@@ -11,7 +11,8 @@
             {{$message}}
         @enderror <br>
         Xatirla meni
-        <input type="checkbox" name="remember" id="remember"><br>
+        <label for="remember">
+        <input type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}><br>
         <input type="submit" value="daxil ol"><br>
     </form>
 @endsection

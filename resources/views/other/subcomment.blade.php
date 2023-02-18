@@ -8,6 +8,13 @@
             @csrf
             <button type="submit">Like {{$subcomment->likes->count()}}</button>
         </form>
+        @can('commentdelete',$subcomment)
+            <form action="/commentdelete/{{$subcomment->id}}" method="post">
+                @csrf
+                @method('delete')
+                <button type="submit">Delete</button>
+            </form>
+        @endcan
         <form action="/comment/{{$subcomment->id}}" method="post" id="{{$subcomment->id}}">
             @csrf
             <textarea name="body" id="" cols="30" rows="3"></textarea> <br>

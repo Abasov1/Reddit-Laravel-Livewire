@@ -9,6 +9,7 @@ class Subreddit extends Model
 {
     use HasFactory;
     protected $fillable = [
+        'creator_id',
         'user_id',
         'name',
         'image'
@@ -21,19 +22,19 @@ class Subreddit extends Model
     // public function joins(){
     //     return $this->hasMany(Join::class);
     // }
-    public function joins()
-    {
-        return $this->hasMany(Join::class);
-    }
+    // public function joins()
+    // {
+    //     return $this->hasMany(Join::class);
+    // }
 
     public function users()
     {
-        return $this->hasManyThrough(User::class, Join::class);
+        return $this->belongsToMany(User::class, 'subreddit_user');
     }
     public function posts(){
             return $this->hasMany(Post::class);
         }
-    public function joinedBy(User $user){
-        return $this->joins->contains('user_id',$user->id);
-    }
+    // public function joinedBy(User $user){
+    //     return $this->joins->contains('user_id',$user->id);
+    // }
 }

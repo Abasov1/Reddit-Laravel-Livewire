@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Models\Subreddit;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -50,6 +51,9 @@ class HomeController extends Controller
     public function show($id)
     {
         $user = User::find($id);
+        if(Subreddit::where('creator_id',$user->id)->exists()){
+            $aton = Subreddit::where('creator_id',$user->id)->get();
+        }
         return view("other.profile",get_defined_vars());
     }
 

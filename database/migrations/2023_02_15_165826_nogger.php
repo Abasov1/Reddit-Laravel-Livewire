@@ -13,10 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('joins', function (Blueprint $table) {
+        Schema::create('subreddit_user', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('subreddit_id')->constrained()->onDelete('cascade');
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('subreddit_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('subreddit_id')->references('id')->on('subreddits')->onDelete('cascade');
             $table->timestamps();
         });
     }

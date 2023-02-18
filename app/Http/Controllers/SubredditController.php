@@ -6,6 +6,8 @@ use App\Models\Join;
 use App\Models\Subreddit;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class SubredditController extends Controller
 {
@@ -16,7 +18,7 @@ class SubredditController extends Controller
      */
     public function index(User $user)
     {
-            
+
     }
 
     /**
@@ -36,6 +38,7 @@ class SubredditController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request){
+        $user = User::find($request->user()->id);
         if($request->hasFile('image')){
             $ex = $request->file('image')->getClientOriginalExtension();
             $file = uniqid() .'.'. $ex;
@@ -48,11 +51,11 @@ class SubredditController extends Controller
             'name' => 'required|max:20|min:6|unique:subreddits',
             'image' =>'required',
     ]);
-        $request->user()->subreddits()->create([
+        Subreddit::create([
+            'creator_id' => $user->id,
             'name' => $request->name,
             'image' => $file
         ]);
-// return $request->user()->subreddits();
         return back();
     }
 
@@ -64,8 +67,16 @@ class SubredditController extends Controller
      */
     public function show($id)
     {
+        $user = Auth::user();
         $subreddit = Subreddit::find($id);
-        $joins = Join::where('subreddit_id',$id)->get();
+        if ($user->subreddits()->where('subreddit_id', $id)->exists()) {
+            $aton = 1;
+        } else {
+            $aton = 0;
+        }
+        if(DB::table('subreddits')->where('creator_id',$user->id)->where('id',$subreddit->id)->exists()){
+            $aton = 2;
+        }
         return view('other.subreddit',get_defined_vars());
     }
 
@@ -98,8 +109,10 @@ class SubredditController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Subreddit $subreddit)
     {
-        //
+        $this->authorize('subredditdelete',$subreddit);
+        $subreddit->delete();
+        return redirect('/homes');
     }
 }

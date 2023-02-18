@@ -6,7 +6,10 @@ use App\Models\Comment;
 use App\Models\Join;
 use App\Models\Post;
 use App\Models\Subreddit;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
@@ -17,15 +20,9 @@ class PostController extends Controller
      */
     public function index()
     {
-
-        $subreddits = Join::where('user_id',auth()->user()->id)->with('subreddit')->get();
-        // $i=[];
-        // foreach($subreddits as $subreddit){
-        //     $i = Subreddit::find($subreddit->subreddit_id)->name;
-        //     echo $i;
-        // }
-        // echo $i;
-        // die();
+        if(DB::table('subreddits')->where('creator_id',auth()->user()->id)->exists()){
+            $subredditss = DB::table('subreddits')->where('creator_id',auth()->user()->id)->get();
+        }
         return view('other.postmake',get_defined_vars());
     }
 
@@ -47,10 +44,10 @@ class PostController extends Controller
      */
     public function store(Request $request){
         if($request->hasFile('image')){
-            $name = $request->file('image')->getClientOriginalName();
+            $ex = $request->file('image')->getClientOriginalExtension();
+            $file = uniqid() .'.'. $ex;
             $folderPath = "storage/images/";
-            $request->file('image')->storeAs($folderPath,$name);
-            $file = $folderPath . $name;
+            $request->file('image')->storeAs($folderPath,$file);
         }
 
         $validated = $request->validate([
@@ -58,13 +55,13 @@ class PostController extends Controller
             'title' => 'required|max:255',
             'image' =>'required',
     ]);
-        $request->user()->posts()->create([
+        $madepost = $request->user()->posts()->create([
             'subreddit_id' => $request->subreddit_id,
             'title' => $request->title,
             'image' => $file
         ]);
 
-        return back();
+        return redirect('post/'.$madepost->id);
     }
 
     /**
@@ -91,7 +88,8 @@ class PostController extends Controller
      */
     public function edit($id)
     {
-        //
+        $editpost = Post::find($id);
+        return view('other.postmake',get_defined_vars());
     }
 
     /**
@@ -103,7 +101,23 @@ class PostController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+
+        $file = Post::find($id)->image;
+        if($request->hasFile('image')){
+            $file = Post::find($id)->image;
+            Storage::disk('public')->delete($file);
+            $ex = $request->file('image')->getClientOriginalExtension();
+            $file = uniqid() .'.'. $ex;
+            $folderPath = "storage/images/";
+            $request->file('image')->storeAs($folderPath,$file);
+
+        }
+        $madepost = $request->user()->posts()->update([
+            'title' => $request->title,
+            'image' => $file
+        ]);
+        $path = Post::find($id)->id;
+        return redirect('post/'.$path);
     }
 
     /**
@@ -112,8 +126,11 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Post $post)
     {
-        //
+        $this->authorize('postdelete',$post);
+        $post->delete();
+        Storage::disk('public')->delete($post->image);
+        return redirect('/homes');
     }
 }

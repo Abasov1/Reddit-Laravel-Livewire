@@ -39,6 +39,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('/comment',[CommentController::class,'store']);
     Route::post('/comment/{comment}',[CommentController::class,'commentstore']);
+    Route::delete('/commentdelete/{comment}',[CommentController::class,'destroy']);
 
     Route::resource('/subreddit',SubredditController::class);
 
