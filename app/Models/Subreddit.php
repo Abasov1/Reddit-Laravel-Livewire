@@ -14,10 +14,26 @@ class Subreddit extends Model
         'image'
     ];
 
-    public function user(){
-        return $this->hasOne(User::class);
+    // public function user(){
+    //     return $this->hasOne(User::class);
+    // }
+
+    // public function joins(){
+    //     return $this->hasMany(Join::class);
+    // }
+    public function joins()
+    {
+        return $this->hasMany(Join::class);
+    }
+
+    public function users()
+    {
+        return $this->hasManyThrough(User::class, Join::class);
     }
     public function posts(){
-        return $this->hasMany(Post::class);
+            return $this->hasMany(Post::class);
+        }
+    public function joinedBy(User $user){
+        return $this->joins->contains('user_id',$user->id);
     }
 }

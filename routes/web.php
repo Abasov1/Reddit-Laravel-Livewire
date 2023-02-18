@@ -6,6 +6,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SubredditController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\JoinController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
 use Illuminate\Support\Facades\Route;
@@ -24,13 +25,14 @@ use Illuminate\Support\Facades\Route;
 Route::get('/register',[RegisterController::class,'index']);
 Route::post('/register',[RegisterController::class,'store']);
 
-Route::get('/login',[LoginController::class,'index']);
+Route::get('/login',[LoginController::class,'index'])->name('login');
 Route::post('/login',[LoginController::class,'store']);
 Route::get('/logout',[LoginController::class,'logout']);
 
-Route::middleware('auth')->group(function () {
-    Route::resource('/home', HomeController::class);
 
+
+Route::middleware(['auth'])->group(function () {
+    Route::resource('/homes', HomeController::class);
     Route::resource('/post', PostController::class);
     Route::post('/like/{post}',[LikeController::class,'store']);
     Route::post('/lik/{comment}',[LikeController::class,'commentstore']);
@@ -40,7 +42,7 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('/subreddit',SubredditController::class);
 
-
+    Route::post('/join/{subreddit}',[JoinController::class,'join']);
 });
 
 Route::get('/test',function(){

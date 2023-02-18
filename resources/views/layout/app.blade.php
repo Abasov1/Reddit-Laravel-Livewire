@@ -14,9 +14,8 @@
 <body>
 
 @auth
-    <a href="/home">HOME</a>
+    <a href="/homes">HOME</a>
     <a href="/post">make post</a>
-    <a href="/subreddit">make subreddit</a>
     <a href="/logout">LOGOUT</a>
     <b>{{auth()->user()->name}}</b> - <img src="{{asset('storage/'.auth()->user()->image)}}" width="40px" height="30px">
 @endauth

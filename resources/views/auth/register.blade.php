@@ -1,9 +1,6 @@
 @extends('layout.app')
 @section('app')
-@if (auth()->check())
 
-    {{function(){ return view('other.home');}}}
-@endif
     <form action="/register" enctype="multipart/form-data" method="post">
         @csrf
         <input type="text" name="name" value="{{ old('name') }}"><br>

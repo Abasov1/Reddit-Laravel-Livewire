@@ -3,7 +3,9 @@
     <h1>POSTS</h1> <br> <br>
     <a href="/subreddit/{{$post->subreddit->id}}"> <h4>{{$post->subreddit->name}}</h4></a>
        <h2>Title:{{$post->title}}@if(auth()->user() == $post->user)
-            - Posted By You
+        - Posted By You
+        @else
+        - {{$post->user->name}} <img src="{{asset('storage/'.$post->user->image)}}" width="40px" height="25px">
      @endif</h2> <h4>{{$post->created_at->diffForHumans()}}</h4>
         <?php $ag = explode('/',$post->image); $nigger = $ag[2]; ?>
         <img src="{{asset('storage/'.$nigger)}}" width="480px" height="270px"><br>

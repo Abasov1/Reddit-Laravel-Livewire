@@ -1,5 +1,6 @@
 @extends('layout.app')
 @section('app')
+
     <style>
         img{
         max-width:180px;
@@ -19,19 +20,25 @@
         @error('image')
             {{$message}}
         @enderror
-        <input type="submit">
-        @if ($subreddits->count())
+        <input type="submit"> <br>
+        @if (auth()->user()->joins->count())
+
         <select name="subreddit_id">
-            @foreach ($subreddits as $subreddit)
+
+            @forelse ($subreddits as $subreddit)
+            <option value="{{$subreddit->subreddit->id}}">{{$subreddit->subreddit->name}}</option>
+
+            {{-- @if ($subreddit->joinedBy(auth()->user()))
                 <option value="{{$subreddit->id}}"> {{$subreddit->name}}</option>
-            @endforeach
+            @endif --}}
+            @empty
+            @endforelse
         </select>
+        @else
+        <h3>You didnt joined any subreddits</h3>
         @endif
     </form>
     <img id="blah" src="http://placehold.it/180" alt="your image" /> <br>
-    @if (!$subreddits->count())
-        <br> You don't joined any subreddits
-    @endif
     <form action="/subreddit" method="post" enctype="multipart/form-data">
         @csrf
         <h1>Create new</h1>

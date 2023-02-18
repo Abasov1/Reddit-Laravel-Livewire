@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Comment;
+use App\Models\Join;
 use App\Models\Post;
 use App\Models\Subreddit;
 use Illuminate\Http\Request;
@@ -16,7 +17,15 @@ class PostController extends Controller
      */
     public function index()
     {
-        $subreddits = Subreddit::get();
+
+        $subreddits = Join::where('user_id',auth()->user()->id)->with('subreddit')->get();
+        // $i=[];
+        // foreach($subreddits as $subreddit){
+        //     $i = Subreddit::find($subreddit->subreddit_id)->name;
+        //     echo $i;
+        // }
+        // echo $i;
+        // die();
         return view('other.postmake',get_defined_vars());
     }
 

@@ -38,6 +38,6 @@ class RegisterController extends Controller
         if(!auth()->attempt($request->only('email','password'))){
             return back();
         }
-        return redirect('/home');
+        return redirect('/homes');
     }
 }

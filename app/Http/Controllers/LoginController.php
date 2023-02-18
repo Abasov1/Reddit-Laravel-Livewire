@@ -15,20 +15,20 @@ class LoginController extends Controller
             'email' => ['required', 'email'],
             'password' => ['required'],
         ]);
- 
+
         if(!auth()->attempt($request->only('email','password'),$request->remember)){
             return back();
         }
-        return redirect('/home');
+        return redirect('/homes');
     }
     public function logout(Request $request)
     {
         Auth::logout();
-    
+
         $request->session()->invalidate();
-    
+
         $request->session()->regenerateToken();
-    
+
         return redirect('/login');
     }
 }

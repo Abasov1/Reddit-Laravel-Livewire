@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Join;
 use App\Models\Subreddit;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class SubredditController extends Controller
@@ -12,9 +14,9 @@ class SubredditController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(User $user)
     {
-        //
+            
     }
 
     /**
@@ -63,6 +65,7 @@ class SubredditController extends Controller
     public function show($id)
     {
         $subreddit = Subreddit::find($id);
+        $joins = Join::where('subreddit_id',$id)->get();
         return view('other.subreddit',get_defined_vars());
     }
 

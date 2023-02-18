@@ -51,10 +51,35 @@ class User extends Authenticatable
     public function likes(){
         return $this->hasMany(Like::class);
     }
-    public function subreddits(){
-        return $this->hasMany(Subreddit::class);
+    // public function subreddits(){
+    //     return $this->hasMany(Subreddit::class);
+    // }
+    // public function joins(){
+    //     return $this->hasMany(Join::class);
+    // }
+    public function joins()
+    {
+        return $this->hasMany(Join::class);
+    }
+
+    public function subreddits()
+    {
+        return $this->hasManyThrough(Subreddit::class, Join::class);
     }
     public function comments(){
         return $this->hasMany(Comment::class);
+    }
+
+    public function joinedBy(Subreddit $subreddit){
+        return $this->contains('id',$subreddit->user_id);
+    }
+    public function receivedLikes(){
+        return $this->hasManyThrough(Like::class,Post::class);
+    }
+    public function receivedComments(){
+        return $this->hasManyThrough(Comment::class,Post::class);
+    }
+    public function joinedSubreddits(){
+        return $this->hasManyThrough(Join::class,Subreddit::class);
     }
 }

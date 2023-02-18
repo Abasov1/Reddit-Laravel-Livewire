@@ -31,5 +31,7 @@ class Comment extends Model
     public function post(){
         return $this->belongsTo(Post::class,'id','post_id');
     }
-
+    public function commentedComments(User $user){
+        return $this->hasManyThrough(Comment::class,Comment::class)->where('user_id',$user->id);
+    }
 }
