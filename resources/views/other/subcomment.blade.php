@@ -13,13 +13,19 @@
                 @csrf
                 @method('delete')
                 <button type="submit">Delete</button>
+                <a href="/commentedit/{{$subcomment->id}}">Edit</a>
             </form>
         @endcan
-        <form action="/comment/{{$subcomment->id}}" method="post" id="{{$subcomment->id}}">
+        <form @isset($ecomment) action="/childupdate/{{$ecomment->id}}" @else action="/comment/{{$subcomment->id}}" @endisset  method="post" id="{{$subcomment->id}}">
             @csrf
-            <textarea name="body" id="" cols="30" rows="3"></textarea> <br>
+            @isset($ecomment) @method('put') @endisset
+            <textarea name="body" id="textext" cols="30" rows="3" @isset($ecomment) value="{{$ecomment->body}}" @endisset></textarea> <br>
+            @isset($ecomment)
+            <button type="submit">Edit</button>
+            @else
             <button type="submit">Comment</button>
-            <button id="{{'legv'.$subcomment->id}}">Legv</button>
+            @endisset
+            <button id="{{'legv'.$subcomment->id}}">Legv ele</button>
         </form>
             <button id="{{'ilk'.$subcomment->id}}">Comment</button>
         <script>
@@ -37,6 +43,15 @@
                 $('#ilk'+{{$subcomment->id}}).show();
             })
         </script>
+        @isset($ecomment)
+        @if(empty($ecomment->post_id))
+            <script>
+                $('#'+{{$ecomment->id}}).show();
+                $('#legv'+{{$ecomment->id}}).show();
+                $('#ilk'+{{$ecomment->id}}).hide();
+            </script>
+        @endif
+    @endisset
         @include('other.subcomment',['subcomments' => $subcomment->subcomments])
     </div>
     @endforeach

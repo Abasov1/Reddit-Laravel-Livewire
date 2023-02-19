@@ -1,30 +1,11 @@
 @extends('layout.app')
 @section('app')
-    <h1>POSTS</h1> <br> <br>
-
-        <h2>Title:{{$post->title}}<a href="/homes/{{$post->user->id}}" style="text-decoration: none;text-color:black;">
-            @if(auth()->user() == $post->user)
-
-            - Posted By You
-            @else
-            - {{$post->user->name}} <img src="{{asset('storage/'.$post->user->image)}}" width="40px" height="25px">
-
-            @endif</h2></a>
-        <img src="{{asset('storage/'.$post->image)}}" width="480px" height="270px"><br>
-
-        <form action="/like/{{$post->id}}" method="post">
-            @csrf
-            <button type="submit">Like {{$post->likes->count()}}</button>
-        </form>
-        @can('postdelete',$post)
-            <form action="/post/{{$post->id}}" method="post">
-                @csrf
-                @method('delete')
-                <button type="submit">Delete</button>
-            </form>
-            <a href="/post/{{$post->id}}/edit">Edit</a>
-        @endcan
-
+<h1>POST</h1> <br>
+@include('other.post')
+@php
+    $ecomment = session('ecomment');
+    $comments = session('comments');
+@endphp
         <form action="/comment" method="post">
             @csrf
             <input type="text" name="post_id" value="{{$post->id}}" style="display: none">
@@ -51,32 +32,48 @@
                 @csrf
                 @method('delete')
                 <button type="submit">Delete</button>
+                <a href="/commentedit/{{$comment->id}}">Edit</a>
             </form>
 
         @endcan
 
-            <form action="/comment/{{$comment->id}}" method="post" id="ilkform">
+            <form @isset($ecomment) action="/parentedit/{{$ecomment->id}}" @else action="/comment/{{$comment->id}}" @endisset  method="post" id="{{'ilkformm'.$comment->id}}">
                 @csrf
-                <textarea name="body" id="" cols="30" rows="3"></textarea> <br>
+                @isset($ecomment) @method('put') @endisset
+                <textarea name="body" id="textext" cols="30" rows="3" @isset($ecomment) value="{{$ecomment->body}}" @endisset></textarea> <br>
+                @isset($ecomment)
+                <button type="submit">Edit</button>
+                @else
                 <button type="submit">Comment</button>
-                <button id="legv">Legv ele</button>
+                @endisset
+                <button id="{{'legvv'.$comment->id}}">Legv ele</button>
             </form>
-            <button type="submit" id='ilk'>Comment</button>
+            <button type="submit" id='{{'ilkk'.$comment->id}}'>Comment</button>
             <script>
-                $('#ilkform').hide();
-                $('#legv').hide();
-                $('#ilk').click(function(){
-                    $('#ilkform').show();
-                    $('#legv').show();
-                    $('#ilk').hide();
+
+                $('#ilkformm'+{{$comment->id}}).hide();
+                $('#legvv'+{{$comment->id}}).hide();
+                $('#ilkk'+{{$comment->id}}).click(function(){
+                    $('#ilkformm'+{{$comment->id}}).show();
+                    $('#legvv'+{{$comment->id}}).show();
+                    $('#ilkk'+{{$comment->id}}).hide();
                 })
-                $('#legv').click(function(e){
+                $('#legvv'+{{$comment->id}}).click(function(e){
                     e.preventDefault();
-                    $('#ilkform').hide();
-                    $('#legv').hide();
-                    $('#ilk').show();
+                    $('#ilkformm'+{{$comment->id}}).hide();
+                    $('#legvv'+{{$comment->id}}).hide();
+                    $('#ilkk'+{{$comment->id}}).show();
                 })
             </script>
+            @isset($ecomment)
+            @if(empty($ecomment->comment_id))
+                <script>
+                    $('#ilkformm'+{{$ecomment->id}}).show();
+                    $('#legvv'+{{$ecomment->id}}).show();
+                    $('#ilkk'+{{$ecomment->id}}).hide();
+                </script>
+            @endif
+        @endisset
             @include('other.subcomment',['subcomments' => $comment->subcomments])
             </div>
         @endforeach

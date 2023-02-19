@@ -36,6 +36,41 @@ class CommentController extends Controller
         $comment->delete();
         return back();
     }
-
+    public function edit(Comment $comment){
+        $this->authorize('commentdelete',$comment);
+        $ecomment = Comment::find($comment->id);
+        $comments = Comment::with('subcomments.subcomments')
+            ->whereNull('post_id')->get();
+        return back()->with([
+            'ecomment' => $ecomment,
+            'comments' => $comments
+        ]);
+    }
+    public function parentupdate(Request $request,$id){
+        $comment = Comment::find($id);
+        $this->authorize('commentdelete',$comment);
+        $validated = $request->validate([
+            'body' => 'required|max:255',
+    ]);
+        $comment->update([
+            'user_id' => $comment->user_id,
+            'post_id' => $comment->post_id,
+            'body' => $request->body,
+        ]);
+        return back();
+    }
+    public function childupdate(Request $request,$id){
+        $comment = Comment::find($id);
+        $this->authorize('commentdelete',$comment);
+        $validated = $request->validate([
+            'body' => 'required|max:255',
+    ]);
+        $comment->update([
+            'user_id' => $comment->user_id,
+            'comment_id' => $comment->comment_id,
+            'body' => $request->body,
+        ]);
+        return back();
+    }
 
 }

@@ -40,6 +40,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/comment',[CommentController::class,'store']);
     Route::post('/comment/{comment}',[CommentController::class,'commentstore']);
     Route::delete('/commentdelete/{comment}',[CommentController::class,'destroy']);
+    Route::put('/parentedit/{comment}',[CommentController::class,'parentupdate']);
+    Route::put('/childupdate/{comment}',[CommentController::class,'childupdate']);
+    Route::get('/commentedit/{comment}',[CommentController::class,'edit']);
+    Route::get('/childedit/{comment}',[CommentController::class,'edit']);
 
     Route::resource('/subreddit',SubredditController::class);
 

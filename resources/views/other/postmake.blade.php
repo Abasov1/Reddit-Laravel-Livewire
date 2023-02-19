@@ -33,10 +33,6 @@
         @else
         <select name="subreddit_id">
             @if (!empty($subredditss))
-            @isset($editpost)
-                <option value="{{$editpost->subreddit_id}}">{{$editpost->subreddit->name}}</option>
-            @endisset
-
                 @foreach ($subredditss as $subreddit)
                     <option value="{{$subreddit->id}}">{{$subreddit->name}}</option>
                 @endforeach
@@ -51,6 +47,7 @@
             @endforelse
         </select>
         @endisset
+        @elseif(isset($editpost))
         @else
         <h3>You didnt joined any subreddits</h3>
         @endif
@@ -61,7 +58,7 @@
     <img id="blah" src="http://placehold.it/180"  width="100px" height="auto"/> <br>
     <form action="/subreddit" method="post" enctype="multipart/form-data">
         @csrf
-        <h1>Create new</h1>
+        <h1>Create new Subreddit</h1>
         <input type="text" name="name"><br>
         @error('text')
             {{$message}}
