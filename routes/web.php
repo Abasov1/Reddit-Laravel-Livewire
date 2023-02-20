@@ -21,14 +21,13 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
+Route::middleware(['guest'])->group(function () {
 Route::get('/register',[RegisterController::class,'index']);
 Route::post('/register',[RegisterController::class,'store']);
 
 Route::get('/login',[LoginController::class,'index'])->name('login');
 Route::post('/login',[LoginController::class,'store']);
-Route::get('/logout',[LoginController::class,'logout']);
-
+});
 
 
 Route::middleware(['auth'])->group(function () {
@@ -46,12 +45,18 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/childedit/{comment}',[CommentController::class,'edit']);
 
     Route::resource('/subreddit',SubredditController::class);
+    Route::post('/giverole/{user}/{subreddit}',[JoinController::class,'givemod']);
+    Route::post('/takerole/{user}/{subreddit}',[JoinController::class,'takemod']);
+
+    Route::post('/ban/{user}/{subreddit}',[JoinController::class,'ban']);
+    Route::post('/unban/{user}/{subreddit}',[JoinController::class,'unban']);
+    Route::get('/bannedusers/{id}',[JoinController::class,'index']);
 
     Route::post('/join/{subreddit}',[JoinController::class,'join']);
+    Route::get('/logout',[LoginController::class,'logout']);
 });
 
 Route::get('/test',function(){
     return view('other.test');
 });
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

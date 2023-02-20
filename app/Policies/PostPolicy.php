@@ -4,6 +4,8 @@ namespace App\Policies;
 
 use App\Models\Comment;
 use App\Models\Post;
+use App\Models\Role;
+use App\Models\Subreddit;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 

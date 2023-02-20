@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Join;
+use App\Models\Role;
 use App\Models\Subreddit;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -51,11 +52,13 @@ class SubredditController extends Controller
             'name' => 'required|max:20|min:6|unique:subreddits',
             'image' =>'required',
     ]);
-        Subreddit::create([
+        $subreddit = Subreddit::create([
             'creator_id' => $user->id,
             'name' => $request->name,
             'image' => $file
         ]);
+        $role = Role::where('name', 'moderator')->first();
+        $user->subredditss()->attach($subreddit->id, ['role_id' => $role->id]);
         return back();
     }
 

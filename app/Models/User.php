@@ -62,10 +62,14 @@ class User extends Authenticatable
     return $this->hasMany(Join::class);
 }
 
-public function subreddits()
-{
-    return $this->belongsToMany(Subreddit::class, 'subreddit_user');
-}
+    public function subreddits()
+    {
+        return $this->belongsToMany(Subreddit::class, 'subreddit_user');
+    }
+    public function subredditss()
+    {
+        return $this->belongsToMany(Subreddit::class,'subreddit_user_role')->withPivot('role_id');
+    }
     public function comments(){
         return $this->hasMany(Comment::class);
     }

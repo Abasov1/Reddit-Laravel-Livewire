@@ -8,6 +8,7 @@ use App\Models\Post;
 use App\Models\Subreddit;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -101,7 +102,8 @@ class PostController extends Controller
      */
     public function update(Request $request, $id)
     {
-
+        $post = Post::find($id);
+        $this->authorize('postdelete',$post);
         $file = Post::find($id)->image;
         if($request->hasFile('image')){
             $file = Post::find($id)->image;
@@ -128,9 +130,21 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        $this->authorize('postdelete',$post);
-        $post->delete();
-        Storage::disk('public')->delete($post->image);
-        return redirect('/homes');
+        $user = Auth::user();
+        if($user->subredditss()->where('subreddit_id', $post->subreddit->id)->wherePivot('role_id',2)->exists()){
+            $this->authorize('moddelete',$post->subreddit);
+        }else{
+            $this->authorize('postdelete',$post);
+        }
+        if($user->id != $post->subreddit->creator_id){
+            $post->delete();
+            Storage::disk('public')->delete($post->image);
+            return redirect('/homes');
+        }   
+        if($user->id = $post->subreddit->creator_id){
+            $post->delete();
+            Storage::disk('public')->delete($post->image);
+            return redirect('/homes');
+        }
     }
 }

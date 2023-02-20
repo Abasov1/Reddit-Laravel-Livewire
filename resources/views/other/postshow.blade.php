@@ -15,10 +15,8 @@
         </form>
 
         <h1>Comments:</h1>
-        {{-- @if (1=0)
-        <h1>ladskasldklkasdlasdk</h1>
-        @else --}}
-        @foreach ($post->comments as $comment)
+
+        @foreach ($post->comments as $comment )
             <b>{{$comment->user->name}}</b> - <img src="{{asset('storage/'.$comment->user->image)}}" width="40px" height="30px">
             - {{$comment->created_at->diffForHumans()}}
             <div style="margin-left:30px;">
