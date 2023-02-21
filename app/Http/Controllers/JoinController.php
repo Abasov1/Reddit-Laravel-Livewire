@@ -25,14 +25,14 @@ class JoinController extends Controller
     }
     public function join(Subreddit $subreddit,Request $request){
         $user = Auth::user();
-        if($user->subredditss()->where('subreddit_id', $subreddit->id)->wherePivot('role_id',3)->exists()){
+        if($user->isBanned($subreddit)){
             return back();
         }
         if($user->id != $subreddit->creator_id){
 
-        if(DB::table('subreddit_user')->where('user_id',$user->id)->exists()){
+        if($user->isJoined($subreddit)){
             $user->subreddits()->detach($subreddit);
-            if($user->subredditss()->where('subreddit_id', $subreddit->id)->wherePivot('role_id',2)->exists()){
+            if($user->isMod($subreddit)){
                 $role = Role::where('name', 'moderator')->first();
                 $user->subredditss()->detach($subreddit->id, ['role_id' => $role->id]);
             }
@@ -46,12 +46,18 @@ class JoinController extends Controller
     }
     public function givemod(User $user,Subreddit $subreddit){
         $this->authorize('subredditdelete',$subreddit);
-        $role = Role::where('name', 'moderator')->first();
+        if(!$user->isJoined($subreddit)){
+        return back()->with('mesaj','this user is not joined to your server');
+    }
         $user->subredditss()->attach($subreddit->id, ['role_id' => $role->id]);
+        $role = Role::where('name', 'moderator')->first();
         return back();
     }
     public function takemod(User $user,Subreddit $subreddit){
         $this->authorize('subredditdelete',$subreddit);
+        if(!$user->isJoined($subreddit)){
+        return back()->with('mesaj','this user is not joined to your server');
+    }
         $role = Role::where('name', 'moderator')->first();
         $user->subredditss()->detach($subreddit->id, ['role_id' => $role->id]);
         return back();
@@ -59,7 +65,7 @@ class JoinController extends Controller
     public function ban(User $user, Subreddit $subreddit){
         $auth = Auth::user();
         if($auth->id === $subreddit->creator_id){
-            if($user->subredditss()->where('subreddit_id', $subreddit->id)->wherePivot('role_id',2)->exists()){
+            if($user->isMod($subreddit)){
                 $role = Role::where('name', 'moderator')->first();
                 $user->subredditss()->detach($subreddit->id, ['role_id' => $role->id]);
             }
@@ -68,5 +74,12 @@ class JoinController extends Controller
         $banrole = Role::where('name', 'banned')->first();
         $user->subredditss()->attach($subreddit->id, ['role_id' => $banrole->id]);
         return back();
+    }
+    public function unban(User $user, Subreddit $subreddit){
+        $auth = Auth::user();
+        $banrole = Role::where('name', 'banned')->first();
+        $user->subredditss()->detach($subreddit->id, ['role_id' => $banrole->id]);
+        $user->subreddits()->attach($subreddit);
+        return redirect('/subreddit/'.$subreddit->id);
     }
 }

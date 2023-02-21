@@ -6,17 +6,20 @@
         <h3>{{$subcomment->body}}</h3>
         <form action="/lik/{{$subcomment->id}}" method="post">
             @csrf
-            <button type="submit">Like {{$subcomment->likes->count()}}</button>
+            <button type="submit" style="margin-bottom: 5px;">Like {{$subcomment->likes->count()}}</button>
         </form>
         @can('commentdelete',$subcomment)
             <form action="/commentdelete/{{$subcomment->id}}" method="post">
                 @csrf
                 @method('delete')
                 <button type="submit">Delete</button>
+                @if(!auth()->user()->isBanned($post->subreddit))
                 <a href="/commentedit/{{$subcomment->id}}">Edit</a>
+                @endif
             </form>
         @endcan
-        <form @isset($ecomment) action="/childupdate/{{$ecomment->id}}" @else action="/comment/{{$subcomment->id}}" @endisset  method="post" id="{{$subcomment->id}}">
+        @if(!auth()->user()->isBanned($post->subreddit))
+        <form @isset($ecomment) action="/childupdate/{{$ecomment->id}}/{{$post->subreddit->id}}" @else action="/comment/{{$subcomment->id}}/{{$post->subreddit->id}}" @endisset  method="post" id="{{$subcomment->id}}">
             @csrf
             @isset($ecomment) @method('put') @endisset
             <textarea name="body" id="textext" cols="30" rows="3" @isset($ecomment) value="{{$ecomment->body}}" @endisset></textarea> <br>
@@ -52,6 +55,7 @@
             </script>
         @endif
     @endisset
+    @endif
         @include('other.subcomment',['subcomments' => $subcomment->subcomments])
     </div>
     @endforeach

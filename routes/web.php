@@ -36,11 +36,11 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/like/{post}',[LikeController::class,'store']);
     Route::post('/lik/{comment}',[LikeController::class,'commentstore']);
 
-    Route::post('/comment',[CommentController::class,'store']);
-    Route::post('/comment/{comment}',[CommentController::class,'commentstore']);
+    Route::post('/comment/{subreddit}',[CommentController::class,'store']);
+    Route::post('/comment/{comment}/{subreddit}',[CommentController::class,'commentstore']);
     Route::delete('/commentdelete/{comment}',[CommentController::class,'destroy']);
-    Route::put('/parentedit/{comment}',[CommentController::class,'parentupdate']);
-    Route::put('/childupdate/{comment}',[CommentController::class,'childupdate']);
+    Route::put('/parentedit/{comment}/{subreddit}',[CommentController::class,'parentupdate']);
+    Route::put('/childupdate/{comment}/{subreddit}',[CommentController::class,'childupdate']);
     Route::get('/commentedit/{comment}',[CommentController::class,'edit']);
     Route::get('/childedit/{comment}',[CommentController::class,'edit']);
 

@@ -8,6 +8,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\DB;
 
 class User extends Authenticatable
 {
@@ -85,5 +86,14 @@ class User extends Authenticatable
     }
     public function joinedSubreddits(){
         return $this->hasManyThrough(Join::class,Subreddit::class);
+    }
+    public function isMod(Subreddit $subreddit){
+        return $this->subredditss()->where('subreddit_id',$subreddit->id)->wherePivot('role_id',2)->exists();
+    }
+    public function isBanned(Subreddit $subreddit){
+        return $this->subredditss()->where('subreddit_id',$subreddit->id)->wherePivot('role_id',3)->exists();
+    }
+    public function isJoined(Subreddit $subreddit){
+        return DB::table('subreddit_user')->where('user_id',$this->id)->where('subreddit_id',$subreddit->id)->exists();
     }
 }

@@ -13,7 +13,7 @@
             <button type="submit">Delete</button>
         </form>
     @endcan
-    @if (auth()->user()->subredditss()->where('subreddit_id',$subreddit->id)->wherePivot('role_id',3)->exists())
+    @if (auth()->user()->isBanned($subreddit))
         You ARE BANNED FROM THIS SUBREDDIT BUT YOU CAN STILL LOOK POSTS
         @else
         <form action="/join/{{$subreddit->id}}" method="post">

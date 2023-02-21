@@ -6,14 +6,15 @@
     $ecomment = session('ecomment');
     $comments = session('comments');
 @endphp
-        <form action="/comment" method="post">
+    @if(!auth()->user()->isBanned($post->subreddit))
+        <form action="/comment/{{$post->subreddit->id}}" method="post">
             @csrf
             <input type="text" name="post_id" value="{{$post->id}}" style="display: none">
             <h1>Make comment</h1> <br>
             <textarea name="body" id="" cols="30" rows="3"></textarea> <br>
             <button type="submit">gonder</button>
         </form>
-
+    @endif
         <h1>Comments:</h1>
 
         @foreach ($post->comments as $comment )
@@ -25,28 +26,29 @@
                 @csrf
                 <button type="submit">Like {{$comment->likes->count()}}</button>
             </form>
+        
             @can('commentdelete',$comment)
-            <form action="/commentdelete/{{$comment->id}}" method="post">
-                @csrf
-                @method('delete')
-                <button type="submit">Delete</button>
-                <a href="/commentedit/{{$comment->id}}">Edit</a>
-            </form>
-
-        @endcan
-
-            <form @isset($ecomment) action="/parentedit/{{$ecomment->id}}" @else action="/comment/{{$comment->id}}" @endisset  method="post" id="{{'ilkformm'.$comment->id}}">
-                @csrf
-                @isset($ecomment) @method('put') @endisset
-                <textarea name="body" id="textext" cols="30" rows="3" @isset($ecomment) value="{{$ecomment->body}}" @endisset></textarea> <br>
-                @isset($ecomment)
-                <button type="submit">Edit</button>
-                @else
-                <button type="submit">Comment</button>
-                @endisset
-                <button id="{{'legvv'.$comment->id}}">Legv ele</button>
-            </form>
-            <button type="submit" id='{{'ilkk'.$comment->id}}'>Comment</button>
+                <form action="/commentdelete/{{$comment->id}}" method="post">
+                    @csrf
+                    @method('delete')
+                    <button type="submit">Delete</button>
+                    <a href="/commentedit/{{$comment->id}}">Edit</a>
+                </form>
+            @endcan
+            @if(!auth()->user()->isBanned($post->subreddit))    
+                <form @isset($ecomment) action="/parentedit/{{$ecomment->id}}/{{$post->subreddit->id}}" @else action="/comment/{{$post->subreddit->id}}" @endisset  method="post" id="{{'ilkformm'.$comment->id}}">
+                    @csrf
+                    @isset($ecomment) @method('put') @endisset
+                    <textarea name="body" id="textext" cols="30" rows="3" @isset($ecomment) value="{{$ecomment->body}}" @endisset></textarea> <br>
+                    @isset($ecomment)
+                    <button type="submit">Edit</button>
+                    @else
+                    <button type="submit">Comment</button>
+                    @endisset
+                    <button id="{{'legvv'.$comment->id}}">Legv ele</button>
+                </form>
+                <button type="submit" id='{{'ilkk'.$comment->id}}'>Comment</button>
+            
             <script>
 
                 $('#ilkformm'+{{$comment->id}}).hide();
@@ -72,6 +74,7 @@
                 </script>
             @endif
         @endisset
+        @endif
             @include('other.subcomment',['subcomments' => $comment->subcomments])
             </div>
         @endforeach

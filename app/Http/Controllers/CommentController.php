@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Comment;
 use App\Models\Post;
+use App\Models\Subreddit;
 use Illuminate\Http\Request;
 
 class CommentController extends Controller
 {
-    public function store(Request $request){
+    public function store(Request $request,Subreddit $subreddit){
+        if(!$request->user()->isBanned($subreddit)){
         $validated = $request->validate([
             'body' => 'required|max:255',
     ]);
@@ -16,10 +18,11 @@ class CommentController extends Controller
             'post_id' => $request->post_id,
             'body' => $request->body,
         ]);
-
+    }
         return back();
     }
-    public function commentstore(Comment $comment,Request $request){
+    public function commentstore(Comment $comment,Subreddit $subreddit,Request $request){
+        if(!$request->user()->isBanned($subreddit)){
         $validated = $request->validate([
             'body' => 'required|max:255',
     ]);
@@ -27,7 +30,7 @@ class CommentController extends Controller
             'comment_id' => $comment->id,
             'body' => $request->body,
         ]);
-
+    }
         return back();
     }
     public function destroy(Comment $comment)
@@ -46,8 +49,8 @@ class CommentController extends Controller
             'comments' => $comments
         ]);
     }
-    public function parentupdate(Request $request,$id){
-        $comment = Comment::find($id);
+    public function parentupdate(Comment $comment,Subreddit $subreddit,Request $request){
+        if(!$request->user()->isBanned($subreddit)){
         $this->authorize('commentdelete',$comment);
         $validated = $request->validate([
             'body' => 'required|max:255',
@@ -57,10 +60,11 @@ class CommentController extends Controller
             'post_id' => $comment->post_id,
             'body' => $request->body,
         ]);
+    }
         return back();
     }
-    public function childupdate(Request $request,$id){
-        $comment = Comment::find($id);
+    public function childupdate(Comment $comment,Subreddit $subreddit,Request $request){
+        if(!$request->user()->isBanned($subreddit)){
         $this->authorize('commentdelete',$comment);
         $validated = $request->validate([
             'body' => 'required|max:255',
@@ -70,6 +74,7 @@ class CommentController extends Controller
             'comment_id' => $comment->comment_id,
             'body' => $request->body,
         ]);
+    }
         return back();
     }
 

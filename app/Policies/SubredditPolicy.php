@@ -15,7 +15,7 @@ class SubredditPolicy
         return $user->id === $subreddit->creator_id;
     }
     public function moddelete(User $user,Subreddit $subreddit){
-        if($user->subredditss()->where('subreddit_id', $subreddit->id)->wherePivot('role_id',2)->exists()){
+        if($user->isMod($subreddit)){
         $role_id = $user->subredditss()->where('subreddit_id', $subreddit->id)->wherePivot('role_id',2)->value('role_id');
         $role = Role::find($role_id)->name;
 

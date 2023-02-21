@@ -131,7 +131,7 @@ class PostController extends Controller
     public function destroy(Post $post)
     {
         $user = Auth::user();
-        if($user->subredditss()->where('subreddit_id', $post->subreddit->id)->wherePivot('role_id',2)->exists()){
+        if($user->isMod($post->subreddit)){
             $this->authorize('moddelete',$post->subreddit);
         }else{
             $this->authorize('postdelete',$post);
