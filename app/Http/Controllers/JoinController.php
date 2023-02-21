@@ -20,7 +20,10 @@ class JoinController extends Controller
         $subId = collect($bannedusers)->pluck('subreddit_id');
         $users = User::whereIn('id',$userIds)->get();
         $subreddits = Subreddit::whereIn('user_id',$userIds);
-        $posts = Post::whereIn('user_id',$userIds)->whereIn('subreddit_id',$subId)->get();
+        $bannedpostid = DB::table('subreddit_user_post')->whereIn('user_id',$userIds)->whereIn('subreddit_id',$subId)->get();
+        $postIds = collect($bannedpostid)->pluck('post_id');
+        $bannedposts = Post::whereIn('id',$postIds)->get();
+        $posts = Post::whereIn('user_id',$userIds)->where('subreddit_id',$id)->get();
         return view("other.bannedusers",get_defined_vars());
     }
     public function join(Subreddit $subreddit,Request $request){
@@ -49,8 +52,8 @@ class JoinController extends Controller
         if(!$user->isJoined($subreddit)){
         return back()->with('mesaj','this user is not joined to your server');
     }
-        $user->subredditss()->attach($subreddit->id, ['role_id' => $role->id]);
         $role = Role::where('name', 'moderator')->first();
+        $user->subredditss()->attach($subreddit->id, ['role_id' => $role->id]);
         return back();
     }
     public function takemod(User $user,Subreddit $subreddit){
@@ -62,8 +65,10 @@ class JoinController extends Controller
         $user->subredditss()->detach($subreddit->id, ['role_id' => $role->id]);
         return back();
     }
-    public function ban(User $user, Subreddit $subreddit){
+    public function ban(Post $post){
         $auth = Auth::user();
+        $user = $post->user;
+        $subreddit = $post->subreddit;
         if($auth->id === $subreddit->creator_id){
             if($user->isMod($subreddit)){
                 $role = Role::where('name', 'moderator')->first();
@@ -73,6 +78,7 @@ class JoinController extends Controller
         $user->subreddits()->detach($subreddit);
         $banrole = Role::where('name', 'banned')->first();
         $user->subredditss()->attach($subreddit->id, ['role_id' => $banrole->id]);
+        $user->bannedfrom()->attach($subreddit->id, ['post_id' => $post->id]);
         return back();
     }
     public function unban(User $user, Subreddit $subreddit){

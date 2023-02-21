@@ -71,10 +71,13 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Subreddit::class,'subreddit_user_role')->withPivot('role_id');
     }
+    public function bannedfrom()
+    {
+        return $this->belongsToMany(Subreddit::class,'subreddit_user_post')->withPivot('post_id');
+    }
     public function comments(){
         return $this->hasMany(Comment::class);
     }
-
     public function joinedBy(Subreddit $subreddit){
         return $this->contains('id',$subreddit->user_id);
     }
@@ -95,5 +98,11 @@ class User extends Authenticatable
     }
     public function isJoined(Subreddit $subreddit){
         return DB::table('subreddit_user')->where('user_id',$this->id)->where('subreddit_id',$subreddit->id)->exists();
+    }
+    public function isCreator(Subreddit $subreddit){
+        return $this->id === $subreddit->creator_id;
+    }
+    public function subcount(Subreddit $subreddit){
+        return $this->posts->where('subreddit_id',$subreddit->id)->count();
     }
 }

@@ -33,10 +33,14 @@ class CommentController extends Controller
     }
         return back();
     }
-    public function destroy(Comment $comment)
+    public function destroy(Comment $comment,Subreddit $subreddit)
     {
+        if(auth()->user()->isMod($subreddit)){
+            $comment->delete();
+        }else{
         $this->authorize('commentdelete',$comment);
         $comment->delete();
+    }
         return back();
     }
     public function edit(Comment $comment){

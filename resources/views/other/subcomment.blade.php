@@ -8,18 +8,29 @@
             @csrf
             <button type="submit" style="margin-bottom: 5px;">Like {{$subcomment->likes->count()}}</button>
         </form>
-        @can('commentdelete',$subcomment)
-            <form action="/commentdelete/{{$subcomment->id}}" method="post">
-                @csrf
-                @method('delete')
-                <button type="submit">Delete</button>
-                @if(!auth()->user()->isBanned($post->subreddit))
-                <a href="/commentedit/{{$subcomment->id}}">Edit</a>
-                @endif
-            </form>
-        @endcan
+            @if(auth()->user()->isMod($post->subreddit) && !$subcomment->user->isCreator($post->subreddit))
+                    <form action="/commentdelete/{{$subcomment->id}}/{{$post->subreddit->id}}" method="post">
+                        @csrf
+                        @method('delete')
+                        <button type="submit">Delete</button>
+                        @can('commentdelete',$subcomment)
+                        <a href="/commentedit/{{$subcomment->id}}">Edit</a>
+                        @endcan
+                    </form>
+                @else
+            @can('commentdelete',$subcomment)
+                <form action="/commentdelete/{{$subcomment->id}}/{{$post->subreddit->id}}" method="post">
+                    @csrf
+                    @method('delete')
+                    <button type="submit">Delete</button>
+                    @if(!auth()->user()->isBanned($post->subreddit))
+                    <a href="/commentedit/{{$subcomment->id}}">Edit</a>
+                    @endif
+                </form>
+            @endcan
+            @endif
         @if(!auth()->user()->isBanned($post->subreddit))
-        <form @isset($ecomment) action="/childupdate/{{$ecomment->id}}/{{$post->subreddit->id}}" @else action="/comment/{{$subcomment->id}}/{{$post->subreddit->id}}" @endisset  method="post" id="{{$subcomment->id}}">
+        <form @isset($ecomment) action="/childupdate/{{$ecomment->id}}/{{$post->subreddit->id}}" @else action="/commentt/{{$subcomment->id}}/{{$post->subreddit->id}}" @endisset  method="post" id="{{$subcomment->id}}">
             @csrf
             @isset($ecomment) @method('put') @endisset
             <textarea name="body" id="textext" cols="30" rows="3" @isset($ecomment) value="{{$ecomment->body}}" @endisset></textarea> <br>

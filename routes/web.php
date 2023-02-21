@@ -37,8 +37,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/lik/{comment}',[LikeController::class,'commentstore']);
 
     Route::post('/comment/{subreddit}',[CommentController::class,'store']);
-    Route::post('/comment/{comment}/{subreddit}',[CommentController::class,'commentstore']);
-    Route::delete('/commentdelete/{comment}',[CommentController::class,'destroy']);
+    Route::post('/commentt/{comment}/{subreddit}',[CommentController::class,'commentstore']);
+    Route::delete('/commentdelete/{comment}/{subreddit}',[CommentController::class,'destroy']);
     Route::put('/parentedit/{comment}/{subreddit}',[CommentController::class,'parentupdate']);
     Route::put('/childupdate/{comment}/{subreddit}',[CommentController::class,'childupdate']);
     Route::get('/commentedit/{comment}',[CommentController::class,'edit']);
@@ -48,7 +48,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/giverole/{user}/{subreddit}',[JoinController::class,'givemod']);
     Route::post('/takerole/{user}/{subreddit}',[JoinController::class,'takemod']);
 
-    Route::post('/ban/{user}/{subreddit}',[JoinController::class,'ban']);
+    Route::post('/ban/{post}',[JoinController::class,'ban']);
     Route::post('/unban/{user}/{subreddit}',[JoinController::class,'unban']);
     Route::get('/bannedusers/{id}',[JoinController::class,'index']);
 

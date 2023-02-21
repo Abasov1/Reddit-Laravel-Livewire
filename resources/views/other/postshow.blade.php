@@ -26,17 +26,29 @@
                 @csrf
                 <button type="submit">Like {{$comment->likes->count()}}</button>
             </form>
-        
+                @if(auth()->user()->isMod($post->subreddit) && !$comment->user->isCreator($post->subreddit))
+                    <form action="/commentdelete/{{$comment->id}}/{{$post->subreddit->id}}" method="post">
+                        @csrf
+                        @method('delete')
+                        <button type="submit">Delete</button>
+                        @can('commentdelete',$comment)
+                        <a href="/commentedit/{{$comment->id}}">Edit</a>
+                        @endcan
+                    </form>
+                @else
             @can('commentdelete',$comment)
-                <form action="/commentdelete/{{$comment->id}}" method="post">
+                <form action="/commentdelete/{{$comment->id}}/{{$post->subreddit->id}}" method="post">
                     @csrf
                     @method('delete')
                     <button type="submit">Delete</button>
+                    @if(!auth()->user()->isBanned($post->subreddit))
                     <a href="/commentedit/{{$comment->id}}">Edit</a>
+                    @endif
                 </form>
             @endcan
+            @endif
             @if(!auth()->user()->isBanned($post->subreddit))    
-                <form @isset($ecomment) action="/parentedit/{{$ecomment->id}}/{{$post->subreddit->id}}" @else action="/comment/{{$post->subreddit->id}}" @endisset  method="post" id="{{'ilkformm'.$comment->id}}">
+                <form @isset($ecomment) action="/parentedit/{{$ecomment->id}}/{{$post->subreddit->id}}" @else action="/commentt/{{$comment->id}}/{{$post->subreddit->id}}" @endisset  method="post" id="{{'ilkformm'.$comment->id}}">
                     @csrf
                     @isset($ecomment) @method('put') @endisset
                     <textarea name="body" id="textext" cols="30" rows="3" @isset($ecomment) value="{{$ecomment->body}}" @endisset></textarea> <br>

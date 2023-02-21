@@ -27,20 +27,22 @@
                     @endif
                 @endcan
                     @can('subredditdelete',$post->subreddit)
-                            <form action="/ban/{{$post->user->id}}/{{$post->subreddit->id}}" method="post">
+                            <form action="/ban/{{$post->id}}" method="post">
                                 @csrf
                                 <button type="submit">Banla</button>
                             </form>
                         @endcan
-                    @if($post->user->id != $post->subreddit->creator_id)
-                            @if(!$post->user->isMod($post->subreddit))
-                                @can('moddelete',$post->subreddit)
-                                    <form action="/ban/{{$post->user->id}}/{{$post->subreddit->id}}" method="post">
-                                        @csrf
-                                        <button type="submit">Banla</button>
-                                    </form>
-                                @endcan
-                            @endif
+                    @if (auth()->user()->id != $post->subreddit->creator_id)
+                        @if($post->user->id != $post->subreddit->creator_id)
+                                @if(!$post->user->isMod($post->subreddit))
+                                    @can('moddelete',$post->subreddit)
+                                        <form action="/ban/{{$post->id}}" method="post">
+                                            @csrf
+                                            <button type="submit">Banla</button>
+                                        </form>
+                                    @endcan
+                                @endif
+                        @endif
                     @endif
             @endif                
         @endif</h2></a><a href="/post/{{$post->id}}" style="text-decoration: none;text-color:black;">
