@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Post;
+use App\Models\Subreddit;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -12,7 +14,10 @@ use Nette\Utils\FileSystem;
 class RegisterController extends Controller
 {
     public function index(){
-        return view('auth.register');
+        $users = User::get();
+        $subreddits = Subreddit::get();
+        $posts = Post::get();
+        return view('auth.register',get_defined_vars());
     }
     public function store(Request $request){
         if($request->hasFile('image')){
