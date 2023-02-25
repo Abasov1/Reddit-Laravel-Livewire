@@ -72,24 +72,84 @@
 <div class="central-meta item">
     <div class="user-post">
         <div class="friend-info">
-            <figure>
-                <img src="{{asset('storage/'.$post->user->image)}}" alt="">
-            </figure>
+            {{-- <figure> --}}
+                <div class="comet-avatar user-image-container">
+                    <img src="{{asset('storage/'.$post->user->image)}}" alt="">
+                </div>
+
+            {{-- </figure> --}}
             <div class="friend-name">
                 <div class="more">
                     <div class="more-post-optns"><i class="ti-more-alt"></i>
                         <ul>
-                            <li><i class="fa fa-pencil-square-o"></i>Edit Post</li>
-                            <li><i class="fa fa-trash-o"></i>Delete Post</li>
-                            <li class="bad-report"><i class="fa fa-flag"></i>Report Post</li>
-                            <li><i class="fa fa-address-card-o"></i>Boost This Post</li>
-                            <li><i class="fa fa-clock-o"></i>Schedule Post</li>
-                            <li><i class="fa fa-wpexplorer"></i>Select as featured</li>
-                            <li><i class="fa fa-bell-slash-o"></i>Turn off Notifications</li>
+                            @can('postdelete', $post)
+                                <form action="/post/{{$post->id}}" method="post">
+                                    @csrf
+                                    @method('delete')
+                                    <button id="postsil" type="submit" style="display:none;">Delete</button>
+                                    <li><label for="postsil"><i class="fa fa-trash-o"></i>Delete Post</label></li>
+                                </form>
+                                <a href="/post/{{$post->id}}/edit">Edit</a>
+                                <li><i class="fa fa-pencil-square-o"></i>Edit Post</li>
+                            @elsecan('moddelete', $post->subreddit)
+                                    <form action="/post/{{$post->id}}" method="post">
+                                        @csrf
+                                        @method('delete')
+                                        @if($post->user->id != $post->subreddit->creator_id)
+                                        <button id="modpostsil" type="submit" style="display:none;">Delete</button>
+                                        <li><label for="modpostsil"><i class="fa fa-trash-o"></i>Delete Post</label></li>
+                                        @endif
+                                    </form>
+                                @endcan
+
+
+                            @if ($post->user->isJoined($post->subreddit))
+                                @can('subredditdelete',$post->subreddit)
+                                    @if (!$post->user->isMod($post->subreddit))
+                                        <form action="/giverole/{{$post->user->id}}/{{$post->subreddit->id}}" method="post">
+                                            @csrf
+                                            <button id="modver" type="submit" style="display: none">MODERATORLUQ VER</button>
+                                            <li><label for="modver"><i class="fa fa-address-card-o"></i>Give mod role at {{$post->subreddit->name}}</label></li>
+                                        </form>
+                                    @elseif ($post->user->isMod($post->subreddit))
+                                        <form action="/takerole/{{$post->user->id}}/{{$post->subreddit->id}}" method="post">
+                                            @csrf
+                                            <button id="modal" type="submit" style="display: none">MODERATORLUQ Al</button>
+                                            <li><label for="modal"><i class="fa fa-address-card-o"></i>Take mod role from {{$post->subreddit->name}}</label></li>
+                                        </form>
+                                    @endif
+                                @endcan
+                                @can('subredditdelete',$post->subreddit)
+                                    <form action="/ban/{{$post->id}}" method="post">
+                                        @csrf
+                                        <button id="modverr" type="submit" style="display: none">   </button>
+                                        <li><label for="modverr"><i class="fa fa-address-card-o"></i>Ban from{{$post->subreddit->name}}</label></li>
+                                    </form>
+                                    @endcan
+                                @if (auth()->user()->id != $post->subreddit->creator_id)
+                                    @if($post->user->id != $post->subreddit->creator_id)
+                                            @if(!$post->user->isMod($post->subreddit))
+                                                @can('moddelete',$post->subreddit)
+                                                    <form action="/ban/{{$post->id}}" method="post">
+                                                        @csrf
+                                                        <button id="modverrr" type="submit" style="display: none">   </button>
+                                                        <li><label for="modverrr"><i class="fa fa-address-card-o"></i>Ban from{{$post->subreddit->name}}</label></li>
+                                                    </form>
+                                                @endcan
+                                            @endif
+                                    @endif
+                                @endif
+                            @endif
+
                         </ul>
                     </div>
                 </div>
-                <ins><a title="" href="time-line.html">{{$post->user->name}}</a></ins>
+                <ins><a title="" href="/homes/{{$post->user->id}}">{{$post->user->name}}</a>
+                    Posted on <a href="/subreddit/{{$post->subreddit->id}}">{{$post->subreddit->name}}</a>
+                    @if (auth()->user()->id === $post->user->id)
+                        - Posted by you
+                    @endif
+                </ins>
                 <span>{{$post->created_at->diffForHumans()}}</span>
             </div>
             <div class="description">
@@ -129,15 +189,16 @@
                             <form action="/like/{{$post->id}}" method="post" style="margin:0%;padding:0%;">
                                 @csrf
 
-                                <button type="submit" style="background: none; border: none; color: red; font-size: 20px; line-height: 0;">
+                                <button id="likepost" type="submit" style="background: none; border: none; color: red; font-size: 20px; line-height: 0;display:none"></button>
+                                    <label for="likepost" style="color:red;text-size:40px;" >
                                     @if (!$post->likedBy(auth()->user()))
                                         <i class="fa fa-heart-o"></i>
                                     @else
                                         <i class="fa fa-heart"></i>
                                     @endif
                                     <span style="margin-left: 5px;margin-top:0px; font-size: 12px; font-weight: bold;">{{$post->likes->count()}}</span>
-                                </button>
 
+                                    </label>
                             </form>
 
                         </li>

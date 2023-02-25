@@ -84,8 +84,11 @@ class JoinController extends Controller
     public function unban(User $user, Subreddit $subreddit){
         $auth = Auth::user();
         $banrole = Role::where('name', 'banned')->first();
+        $postfind = DB::table('subreddit_user_post')->where('user_id',$user->id)->where('subreddit_id',$subreddit->id)->get();
+        $postid = $postfind[0]->post_id;
+        $post = Post::find($postid);
         $user->subredditss()->detach($subreddit->id, ['role_id' => $banrole->id]);
-        $user->subreddits()->attach($subreddit);
+        $user->bannedfrom()->detach($subreddit->id, ['post_id' => $post->id]);
         return redirect('/subreddit/'.$subreddit->id);
     }
 }

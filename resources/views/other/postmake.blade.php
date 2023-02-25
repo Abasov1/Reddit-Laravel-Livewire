@@ -1,10 +1,10 @@
 @extends('layout.temp')
 @section('temp')
-<style>
+{{-- <style>
     *{
         background:none;
     }
-</style>
+</style> --}}
 {{--
     <style>
         img{
@@ -113,11 +113,10 @@
         <div class="central-meta postbox">
             <span class="create-post">Create post</span>
             <div class="new-postbox">
-                <figure >
-                    <img src="{{asset('storage/'.auth()->user()->image)}}" width="50px">
-
-                </figure>
-                <span style="text-color:white">{{auth()->user()->name}}</span>
+                <div class="comet-avatar user-image-container">
+                    <img src="{{asset('storage/'.auth()->user()->image)}}" alt="">
+                </div>
+                <span style="text-color:white" id="narinci"><a href="homes/{{auth()->user()->id}}">{{auth()->user()->name}}</a></span>
                 {{-- <div class="newpst-input">
                         <textarea rows="2" placeholder="Title"></textarea>
                 </div> --}}
@@ -127,7 +126,7 @@
                                         <div class="newpst-input">
                                             <textarea rows="2" placeholder="Title" name="title"></textarea>
                                         </div>
-                                        <div class="mb-4 d-flex justify-content-center">
+                                        {{-- <div class="mb-4 d-flex justify-content-center">
                                             <img id="blahh" src=""
                                             style="width: 500%" />
                                         </div>
@@ -135,22 +134,59 @@
                                                 <label class="uqaqa">
                                                 <input type="file" name="image" class="form-control d-none" id="customFile1" onchange="readURL(this);"/>
                                                 </label><ins>asdlkja</ins>
-                                        </div>
+                                        </div> --}}
                                         <div class="blurry-select-container">
                                             <div class="blurry-overlay"></div>
-                                            <select class="blurry-select" name="subreddit_id">
+                                            <select class="blurry-select" name="subreddit_id" style="display:none">
                                                 @if (!empty($subredditss))
                                                 @foreach ($subredditss as $subreddit)
                                                     <option value="{{$subreddit->id}}">{{$subreddit->name}}</option>
                                                 @endforeach
                                                 @endif
                                                 @forelse (auth()->user()->subreddits as $subreddit)
-                                                <option value="{{$subreddit->id}}">{{$subreddit->name}}</option>
+                                                    <option value="{{$subreddit->id}}">{{$subreddit->name}}</option>
                                                 @empty
                                                 @endforelse
                                             </select>
-
                                         </div>
+                                        <div class="mb-4 d-flex justify-content-center">
+                                            <img id="back-post-preview" src=""
+                                            style="width: 500%" />
+                                        </div>
+                                        <div class="modal fade" id="postModal" tabindex="-1" role="dialog"  aria-labelledby="postModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered modal-left-side" role="document">
+                                              <div class="modal-content modal-left" style="background-color:rgb(6,8,24);">
+                                                <div class="modal-header">
+                                                  <h5 class="modal-title" id="postModalLabel">Choose Image</h5>
+                                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close" >
+                                                    <span aria-hidden="true" style="color:rgb(149,154,181);">&times;</span>
+                                                  </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                  <div class="post-upload">
+                                                    <div class="post-preview">
+                                                      <img id="post-preview" src="https://cdn.oneesports.gg/cdn-data/2022/11/MW2_Ghost_Mask.jpg" alt="Preview">
+                                                    </div>
+                                                    <div class="post-edit">
+                                                      <input type='file' id="post" onchange="previewImage('post', 'post-preview')" name="image" accept=".png, .jpg, .jpeg" />
+                                                      <label for="post" >Choose Image</label>
+                                                    </div>
+                                                  </div>
+                                                  @error('image')
+                                                  <div class="alert alert-danger">{{ $message }}</div>
+                                                  @enderror
+                                                </div>
+                                                <div class="modal-footer">
+                                                  <button type="button" data-dismiss="modal">Close</button>
+                                                  <button type="button" data-dismiss="modal">Save changes</button>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+
+                                          <button type="button" class="post-btn" style="@error('image') border-style:solid;border-color:red; @enderror" data-toggle="modal" data-target="#postModal">
+                                            Choose Image
+                                          </button>
                                         <button class="post-btn" type="submit" data-ripple="">Post</button>
                                     </div>
                                 </form>
@@ -159,3 +195,120 @@
          <br> <br> <br><br><br><br><br><br><br><br><br><br><br>
 
 @endsection
+@section('righttemp')
+
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+    <div class="col-lg-10">
+        <div class="central-meta postbox">
+            <span class="create-post">Create Subreddit</span>
+            <div class="new-postbox">
+
+                    <form action="/subreddit" method="post" enctype="multipart/form-data" style="margin-top: 3%">
+                                     @csrf
+                                    <div>
+                                        <div class="newpst-input">
+                                            <textarea rows="2" placeholder="Name of the subreddit" name="name"></textarea>
+                                        </div>
+                                        {{-- <div class="mb-4 d-flex justify-content-center">
+                                            <img id="blahh" src=""
+                                            style="width: 500%" />
+                                        </div>
+                                        <div class="d-flex justify-content">
+                                                <label class="uqaqa">
+                                                <input type="file" name="image" class="form-control d-none" id="customFile1" onchange="readURL(this);"/>
+                                                </label><ins>asdlkja</ins>
+                                        </div> --}}
+                                        <div class="modal fade" id="avatarModal" tabindex="-1" role="dialog" aria-labelledby="avatarModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                              <div class="modal-content" style="background-color:rgb(6,8,24);">
+                                                <div class="modal-header">
+                                                  <h5 class="modal-title" id="avatarModalLabel">Choose Subreddit Profile</h5>
+                                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close" >
+                                                    <span aria-hidden="true" style="color:rgb(149,154,181);">&times;</span>
+                                                  </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                  <div class="avatar-upload">
+                                                    <div class="avatar-preview">
+                                                      <img id="avatar-preview" src="https://cdn.oneesports.gg/cdn-data/2022/11/MW2_Ghost_Mask.jpg" alt="Preview">
+                                                    </div>
+                                                    <div class="avatar-edit">
+                                                      <input type='file' id="avatar" onchange="previewImage('avatar', 'avatar-preview')" name="image" accept=".png, .jpg, .jpeg" />
+                                                      <label for="avatar" >Choose Subreddit Profile</label>
+                                                    </div>
+                                                  </div>
+                                                  @error('image')
+                                                  <div class="alert alert-danger">{{ $message }}</div>
+                                                  @enderror
+                                                </div>
+                                                <div class="modal-footer">
+                                                  <button type="button" data-dismiss="modal">Close</button>
+                                                  <button type="button" data-dismiss="modal">Save changes</button>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <button type="button" class="post-btn" style="@error('image') border-style:solid;border-color:red; @enderror" data-toggle="modal" data-target="#avatarModal">
+                                            Choose Subreddit Profile
+                                          </button>
+                                        <button class="post-btn" type="submit" style="display:inline-block;" data-ripple="">Post</button>
+
+                                    </div>
+                                </form>
+            </div></div></div>
+
+         <br> <br> <br><br><br><br><br><br><br><br><br><br><br>
+         <script>
+            // function readURL('#avatar') {
+            //     if (input.files && input.files[0]) {
+            //         var reader = new FileReader();
+            //         reader.onload = function (e) {
+            //             $('#avatar-preview').attr('src', e.target.result);
+            //         }
+            //         reader.readAsDataURL(input.files[0]);
+            //     }
+            // }
+            // $("#avatar").change(function(){
+            //     readURL(this);
+            // });
+            // function readURL(input) {
+            //     if (input.files && input.files[0]) {
+            //         var reader = new FileReader();
+            //         reader.onload = function (e) {
+            //             $('#post-preview').attr('src', e.target.result);
+            //         }
+            //         reader.readAsDataURL(input.files[0]);
+            //     }
+            // }
+            // $("#post").change(function(){
+            //     readURL(this);
+            // });
+            function previewImage(inputId, previewId) {
+                const input = document.getElementById(inputId);
+                const preview = document.getElementById(previewId);
+                const backpreview = document.getElementById('back-post-preview');
+
+                if (input.files && input.files[0]) {
+                    const reader = new FileReader();
+
+                    reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    backpreview.src = e.target.result;
+                    preview.style.display = 'block';
+                    }
+
+                    reader.readAsDataURL(input.files[0]);
+                }
+}
+        </script>
+@endsection
+

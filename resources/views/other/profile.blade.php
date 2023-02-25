@@ -1,8 +1,10 @@
-@extends('layout.app')
-@section('app')
-    <h1>{{$user->name}}</h1>
-    <img src="{{asset('storage/'.$user->image)}}" width="80px" height="45">
-    - Total posts: {{$user->posts->count()}}
+@extends('layout.temp')
+@section('temp')
+<h1>
+    <div class="comet-avatar profile-image-container">
+        <img  src="{{asset('storage/'.$user->image)}}" alt="">
+    </div><b  style="padding-left:20px">{{$user->name}}</b></h1>
+     - Total posts: {{$user->posts->count()}}
 
     @isset($aton)
     - Created Subreddits:

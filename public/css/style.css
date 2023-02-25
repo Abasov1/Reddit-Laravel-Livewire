@@ -57,7 +57,12 @@ html,body{
 input[type="file"] {
     display: none;
   }
+.label-post{
 
+}
+#narinci{
+    color:rgb(250,99,66);
+}
   .image-container {
     width: 30px; /* Set the desired width of the image */
     height: 30px; /* Set the desired height of the image */
@@ -67,6 +72,34 @@ input[type="file"] {
   }
 
   .image-container img {
+    width: 100%; /* Set the width of the image to 100% of the container */
+    height: 100%; /* Set the height to auto to maintain aspect ratio */
+    object-fit: cover; /* Crop the image to cover the container */
+
+  }
+  .user-image-container {
+    width: 40px; /* Set the desired width of the image */
+    height: 40px; /* Set the desired height of the image */
+    overflow: hidden; /* Hide any overflow */
+    display: inline-block;
+
+  }
+
+  .user-image-container img {
+    width: 100%; /* Set the width of the image to 100% of the container */
+    height: 100%; /* Set the height to auto to maintain aspect ratio */
+    object-fit: cover; /* Crop the image to cover the container */
+
+  }
+  .profile-image-container {
+    width: 70px; /* Set the desired width of the image */
+    height: 70px; /* Set the desired height of the image */
+    overflow: hidden; /* Hide any overflow */
+    display: inline-block;
+
+  }
+
+  .profile-image-container img {
     width: 100%; /* Set the width of the image to 100% of the container */
     height: 100%; /* Set the height to auto to maintain aspect ratio */
     object-fit: cover; /* Crop the image to cover the container */
@@ -132,13 +165,70 @@ input[type="file"] {
     transition: all 0.2s ease;
     cursor: pointer;
 }
-.avatar-upload .avatar-edit label {
+.post-upload .post-edit label {
     display: block;
     cursor: pointer;
     margin-bottom: 5px;
 }
 .avatar-upload:hover .avatar-edit {
     opacity: 1;
+}
+
+
+.post-upload {
+    position: relative;
+    max-width: 200px;
+    margin: auto;
+}
+.post-upload .post-preview {
+    width: 100%;
+    height: 200px;
+    position: relative;
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.1);
+}
+.post-upload .post-preview img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+}
+.post-upload .post-edit {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    background:none;
+    width: 100%;
+    height: 100%;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-size: 14px;
+    opacity: 0;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+.post-upload .post-edit label {
+    display: block;
+    cursor: pointer;
+    margin-bottom: 5px;
+}
+.post-upload:hover .post-edit {
+    opacity: 1;
+}
+.modal-left-side {
+    display: flex;
+    justify-content: flex-end;
+    align-items: ;
+    margin-left:10%;
+}
+
+.modal-left {
+    margin-left: ;
+    width: 100%;
 }
 body {
     float: left;
@@ -1743,6 +1833,12 @@ form button {
     vertical-align: middle;
     width: 40px;
 }
+.friend-info > .user-image-container {
+    display: inline-block;
+    margin-bottom: 0;
+    vertical-align: middle;
+    width: 40px;
+}
 
 .friend-name {
     display: inline-block;
@@ -2967,6 +3063,8 @@ footer .widget .colla-apps > li a{
     float: left;
     padding: 20px 0;
     width: 100%;
+    position: relative;
+    bottom: 0;
 }
 
 .copyright {
@@ -9762,7 +9860,10 @@ svg #shadow_1_ {
 .again-login > button {
     margin-top: 14px;
 }
-
+.again-login > input[type="checkbox"] {
+    background-color: red;
+    width: 5%;
+}
 .row.border-center > div {
     border-right: 1px solid #ccc;
     padding: 0 75px;
@@ -17680,3 +17781,16 @@ nav .main-btn{margin-left: 20px;}
     background-size: contain;
     cursor: pointer;
   }
+#ag{
+    color:white;
+}
+label {
+    cursor: pointer;
+  }
+  label:hover {
+    color: rgb(250,99,66);
+    text-decoration-color: rgb(250,99,66);
+  }
+  #ag:hover{
+    color:rgb(250,99,66);
+}

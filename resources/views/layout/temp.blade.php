@@ -740,8 +740,9 @@
                                     @yield('temp')
                                 </aside>
                             </div>
-                            <div class="col-lg-3">
+                            <div class="col-lg-6">
 								<aside class="sidebar static right">
+                                    @yield('righttemp')
                                 </aside>
                             </div>
                         </div>
@@ -750,7 +751,7 @@
 			</div>
 		</div>
 	</section>
-
+    <br><br><br><br><br><br>
 	<div class="bottombar">
 		<div class="container">
 			<div class="row">

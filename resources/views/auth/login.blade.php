@@ -148,6 +148,8 @@
                                             @error('password')
                                                 <p style="text-color:red;color:red;margin-left:10px">{{$message}}</p>
                                             @enderror
+                                            <label for="remember" id="remember-label">Remember me</label>
+                                            <input type="checkbox" name="remember" style="display:inline-block" id="remember" {{ old('remember') ? 'checked' : '' }}><br>
 											<button type="submit">Login</button>
 										</form>
 										<p>Don t have account? <a href="/register" title="">Register</a></p>

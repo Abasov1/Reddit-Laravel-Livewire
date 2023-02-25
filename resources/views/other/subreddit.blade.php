@@ -1,5 +1,5 @@
-@extends('layout.app')
-@section('app')
+@extends('layout.temp')
+@section('temp')
     <h1>{{$subreddit->name}} @can('subredditdelete',$subreddit)
         - Created by you <a href="/bannedusers/{{$subreddit->id}}">Banned users</a>
         @elsecan('moddelete',$subreddit)
