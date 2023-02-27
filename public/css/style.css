@@ -63,6 +63,13 @@ input[type="file"] {
 #narinci{
     color:rgb(250,99,66);
 }
+  .frnd-meta .pimage-container{
+    width: 70px; /* Set the desired width of the image */
+    height: 70px; /* Set the desired height of the image */
+    overflow: hidden;
+    display: inline-block;
+    /* padding-left:40px; */
+  }
   .image-container {
     width: 30px; /* Set the desired width of the image */
     height: 30px; /* Set the desired height of the image */
@@ -140,6 +147,7 @@ input[type="file"] {
     position: relative;
     border-radius: 5px;
     overflow: hidden;
+    cursor:pointer;
     box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.1);
 }
 .avatar-upload .avatar-preview img {
@@ -149,9 +157,9 @@ input[type="file"] {
     object-fit: cover;
 }
 .avatar-upload .avatar-edit {
-    position: absolute;
-    right: 12px;
-    bottom: 12px;
+    position: relative;
+    /* right: 12px;
+    bottom: 12px; */
     background:none;
     width: 100%;
     height: 100%;
@@ -6992,15 +7000,15 @@ a.addnewforum {
     right: 0;
     z-index: 8;
 }
-.profile-controls > li {
+.profile-controls > label > li {
     color: #fff;
     display: inline-block;
     margin: 0 2px;
     position: relative;
     vertical-align: middle;
 }
-.profile-controls > li > a,
-.profile-controls > li > div {
+.profile-controls > label > li > a,
+.profile-controls > label > li > div {
     background: #888da8 none repeat scroll 0 0;
     border-radius: 100%;
     display: inline-block;
@@ -7845,25 +7853,25 @@ input[type="checkbox"]:checked + label{color: #000;}
 }
 .frnd-meta {
     display: inline-block;
-    padding: 0 15px 20px;
+    padding-left: 30px;
+    padding-top:10px;
+    padding-bottom:10px;
+    padding-right:10px;
     position: relative;
     width: 100%;
 }
-.frnd-meta > img {
-    border: 2px solid #fff;
+.frnd-meta .pimage-container > img {
+    width: 100%; /* Set the width of the image to 100% of the container */
+    height: 100%; /* Set the height to auto to maintain aspect ratio */
     border-radius: 100%;
-    display: inline-block;
-    margin-top: -40px;
-    position: relative;
-    vertical-align: middle;
-    z-index: 2;
+    object-fit: cover;
 }
 .frnd-name {
     display: inline-block;
     left: 117px;
     position: absolute;
     text-align: left;
-    top: 10px;
+    top: 30px;
 }
 .frnd-name > a {
     color: #313345;
@@ -7958,7 +7966,7 @@ input[type="checkbox"]:checked + label{color: #000;}
 }
 .more-opotnz li {
     display: inline-block;
-    padding: 5px 0;
+    padding: 0px 0;
     width: 100%;
 }
 .more-opotnz:hover > ul {
@@ -8238,6 +8246,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', e
   left: 0;
   position: fixed;
   top: 0;
+  right:0;
+  bottom:0;
   width: 100%;
   z-index: 999;
   -webkit-opacity: 0;
@@ -8245,6 +8255,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', e
   -ms-opacity: 0;
   -o-opacity: 0;
   opacity: 0;
+  display:none;
   visibility: hidden;
   transition: all 0.25s linear 0s;
 }
@@ -8262,7 +8273,9 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', e
   -moz-opacity: 1;
   -ms-opacity: 1;
   -o-opacity: 1;
+  z-index: 999;
   opacity: 1;
+  display:block;
   visibility: visible;
 }
 

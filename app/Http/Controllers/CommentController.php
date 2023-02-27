@@ -21,12 +21,13 @@ class CommentController extends Controller
     }
         return back();
     }
-    public function commentstore(Comment $comment,Subreddit $subreddit,Request $request){
+    public function commentstore(Comment $comment,Subreddit $subreddit,Post $post,Request $request){
         if(!$request->user()->isBanned($subreddit)){
         $validated = $request->validate([
             'body' => 'required|max:255',
     ]);
         $request->user()->comments()->create([
+            'post_id' => $post->id,
             'comment_id' => $comment->id,
             'body' => $request->body,
         ]);

@@ -24,6 +24,11 @@ class JoinController extends Controller
         $postIds = collect($bannedpostid)->pluck('post_id');
         $bannedposts = Post::whereIn('id',$postIds)->get();
         $posts = Post::whereIn('user_id',$userIds)->where('subreddit_id',$id)->get();
+        if(DB::table('friendrequest')->where('friend_id',auth()->user()->id)->exists()){
+            $requests = DB::table('friendrequest')->where('friend_id',auth()->user()->id)->get();
+            $userIds = collect($requests)->pluck('user_id');
+            $rusers = User::whereIn('id',$userIds)->get();
+        }
         return view("other.bannedusers",get_defined_vars());
     }
     public function join(Subreddit $subreddit,Request $request){

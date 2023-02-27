@@ -95,7 +95,7 @@
             <img src="images/resources/nearly1.jpg" alt="">
         </div>
         <div class="post-comt-box">
-            <form action="/commentt/{{$subcomment->id}}/{{$post->subreddit->id}}" method="post">
+            <form action="/commentt/{{$subcomment->id}}/{{$post->subreddit->id}}/{{$post->id}}" method="post">
                 @csrf
                 <input type="text" name="post_id" value="{{$post->id}}" style="display: none">
                 <textarea name="body" placeholder="Post your comment"></textarea>

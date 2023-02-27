@@ -8,8 +8,11 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Facades\Image;
 use League\Flysystem\FilesystemOperationFailed;
 use Nette\Utils\FileSystem;
+
+
 
 class RegisterController extends Controller
 {
@@ -19,12 +22,18 @@ class RegisterController extends Controller
         $posts = Post::get();
         return view('auth.register',get_defined_vars());
     }
+
     public function store(Request $request){
         if($request->hasFile('image')){
+            $image = Image::make($request->file('image'));
+
+            // crop the image to a square
+            $image->fit(300, 300);
+
             $ex = $request->file('image')->getClientOriginalExtension();
             $file = uniqid() .'.'. $ex;
             $folderPath = "storage/images/";
-            $request->file('image')->storeAs($folderPath,$file);
+            $image->save(public_path('storage/' .$file));
 
         }
 

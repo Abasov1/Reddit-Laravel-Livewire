@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\FriendController;
 use App\Http\Controllers\GirisController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SubredditController;
@@ -37,7 +38,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/lik/{comment}',[LikeController::class,'commentstore']);
 
     Route::post('/comment/{subreddit}',[CommentController::class,'store']);
-    Route::post('/commentt/{comment}/{subreddit}',[CommentController::class,'commentstore']);
+    Route::post('/commentt/{comment}/{subreddit}/{post}',[CommentController::class,'commentstore']);
     Route::delete('/commentdelete/{comment}/{subreddit}',[CommentController::class,'destroy']);
     Route::put('/parentedit/{comment}/{subreddit}',[CommentController::class,'parentupdate']);
     Route::put('/childupdate/{comment}/{subreddit}',[CommentController::class,'childupdate']);
@@ -53,10 +54,15 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/bannedusers/{id}',[JoinController::class,'index']);
 
     Route::post('/join/{subreddit}',[JoinController::class,'join']);
+    Route::post('/add/{user}',[FriendController::class,'add']);
+    Route::post('/unadd/{user}',[FriendController::class,'unadd']);
+    Route::post('/ignore/{user}',[FriendController::class,'ignore']);
+    Route::post('/leavefriendship/{user}',[FriendController::class,'leave']);
     Route::get('/logout',[LoginController::class,'logout']);
+
+    Route::get('/friends/{user}',[FriendController::class,'index']);
+
 });
 
-Route::get('/test',function(){
-    return view('logout');
-});
+
 

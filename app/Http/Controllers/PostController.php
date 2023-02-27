@@ -24,6 +24,11 @@ class PostController extends Controller
         if(DB::table('subreddits')->where('creator_id',auth()->user()->id)->exists()){
             $subredditss = DB::table('subreddits')->where('creator_id',auth()->user()->id)->get();
         }
+        if(DB::table('friendrequest')->where('friend_id',auth()->user()->id)->exists()){
+            $requests = DB::table('friendrequest')->where('friend_id',auth()->user()->id)->get();
+            $userIds = collect($requests)->pluck('user_id');
+            $rusers = User::whereIn('id',$userIds)->get();
+        }
         return view('other.postmake',get_defined_vars());
     }
 
@@ -73,11 +78,18 @@ class PostController extends Controller
      */
     public function show($id)
     {
+        $user = auth()->user();
         $post = Post::with('comments')->find($id);
-        // $postid = $post->id;
-        // $comments = Comment::where('body','sadasdas')->get();
+        if(!$user->hasSeen($post)){
+            $user->seenposts()->attach($post);
+        }
         $comments = Comment::with('subcomments.subcomments')
             ->whereNull('post_id')->get();
+        if(DB::table('friendrequest')->where('friend_id',auth()->user()->id)->exists()){
+            $requests = DB::table('friendrequest')->where('friend_id',auth()->user()->id)->get();
+            $userIds = collect($requests)->pluck('user_id');
+            $rusers = User::whereIn('id',$userIds)->get();
+        }
         return view('other.postshow',get_defined_vars());
     }
 
@@ -90,6 +102,12 @@ class PostController extends Controller
     public function edit($id)
     {
         $editpost = Post::find($id);
+        $this->authorize('postdelete',$editpost);
+        if(DB::table('friendrequest')->where('friend_id',auth()->user()->id)->exists()){
+            $requests = DB::table('friendrequest')->where('friend_id',auth()->user()->id)->get();
+            $userIds = collect($requests)->pluck('user_id');
+            $rusers = User::whereIn('id',$userIds)->get();
+        }
         return view('other.postmake',get_defined_vars());
     }
 
@@ -140,7 +158,7 @@ class PostController extends Controller
             $post->delete();
             Storage::disk('public')->delete($post->image);
             return redirect('/homes');
-        }   
+        }
         if($user->id = $post->subreddit->creator_id){
             $post->delete();
             Storage::disk('public')->delete($post->image);

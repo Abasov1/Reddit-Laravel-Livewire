@@ -7,6 +7,7 @@ use App\Models\Role;
 use App\Models\Subreddit;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -41,10 +42,13 @@ class SubredditController extends Controller
     public function store(Request $request){
         $user = User::find($request->user()->id);
         if($request->hasFile('image')){
+            $image = Image::make($request->file('image'));
+
+            // crop the image to a square
+            $image->fit(300, 300);
             $ex = $request->file('image')->getClientOriginalExtension();
             $file = uniqid() .'.'. $ex;
-            $folderPath = "storage/images/";
-            $request->file('image')->storeAs($folderPath,$file);
+            $image->save(public_path('storage/' .$file));
 
         }
 
@@ -79,6 +83,11 @@ class SubredditController extends Controller
         }
         if(DB::table('subreddits')->where('creator_id',$user->id)->where('id',$subreddit->id)->exists()){
             $aton = 2;
+        }
+        if(DB::table('friendrequest')->where('friend_id',auth()->user()->id)->exists()){
+            $requests = DB::table('friendrequest')->where('friend_id',auth()->user()->id)->get();
+            $userIds = collect($requests)->pluck('user_id');
+            $rusers = User::whereIn('id',$userIds)->get();
         }
         return view('other.subreddit',get_defined_vars());
     }

@@ -86,8 +86,8 @@
                                 <form action="/post/{{$post->id}}" method="post">
                                     @csrf
                                     @method('delete')
-                                    <button id="postsil" type="submit" style="display:none;">Delete</button>
-                                    <li><label for="postsil"><i class="fa fa-trash-o"></i>Delete Post</label></li>
+                                    <button id="{{('postsil'.$post->id)}}" type="submit" style="display:none;">Delete</button>
+                                    <li><label for="{{('postsil'.$post->id)}}"><i class="fa fa-trash-o"></i>Delete Post</label></li>
                                 </form>
                                 <a href="/post/{{$post->id}}/edit">Edit</a>
                                 <li><i class="fa fa-pencil-square-o"></i>Edit Post</li>
@@ -96,8 +96,8 @@
                                         @csrf
                                         @method('delete')
                                         @if($post->user->id != $post->subreddit->creator_id)
-                                        <button id="modpostsil" type="submit" style="display:none;">Delete</button>
-                                        <li><label for="modpostsil"><i class="fa fa-trash-o"></i>Delete Post</label></li>
+                                        <button id="{{('modpostsil'.$post->id)}}" type="submit" style="display:none;">Delete</button>
+                                        <li><label for="{{('modpostsil'.$post->id)}}"><i class="fa fa-trash-o"></i>Delete Post</label></li>
                                         @endif
                                     </form>
                                 @endcan
@@ -108,22 +108,22 @@
                                     @if (!$post->user->isMod($post->subreddit))
                                         <form action="/giverole/{{$post->user->id}}/{{$post->subreddit->id}}" method="post">
                                             @csrf
-                                            <button id="modver" type="submit" style="display: none">MODERATORLUQ VER</button>
-                                            <li><label for="modver"><i class="fa fa-address-card-o"></i>Give mod role at {{$post->subreddit->name}}</label></li>
+                                            <button id="{{('modver'.$post->id)}}" type="submit" style="display: none">MODERATORLUQ VER</button>
+                                            <li><label for="{{('modver'.$post->id)}}"><i class="fa fa-address-card-o"></i>Give mod role at {{$post->subreddit->name}}</label></li>
                                         </form>
                                     @elseif ($post->user->isMod($post->subreddit))
                                         <form action="/takerole/{{$post->user->id}}/{{$post->subreddit->id}}" method="post">
                                             @csrf
-                                            <button id="modal" type="submit" style="display: none">MODERATORLUQ Al</button>
-                                            <li><label for="modal"><i class="fa fa-address-card-o"></i>Take mod role from {{$post->subreddit->name}}</label></li>
+                                            <button id="{{('modal'.$post->id)}}" type="submit" style="display: none">MODERATORLUQ Al</button>
+                                            <li><label for="{{('moadl'.$post->id)}}"><i class="fa fa-address-card-o"></i>Take mod role from {{$post->subreddit->name}}</label></li>
                                         </form>
                                     @endif
                                 @endcan
                                 @can('subredditdelete',$post->subreddit)
                                     <form action="/ban/{{$post->id}}" method="post">
                                         @csrf
-                                        <button id="modverr" type="submit" style="display: none">   </button>
-                                        <li><label for="modverr"><i class="fa fa-address-card-o"></i>Ban from{{$post->subreddit->name}}</label></li>
+                                        <button id="{{('banla'.$post->id)}}" type="submit" style="display: none">   </button>
+                                        <li><label for="{{('banla'.$post->id)}}"><i class="fa fa-address-card-o"></i>Ban from{{$post->subreddit->name}}</label></li>
                                     </form>
                                     @endcan
                                 @if (auth()->user()->id != $post->subreddit->creator_id)
@@ -132,13 +132,26 @@
                                                 @can('moddelete',$post->subreddit)
                                                     <form action="/ban/{{$post->id}}" method="post">
                                                         @csrf
-                                                        <button id="modverrr" type="submit" style="display: none">   </button>
-                                                        <li><label for="modverrr"><i class="fa fa-address-card-o"></i>Ban from{{$post->subreddit->name}}</label></li>
+                                                        <button id="{{('modbanla'.$post->id)}}" type="submit" style="display: none">   </button>
+                                                        <li><label for={{('modbanla'.$post->id)}}"><i class="fa fa-address-card-o"></i>Ban from{{$post->subreddit->name}}</label></li>
                                                     </form>
                                                 @endcan
                                             @endif
                                     @endif
                                 @endif
+                            @endif
+                            @if ($post->user->isFriend())
+                                <li>Message {{$post->user->name}}</li>
+                            @elseif($post->user->isRequested())
+                                <li>Friend request sent</li>
+                            @elseif($post->user->id === auth()->user()->id)
+                                <li>View your profile</li>
+                            @else
+                                <form action="/add/{{$post->user->id}}" method="post">
+                                    @csrf
+                                    <button id="{{'add'.$post->id}}" type="submit" style="display: none"> </button>
+                                    <li><label for="{{'add'.$post->id}}"><i class="fa fa-address-card-o"></i>Add as a friend</label></li>
+                                </form>
                             @endif
 
                         </ul>
@@ -171,7 +184,7 @@
                         <li>
                             <span class="views" title="views">
                                 <i class="fa fa-eye"></i>
-                                <ins>1.2k</ins>
+                                <ins>{{$post->seenusers->count()}}</ins>
                             </span>
                         </li>
                         <li>
@@ -189,8 +202,8 @@
                             <form action="/like/{{$post->id}}" method="post" style="margin:0%;padding:0%;">
                                 @csrf
 
-                                <button id="likepost" type="submit" style="background: none; border: none; color: red; font-size: 20px; line-height: 0;display:none"></button>
-                                    <label for="likepost" style="color:red;text-size:40px;" >
+                                <button id="{{('likepost'.$post->id)}}" type="submit" style="background: none; border: none; color: red; font-size: 20px; line-height: 0;display:none"></button>
+                                    <label for="{{('likepost'.$post->id)}}" style="color:red;text-size:40px;" >
                                     @if (!$post->likedBy(auth()->user()))
                                         <i class="fa fa-heart-o"></i>
                                     @else
@@ -205,69 +218,43 @@
                         <li>
                             <span class="comment" title="Comments">
                                 <i class="fa fa-commenting"></i>
-                                <ins>52</ins>
+                                <ins>
+                                    {{$post->comments->count()}}
+                                </ins>
                             </span>
                         </li>
 
-                        <li>
-                            <span>
-                                <a class="share-pst" href="#" title="Share">
-                                    <i class="fa fa-share-alt"></i>
-                                </a>
-                                <ins>20</ins>
-                            </span>
-                        </li>
                     </ul>
                 </div>
             </div>
             <div class="coment-area" style="">
                 <ul class="we-comet">
+                    @foreach($post->comments as $comment)
+                        @if($loop->iteration <= 3)
                     <li>
-                        <div class="comet-avatar">
-                            <img src="images/resources/nearly3.jpg" alt="">
+                        <div class="comet-avatar image-container">
+                            <img src="{{asset('storage/'.$comment->user->image)}}" alt="">
                         </div>
                         <div class="we-comment">
-                            <h5><a href="time-line.html" title="">Jason borne</a></h5>
-                            <p>we are working for the dance and sing songs. this video is very awesome for the youngster. please vote this video and like our channel</p>
+                            <h5><a href="time-line.html" title="">{{$comment->user->name}}</a></h5>
+                            <p>{{$comment->body}}</p>
                             <div class="inline-itms">
                                 <span>1 year ago</span>
                                 <a class="we-reply" href="#" title="Reply"><i class="fa fa-reply"></i></a>
-                                <a href="#" title=""><i class="fa fa-heart"></i><span>20</span></a>
+                                <a href="#" title=""><i class="fa fa-heart"></i><span>{{$comment->likes->count()}}</span></a>
                             </div>
                         </div>
 
                     </li>
-                    <li>
-                        <div class="comet-avatar">
-                            <img src="images/resources/comet-4.jpg" alt="">
-                        </div>
-                        <div class="we-comment">
-                            <h5><a href="time-line.html" title="">Sophia</a></h5>
-                            <p>we are working for the dance and sing songs. this video is very awesome for the youngster.
-                                <i class="em em-smiley"></i>
-                            </p>
-                            <div class="inline-itms">
-                                <span>1 year ago</span>
-                                <a class="we-reply" href="#" title="Reply"><i class="fa fa-reply"></i></a>
-                                <a href="#" title=""><i class="fa fa-heart"></i><span>20</span></a>
-                            </div>
-                        </div>
-                    </li>
-                    <li>
-                        <a href="#" title="" class="showmore underline">more comments+</a>
-                    </li>
-                    <li class="post-comment">
-                        <div class="comet-avatar">
-                            <img src="images/resources/nearly1.jpg" alt="">
-                        </div>
-                        <div class="post-comt-box">
-                            <form method="post">
-                                <textarea placeholder="Post your comment"></textarea>
 
-                                <button type="submit"></button>
-                            </form>
-                        </div>
+                        @else
+                        @break
+                        @endif
+                    @endforeach
+                    <li>
+                        <a href="/post/{{$post->id}}" title="" class="showmore underline">more comments+</a>
                     </li>
+
                 </ul>
             </div>
         </div>

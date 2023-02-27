@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\Post;
+use Carbon\Carbon;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -62,10 +63,22 @@ class User extends Authenticatable
 {
     return $this->hasMany(Join::class);
 }
-
+    public function friends(){
+        return $this->belongsToMany(User::class, 'user_user','user_id','friend_id');
+    }
+    public function friendRequest(){
+        return $this->belongsToMany(User::class,'friendrequest','user_id','friend_id');
+    }
     public function subreddits()
     {
         return $this->belongsToMany(Subreddit::class, 'subreddit_user');
+    }
+    public function seenposts()
+    {
+        return $this->belongsToMany(Post::class, 'user_post');
+    }
+    public function hasSeen(Post $post){
+        return $this->seenposts()->where('post_id',$post->id)->exists();
     }
     public function subredditss()
     {
@@ -104,5 +117,26 @@ class User extends Authenticatable
     }
     public function subcount(Subreddit $subreddit){
         return $this->posts->where('subreddit_id',$subreddit->id)->count();
+    }
+    public function friendcount(){
+        $userId = $this->id;
+        $quzers = DB::table('user_user')
+                        ->where('user_id',$userId)
+                        ->orWhere('friend_id',$userId)
+                        ->pluck('friend_id');
+        $friends = User::whereIn('id',$quzers)->get();
+        return $friends->count();
+    }
+    public function createdSubredditsCount(){
+        return Subreddit::where('creator_id',$this->id)->count();
+    }
+    public function addedAt(User $user){
+        return Carbon::parse(DB::table('user_user')->where('user_id',$user->id)->where('friend_id',$this->id)->first()->created_at)->diffForHumans();
+    }
+    public function isRequested(){
+        return DB::table('friendrequest')->where('user_id',auth()->user()->id)->where('friend_id',$this->id)->exists();
+    }
+    public function isFriend(){
+        return DB::table('user_user')->where('user_id',auth()->user()->id)->where('friend_id',$this->id)->exists();
     }
 }

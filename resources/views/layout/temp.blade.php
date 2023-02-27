@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="" />
     <meta name="keywords" content="" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 	<title>Pitnik Social Network Toolkit</title>
     <link rel="icon" href="{{url('images/fav.png" type="image/png" sizes="16x16')}}">
 
@@ -263,93 +264,50 @@
 				<li><a href="/homes" title="Home"><i class="fa fa-home"></i></a></li>
 				<li>
 					<a href="#" title="Friend Requests" data-ripple="">
-						<i class="fa fa-user"></i><em class="bg-red">5</em>
+						<i class="fa fa-user">
+                            </i><em class="bg-red" @isset($rusers) style="display:block" @else style="display:none" @endisset>
+                                    @isset($rusers)
+                                        {{$rusers->count()}}
+                                    @endisset
+                                </em>
 					</a>
 					<div class="dropdowns">
-						<span>5 New Requests <a href="#" title="">View all Requests</a></span>
+						<span>@isset($rusers) {{$rusers->count()}} new request @endisset</span>
 						<ul class="drops-menu">
-							<li>
-								<div>
-									<figure>
-										<img src="images/resources/thumb-2.jpg" alt="">
-									</figure>
-									<div class="mesg-meta">
-										<h6><a href="#" title="">Loren</a></h6>
-										<span><b>Amy</b> is mutule friend</span>
-										<i>yesterday</i>
-									</div>
-									<div class="add-del-friends">
-										<a href="#" title=""><i class="fa fa-heart"></i></a>
-										<a href="#" title=""><i class="fa fa-trash"></i></a>
-									</div>
-								</div>
-							</li>
-							<li>
-								<div>
-									<figure>
-										<img src="images/resources/thumb-3.jpg" alt="">
-									</figure>
-									<div class="mesg-meta">
-										<h6><a href="#" title="">Tina Trump</a></h6>
-										<span><b>Simson</b> is mutule friend</span>
-										<i>2 days ago</i>
-									</div>
-									<div class="add-del-friends">
-										<a href="#" title=""><i class="fa fa-heart"></i></a>
-										<a href="#" title=""><i class="fa fa-trash"></i></a>
-									</div>
-								</div>
-							</li>
-							<li>
-								<div>
-									<figure>
-										<img src="images/resources/thumb-4.jpg" alt="">
-									</figure>
-									<div class="mesg-meta">
-										<h6><a href="#" title="">Andrew</a></h6>
-										<span><b>Bikra</b> is mutule friend</span>
-										<i>4 hours ago</i>
-									</div>
-									<div class="add-del-friends">
-										<a href="#" title=""><i class="fa fa-heart"></i></a>
-										<a href="#" title=""><i class="fa fa-trash"></i></a>
-									</div>
-								</div>
-							</li>
-							<li>
-								<div>
-									<figure>
-										<img src="images/resources/thumb-5.jpg" alt="">
-									</figure>
-									<div class="mesg-meta">
-										<h6><a href="#" title="">Dasha</a></h6>
-										<span><b>Sarah</b> is mutule friend</span>
-										<i>9 hours ago</i>
-									</div>
-									<div class="add-del-friends">
-										<a href="#" title=""><i class="fa fa-heart"></i></a>
-										<a href="#" title=""><i class="fa fa-trash"></i></a>
-									</div>
-								</div>
-							</li>
-							<li>
-								<div>
-									<figure>
-										<img src="images/resources/thumb-1.jpg" alt="">
-									</figure>
-									<div class="mesg-meta">
-										<h6><a href="#" title="">Emily</a></h6>
-										<span><b>Amy</b> is mutule friend</span>
-										<i>4 hours ago</i>
-									</div>
-									<div class="add-del-friends">
-										<a href="#" title=""><i class="fa fa-heart"></i></a>
-										<a href="#" title=""><i class="fa fa-trash"></i></a>
-									</div>
-								</div>
-							</li>
+                            @isset($rusers)
+                                @foreach ($rusers as $i=>$user)
+                                    <li>
+                                        <div>
+                                            <div class="comet-avatar user-image-container">
+                                                <img src="{{asset('storage/'.$user->image)}}" alt="">
+                                            </div>
+                                            <div class="mesg-meta">
+                                                <h6><a href="#" title="">{{$user->name}}</a></h6>
+                                                <span>Want to be friend</span>
+                                                <i></i>
+                                            </div>
+                                            <div class="add-del-friends">
+                                                <form action="/unadd/{{$user->id}}" method="post" >
+                                                    @csrf
+                                                    <button type="submit" style="display:none;" id="{{('unadd'.$user->id)}}"></button>
+                                                    <label title="Accept friend request" for="{{('unadd'.$user->id)}}"><i class="fa fa-reply"></i></label>
+                                                </form>
+                                                <form action="/ignore/{{$user->id}}" method="post" >
+                                                    @csrf
+                                                    <button type="submit" style="display:none;" id="{{('ignore'.$user->id)}}"></button>
+                                                    <label title="Ignore" for="{{('ignore'.$user->id)}}"><i class="fa fa-trash"></i></label>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </li>
+                                @endforeach
+                                @else
+                                <div class="mesg-meta" style="padding:20px;">
+                                    <h6><a href="#" title="">You dont have any friend requests</a></h6>
+                                    <i></i>
+                                </div>
+                            @endisset
 						</ul>
-						<a href="friend-requests.html" title="" class="more-mesg">View All</a>
 					</div>
 				</li>
 				<li>
@@ -517,9 +475,9 @@
 			</ul>
 			<div class="user-img">
 				<h5>{{auth()->user()->name}}</h5>
-                <div class="image-container">
-				<img src="{{asset('storage/'.auth()->user()->image)}}" alt="">
-            </div>
+                
+				<img src="{{asset('storage/'.auth()->user()->image)}}" width="40pc" height="40px" alt="">
+            
 				<span class="status f-online"></span>
 				<div class="user-setting">
 					<span class="seting-title">Chat setting <a href="#" title="">see all</a></span>
@@ -563,7 +521,7 @@
 					</a>
 				</li>
 				<li>
-					<a href="timeline-friends.html" title="Friends" data-toggle="tooltip" data-placement="right">
+					<a href="/friends/{{auth()->user()->id}}" title="Friends" data-toggle="tooltip" data-placement="right">
 						<i class="ti-user"></i>
 					</a>
 				</li>
@@ -751,6 +709,7 @@
 			</div>
 		</div>
 	</section>
+    @yield('friends')
     <br><br><br><br><br><br>
 	<div class="bottombar">
 		<div class="container">
@@ -806,16 +765,40 @@
 
 
 <script>
-    // function anon(id){
-    //     alert(id);
-    //         // if(document.getElementById('beybala'+id).style.display = 'none'){
-    //         //     document.getElementById('beybala'+id).style.display = 'block';
-    //         // }else{
-    //         //     document.getElementById('beybala'+id).style.display = 'none';
-    //         //     alert('yarraqim');
-    //         // }
-    //     }
-    // $('#agali').fadeToggle(1000)
+   $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+    $(document).on('click', '#loadmore', function(event) {
+    $(this).hide();
+    event.preventDefault();
+    var nextPageUrl = $(this).attr('href');
+    $.get(nextPageUrl, function(data) {
+        $('#variable-list').append(data);
+        if ($(data).filter(':last').hasClass('load-more-container')) {
+            $('#loadmore').attr('href', $(data).filter(':last').find('a').attr('href'));
+        } else {
+            $('#loadmore').remove();
+        }
+    });
+});
+
+    $('#trigger').click(function(){
+        $('#yourmother').click();
+    });
+    $('#avatar-preview').click(function(){
+        $('#avatar').click();
+    });
+    $('#change').click(function(){
+        $('#edita').click();
+    });
+    $('#edited-post-preview').click(function(){
+        $('#edita').click();
+    });
+    $('#came-post-preview').click(function(){
+        $('#edita').click();
+    })
     $('#blahh').hide();
     $('#customFile1').on('change', function() {
     // Get the file input element
