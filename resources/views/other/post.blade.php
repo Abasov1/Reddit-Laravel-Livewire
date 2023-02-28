@@ -72,12 +72,6 @@
 <div class="central-meta item">
     <div class="user-post">
         <div class="friend-info">
-            {{-- <figure> --}}
-                <div class="comet-avatar user-image-container">
-                    <img src="{{asset('storage/'.$post->user->image)}}" alt="">
-                </div>
-
-            {{-- </figure> --}}
             <div class="friend-name">
                 <div class="more">
                     <div class="more-post-optns"><i class="ti-more-alt"></i>
@@ -157,7 +151,9 @@
                         </ul>
                     </div>
                 </div>
-                <ins><a title="" href="/homes/{{$post->user->id}}">{{$post->user->name}}</a>
+                <ins>
+                    <img src="{{asset('storage/'.$post->user->image)}}" width="40px" height="40" style="border-radius:100%;">
+                    <a title="" href="/homes/{{$post->user->id}}">{{$post->user->name}}</a>
                     Posted on <a href="/subreddit/{{$post->subreddit->id}}">{{$post->subreddit->name}}</a>
                     @if (auth()->user()->id === $post->user->id)
                         - Posted by you
@@ -165,12 +161,13 @@
                 </ins>
                 <span>{{$post->created_at->diffForHumans()}}</span>
             </div>
+
             <div class="description">
                 <p>
                     {{$post->title}}
                 </p>
             </div>
-            <div class="post-meta">
+            <div class="post-meta" >
                 <figure>
                     <a title="" href="/post/{{$post->id}}"><img alt="" src="{{asset('storage/'.$post->image)}}"></a>
                 </figure>

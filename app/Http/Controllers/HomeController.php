@@ -68,7 +68,7 @@ class HomeController extends Controller
     {
         $user = User::find($id);
         if(Subreddit::where('creator_id',$user->id)->exists()){
-            $aton = Subreddit::where('creator_id',$user->id)->get();
+            $createdsubs = Subreddit::where('creator_id',$user->id)->get();
         }
         if(DB::table('friendrequest')->where('friend_id',auth()->user()->id)->exists()){
             $requests = DB::table('friendrequest')->where('friend_id',auth()->user()->id)->get();

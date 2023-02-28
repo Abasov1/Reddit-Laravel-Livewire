@@ -3,8 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule as ValidationRule;
+use Intervention\Image\Facades\Image;
 
 class FriendController extends Controller
 {
@@ -19,6 +25,19 @@ class FriendController extends Controller
             $rusers = User::whereIn('id',$userIds)->get();
         }
         return view('friends',get_defined_vars());
+    }
+    public function settings(User $user){
+        if($user->id === auth()->user()->id){
+            return view('other.settings',get_defined_vars());
+        }
+        return back();
+    }
+    public function settingsedit(User $user){
+        if($user->id === auth()->user()->id){
+            $editselected = "";
+            return view('other.settings',get_defined_vars());
+        }
+        return back();
     }
     public function add(User $user){
         $auser = auth()->user();
@@ -61,5 +80,78 @@ class FriendController extends Controller
             $user->friends()->detach($auser);
         }
         return back();
+    }
+    public function ppupdate(User $user,Request $request){
+        if($user->id != auth()->user()->id){
+            return back();
+        }
+        if($request->hasFile('image')){
+            Storage::disk('public')->delete($user->image);
+            $image = Image::make($request->file('image'));
+
+            // crop the image to a square
+            $image->fit(300, 300);
+
+            $ex = $request->file('image')->getClientOriginalExtension();
+            $file = uniqid() .'.'. $ex;
+            $folderPath = "storage/images/";
+            $image->save(public_path('storage/' .$file));
+            $user->update([
+                'image' => $file,
+            ]);
+            return redirect('/homes/'.$user->id);
+        }
+    }
+    public function userupdate(User $user,Request $request){
+        if($user->id != auth()->user()->id){
+            return back();
+        }
+        if($request->hasFile('image')){
+            Storage::disk('public')->delete($user->image);
+            $image = Image::make($request->file('image'));
+
+            // crop the image to a square
+            $image->fit(300, 300);
+
+            $ex = $request->file('image')->getClientOriginalExtension();
+            $file = uniqid() .'.'. $ex;
+            $folderPath = "storage/images/";
+            $image->save(public_path('storage/' .$file));
+            $user->update([
+                'image' => $file
+            ]);
+        }
+        $request->validate([
+            'name' => [
+                'required',
+                'max:20',
+                ValidationRule::unique('users')->ignore($user->id),
+        ],
+            'password' => 'required|min:6',
+            'email' => [
+                'required',
+                'max:20',
+                'email',
+                ValidationRule::unique('users')->ignore($user->id),
+            ],
+        ]);
+        $user->update([
+            'name' => $request->name,
+            'password' => Hash::make($request->password),
+            'email' => $request->email,
+        ]);
+
+        return redirect('/settingsedit/'.$user->id);
+    }
+    
+    public function confirmate(Request $request){
+        $user = Auth::user();
+        $password = $request->input('password');
+
+        if (Hash::check($password, $user->password)) {
+            return response()->json(['success' => true]);
+        } else {
+            return response()->json(['success' => false]);
+        }
     }
 }

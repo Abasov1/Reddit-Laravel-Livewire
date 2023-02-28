@@ -97,6 +97,18 @@ class User extends Authenticatable
     public function receivedLikes(){
         return $this->hasManyThrough(Like::class,Post::class);
     }
+    public function receivedLikesSubWeek(){
+        $lastWeekStart = now()->subWeek()->startOfWeek();
+        $lastWeekEnd = now()->subWeek()->endOfWeek();
+        $yesterday = now()->today()->format('Y-m-d');
+        return $this->hasManyThrough(Like::class,Post::class)->whereBetween('likes.created_at', [$yesterday.' 00:00:00', $yesterday.' 23:59:59']);
+        // ->whereBetween('likes.created_at', [$lastWeekStart, $lastWeekEnd]);
+    }
+    public function totalViews(){
+        $userPosts = $this->posts;
+        $postIds = $userPosts->pluck('id');
+        return DB::table('user_post')->whereIn('post_id',$postIds)->get()->count();
+    }
     public function receivedComments(){
         return $this->hasManyThrough(Comment::class,Post::class);
     }
@@ -138,5 +150,9 @@ class User extends Authenticatable
     }
     public function isFriend(){
         return DB::table('user_user')->where('user_id',auth()->user()->id)->where('friend_id',$this->id)->exists();
+    }
+    public function lastWeek(){
+        $lastweek = Carbon::now()->subWeek();
+        return DB::table('likes')->where('user_id',$this->id)->where('created_at','>=',$lastweek)->get()->count();
     }
 }

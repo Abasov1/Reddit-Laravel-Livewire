@@ -475,9 +475,9 @@
 			</ul>
 			<div class="user-img">
 				<h5>{{auth()->user()->name}}</h5>
-                
+
 				<img src="{{asset('storage/'.auth()->user()->image)}}" width="40pc" height="40px" alt="">
-            
+
 				<span class="status f-online"></span>
 				<div class="user-setting">
 					<span class="seting-title">Chat setting <a href="#" title="">see all</a></span>
@@ -488,10 +488,10 @@
 					</ul>
 					<span class="seting-title">User setting <a href="#" title="">see all</a></span>
 					<ul class="log-out">
-						<li><a href="about.html" title=""><i class="ti-user"></i> view profile</a></li>
-						<li><a href="setting.html" title=""><i class="ti-pencil-alt"></i>edit profile</a></li>
+						<li><a href="/homes/{{auth()->user()->id}}" title=""><i class="ti-user"></i> view profile</a></li>
+						<li><a href="/settingsedit/{{auth()->user()->id}}" title=""><i class="ti-pencil-alt"></i>edit profile</a></li>
 						<li><a href="#" title=""><i class="ti-target"></i>activity log</a></li>
-						<li><a href="setting.html" title=""><i class="ti-settings"></i>account setting</a></li>
+						<li><a href="/settings/{{auth()->user()->id}}" title=""><i class="ti-settings"></i>account setting</a></li>
 						<li><a href="/logout" title=""><i class="ti-power-off"></i>log out</a></li>
 					</ul>
 				</div>
@@ -693,6 +693,7 @@
 				<div class="row">
 					<div class="col-lg-12">
 						<div class="row merged20" id="page-contents">
+                                @yield('profile')
                             <div class="col-lg-6">
 								<aside class="sidebar static left">
                                     @yield('temp')
@@ -703,6 +704,9 @@
                                     @yield('righttemp')
                                 </aside>
                             </div>
+                                    @yield('profileleft')
+                                    @yield('profilecenter')
+                                    @yield('profileright')
                         </div>
 					</div>
 				</div>

@@ -16,7 +16,7 @@
                                             @csrf
                                             <button type="submit" id="uqarsend" style="display:none"></button>
                                             <li><label for="uqarsend" ><i class="fa fa-user-plus"></i></label></li>
-                                        </form> 
+                                        </form>
                                         @else
                                         <form action="/leavefriendship/{{$uqar->id}}" method="post">
                                             @csrf
@@ -49,24 +49,17 @@
 										<div class="col-lg-10 col-md-9">
 											<ul class="profile-menu">
 												<li>
-													<a class="" href="about.html">Posts</a>
+													<a class="" href="/homes/{{$uqar->id}}">Posts</a>
 												</li>
 												<li>
-													<a class="active" href="timeline-friends.html">Friends</a>
+													<a class="active" href="/friends/{{$uqar->id}}">Friends</a>
 												</li>
-												<li style="position:absolute;right:0;">
-													<div class="more">
-														<i class="fa fa-ellipsis-h"></i>
-														<ul class="more-dropdown">
-															<li>
-																<a href="timeline-groups.html">Profile Groups</a>
-															</li>
-															<li>
-																<a href="statistics.html">Profile Analytics</a>
-															</li>
-														</ul>
-													</div>
-												</li>
+
+												@if($user->id === auth()->user()->id)
+                                                <li>
+                                                    <a class="" href="/settings/{{$user->id}}">Settings</a>
+                                                </li>
+                                                @endif
 											</ul>
 										</div>
 									</div>
@@ -80,7 +73,7 @@
 												<div class="align-left">
 													<h5>Friend's List <span>{{$friends->count()}}</span></h5>
 												</div>
-											</div>
+											</div>  
 											<div class="col-lg-6">
 												<div class="row merged20">
 													<div class="col-lg-7 col-lg-7 col-sm-7">
@@ -158,7 +151,12 @@
 									</div>
                                     @if ($friends->isEmpty())
                                         <div class="lodmore">
-                                            <span>You have no friends</span>
+                                            @if ($user->id === auth()->user()->id)
+                                                <span>You have no friends</span>
+                                            @else
+                                                <span>{{$uqar->name}} have no friends</span>
+                                            @endif
+
                                         </div>
                                     @endif
 								</div>

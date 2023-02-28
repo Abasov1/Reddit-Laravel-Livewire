@@ -58,6 +58,15 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/unadd/{user}',[FriendController::class,'unadd']);
     Route::post('/ignore/{user}',[FriendController::class,'ignore']);
     Route::post('/leavefriendship/{user}',[FriendController::class,'leave']);
+    Route::put('/ppupdate/{user}',[FriendController::class,'ppupdate']);
+    Route::put('/userupdate/{user}',[FriendController::class,'userupdate']);
+
+    Route::get('/settings/{user}',[FriendController::class,'settings']);
+    Route::get('/settingsedit/{user}',[FriendController::class,'settingsedit']);
+    Route::post('/password-confirmation',[FriendController::class,'confirmate']);
+
+
+
     Route::get('/logout',[LoginController::class,'logout']);
 
     Route::get('/friends/{user}',[FriendController::class,'index']);

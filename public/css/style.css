@@ -96,6 +96,7 @@ input[type="file"] {
     width: 100%; /* Set the width of the image to 100% of the container */
     height: 100%; /* Set the height to auto to maintain aspect ratio */
     object-fit: cover; /* Crop the image to cover the container */
+    border-radius:100%;
 
   }
   .profile-image-container {
@@ -1147,7 +1148,8 @@ header.sticky {
     display: inline-block;
     font-size: 14px;
     position: relative;
-    text-align: center;
+    float:left;
+    text-align: left;
     text-transform: capitalize;
 }
 .attach-file .fileContainer {
@@ -1850,7 +1852,7 @@ form button {
 
 .friend-name {
     display: inline-block;
-    padding-left: 10px;
+    padding-left: 0px;
     vertical-align: middle;
     width: 91.2%;
 }
@@ -1866,7 +1868,7 @@ form button {
 }
 .friend-name > ins {
 	display: inline-block;
-    width: 90%;
+    width: 100%;
     font-size: 12px;
     text-decoration: none;
 }
@@ -1962,9 +1964,10 @@ form button {
 .friend-name > span {
     color: #999;
     float: left;
+    margin-left:50px;
     font-size: 12px;
     text-transform: capitalize;
-    width: 90%;
+    width: 100%;
 }
 
 .like-dislike {
@@ -7544,7 +7547,7 @@ input[type="checkbox"]:checked + label{color: #000;}
 }
 .change-photo .fileContainer{
 	margin-bottom: 0;
-	padding: 2px 5px;
+	padding: 0px 0px;
 }
 .edit-phto:hover{color: #fff;}
 .setting-meta {
@@ -7552,13 +7555,16 @@ input[type="checkbox"]:checked + label{color: #000;}
     width: 100%;
 }
 .change-photo > figure {
-    display: inline-block;
-    margin: 0;
-    width: auto;
+    width: 40px; /* Set the desired width of the image */
+    height: 40px; /* Set the desired height of the image */
+    margin-left:10px;
+    overflow: hidden; /* Hide any overflow */
 }
 .change-photo > figure img {
-    border: 3px solid #ccc;
-    border-radius: 100%;
+    width: 100%; /* Set the width of the image to 100% of the container */
+    height: 100%; /* Set the height to auto to maintain aspect ratio */
+    object-fit: cover; /* Crop the image to cover the container */
+    border-radius:100%;
 }
 .edit-img {
     display: inline-block;
@@ -12166,28 +12172,29 @@ aside.sidebar .friend-box .frnd-meta {
     display: inline-block;
     text-align: center;
     vertical-align: middle;
-    width: 35px;
+    height:60px;
 	border-radius: 5px;
-	float: right;
+	float: left;
 }
 .number > input {
     background: rgba(0, 0, 0, 0) none repeat scroll 0 0;
     border: medium none;
     color: #515365;
     text-align: center;
-    width: 33px;
-	padding: 2px 0;
+    width: 13px;
+    font-size:10px;
+	padding: 1px 0;
 }
 .number > span {
     cursor: pointer;
     display: inline-block;
-    padding: 5px 0;
+    padding: 0px 0;
     position: relative;
     width: 100%;
 }
 .number > span > i {
     color: #515365;
-    font-size: 20px;
+    font-size: 10px;
     position: relative;
     z-index: 3;
 }

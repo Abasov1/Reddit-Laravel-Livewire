@@ -243,6 +243,11 @@
             </div></div></div>
 
          <br> <br> <br><br><br><br><br><br><br><br><br><br><br>
+         @error('name')
+             <script>
+                alert(''+{{$message}});
+             </script>
+         @enderror
          <script>
             function previewImage(inputId,previewId) {
                 const input = document.getElementById(inputId);
