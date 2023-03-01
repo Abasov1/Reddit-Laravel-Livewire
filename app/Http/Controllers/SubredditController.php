@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Join;
+use App\Models\Post;
 use App\Models\Role;
 use App\Models\Subreddit;
 use App\Models\User;
@@ -45,10 +46,13 @@ class SubredditController extends Controller
             $image = Image::make($request->file('image'));
 
             // crop the image to a square
-            $image->fit(300, 300);
+            $square = $image->fit(300, 300);
             $ex = $request->file('image')->getClientOriginalExtension();
             $file = uniqid() .'.'. $ex;
-            $image->save(public_path('storage/' .$file));
+            $square->save(public_path('storage/' .$file));
+            $baner = $image->fit(1000,100);
+            $banner = uniqid() .'.'. $ex;
+            $baner->save(public_path('storage/'.$banner));
 
         }
 
@@ -59,7 +63,7 @@ class SubredditController extends Controller
         $subreddit = Subreddit::create([
             'creator_id' => $user->id,
             'name' => $request->name,
-            'image' => $file
+            'image' => $file.'/'.$banner
         ]);
         $role = Role::where('name', 'moderator')->first();
         $user->subredditss()->attach($subreddit->id, ['role_id' => $role->id]);
@@ -76,14 +80,8 @@ class SubredditController extends Controller
     {
         $user = Auth::user();
         $subreddit = Subreddit::find($id);
-        if ($user->subreddits()->where('subreddit_id', $id)->exists()) {
-            $aton = 1;
-        } else {
-            $aton = 0;
-        }
-        if(DB::table('subreddits')->where('creator_id',$user->id)->where('id',$subreddit->id)->exists()){
-            $aton = 2;
-        }
+        $newposts = Post::where('subreddit_id',$id)->latest()->get();
+        $subreddits = Subreddit::withCount('users')->orderByDesc('users_count')->get();
         if(DB::table('friendrequest')->where('friend_id',auth()->user()->id)->exists()){
             $requests = DB::table('friendrequest')->where('friend_id',auth()->user()->id)->get();
             $userIds = collect($requests)->pluck('user_id');

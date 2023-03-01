@@ -184,17 +184,7 @@
                                 <ins>{{$post->seenusers->count()}}</ins>
                             </span>
                         </li>
-                        <li>
-                             {{-- <div class="likes heart" title="Like/Dislike" style="color: red">❤ <span>{{$post->likes->count()}}</span>
-                                {{-- <form action="/like/{{$post->id}}" method="post">
-                                    @csrf
-                                    <button type="submit">Like {{$post->likes->count()}}</button>
-                                </form> --}}
-                                {{-- <form action="/like/{{$post->id}}" method="post"  style="background: none; border: none">
-                                    @csrf
-                                    <button type="submit" style="background: none; border: none;margin-right:0%">❤</button>
-                                  </form>
-                            </div> --}}
+                        {{-- <li>
 
                             <form action="/like/{{$post->id}}" method="post" style="margin:0%;padding:0%;">
                                 @csrf
@@ -211,6 +201,11 @@
                                     </label>
                             </form>
 
+                        </li> --}}
+                        <li>
+                            <div class="likes heart @if($post->likedBy(auth()->user())) happy @endif" onclick="likepost({{$post->id}})" title="Like/Dislike">
+                                ❤ <span  id="{{'like'.$post->id}}">{{$post->likes->count()}}</span>
+                            </div>
                         </li>
                         <li>
                             <span class="comment" title="Comments">

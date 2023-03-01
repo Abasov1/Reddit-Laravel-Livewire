@@ -143,7 +143,6 @@ class FriendController extends Controller
 
         return redirect('/settingsedit/'.$user->id);
     }
-    
     public function confirmate(Request $request){
         $user = Auth::user();
         $password = $request->input('password');
@@ -154,4 +153,5 @@ class FriendController extends Controller
             return response()->json(['success' => false]);
         }
     }
+    
 }

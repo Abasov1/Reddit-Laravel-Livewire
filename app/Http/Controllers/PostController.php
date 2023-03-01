@@ -81,7 +81,7 @@ class PostController extends Controller
         $user = auth()->user();
         $post = Post::with('comments')->find($id);
         if(!$user->hasSeen($post)){
-            $user->seenposts()->attach($post);
+            $user->seenposts()->attach($post, ['created_at' => now(), 'updated_at' => now()]);
         }
         $comments = Comment::with('subcomments.subcomments')
             ->whereNull('post_id')->get();

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Subreddit extends Model
 {
@@ -37,4 +38,9 @@ class Subreddit extends Model
     // public function joinedBy(User $user){
     //     return $this->joins->contains('user_id',$user->id);
     // }
+    public function moderators()
+    {
+        return $this->belongsToMany(User::class, 'subreddit_user_role')
+            ->wherePivot('role_id', 2);
+    }
 }

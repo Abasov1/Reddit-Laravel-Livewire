@@ -12299,6 +12299,7 @@ aside.sidebar .friend-box .frnd-meta {
 }
 .pst-change-style {
     display: inline-block;
+    margin-bottom:15px;
     width: 100%;
 }
 .pst-change-style > span {

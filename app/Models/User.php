@@ -104,6 +104,13 @@ class User extends Authenticatable
         return $this->hasManyThrough(Like::class,Post::class)->whereBetween('likes.created_at', [$yesterday.' 00:00:00', $yesterday.' 23:59:59']);
         // ->whereBetween('likes.created_at', [$lastWeekStart, $lastWeekEnd]);
     }
+    public function totalViewsThisWeek(){
+        $lastWeekStart = now()->startOfWeek();
+        $lastWeekEnd = now()->endOfWeek();
+        $userPosts = $this->posts;
+        $postIds = $userPosts->pluck('id');
+        return DB::table('user_post')->whereIn('post_id',$postIds)->whereBetween('created_at', [$lastWeekStart, $lastWeekEnd])->count();
+    }
     public function totalViews(){
         $userPosts = $this->posts;
         $postIds = $userPosts->pluck('id');

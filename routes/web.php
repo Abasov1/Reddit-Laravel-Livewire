@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\FIlterController;
 use App\Http\Controllers\FriendController;
 use App\Http\Controllers\GirisController;
 use App\Http\Controllers\HomeController;
@@ -65,7 +66,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/settingsedit/{user}',[FriendController::class,'settingsedit']);
     Route::post('/password-confirmation',[FriendController::class,'confirmate']);
 
-
+    Route::get('subreddit/{id}/{date}',[FIlterController::class,'filter']);
 
     Route::get('/logout',[LoginController::class,'logout']);
 

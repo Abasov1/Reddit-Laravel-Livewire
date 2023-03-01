@@ -501,7 +501,7 @@
 	</div><!-- topbar -->
 
 
-	<div class="fixed-sidebar left">
+	<div class="fixed-sidebar left" id="sidebar-left">
 		<div class="menu-left">
 			<ul class="left-menu">
 				<li>
@@ -686,7 +686,7 @@
 			</ul>
 		</div>
 	</div><!-- left sidebar menu -->
-
+    @yield('subreddit')
 	<section>
 		<div class="gap2 gray-bg">
 			<div class="container">
@@ -769,6 +769,26 @@
 
 
 <script>
+    $('#filter-posts').change(function() {
+        var url = $(this).val();
+        window.location.href = url;
+    });
+    function likepost(id){
+            $.ajax({
+                type: 'POST',
+                url: '/like/'+id,
+                success: function(data) {
+                    if (data.success) {
+                    }
+                    else {
+
+                    }
+                },
+                error: function() {
+                    // Error handling
+                }
+            });
+        }
    $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -803,6 +823,10 @@
     $('#came-post-preview').click(function(){
         $('#edita').click();
     })
+    $('#joinbuttontrigger').on('click',function(event){
+        event.preventDefault();
+        $('#joinsubmit').click();
+    });
     $('#blahh').hide();
     $('#customFile1').on('change', function() {
     // Get the file input element

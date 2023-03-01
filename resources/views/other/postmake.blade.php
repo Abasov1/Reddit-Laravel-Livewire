@@ -127,14 +127,14 @@
                             <div>
                                 <div class="newpst-input">
                                     <textarea rows="2" placeholder="Title" name="title">{{$editpost->title}}</textarea>
-                                </div>                    
+                                </div>
                                 <div class="mb-4 d-flex justify-content-center">
                                     <img id="came-post-preview" src="{{asset('storage/'.$editpost->image)}}"
                                     style="width: 500%;cursor:pointer;" />
                                     <img id="edited-post-preview" src=""
                                     style="width: 500%;display:none;cursor:pointer;" />
                                 </div>
-                                <input type='file' id="edita" onchange="editPreviewImage('edita','edited-post-preview','came-post-preview')" name="image" accept=".png, .jpg, .jpeg" />
+                                <input type='file' id="edita" onchange="editPreviewImage('edita','edited-post-preview','came-post-preview')" name="image" accept=".png, .jpg, .jpeg, .jfif" />
                                 <button type="button" class="post-btn" id="change">Change Image</button>
                                 <button type="button" class="post-btn" style="display:none" id="backik" onclick="backt();">Back</button>
                                 <button class="post-btn" type="submit" data-ripple="">Post Again</button>
@@ -151,7 +151,7 @@
                                                 You didn't Joined or Created any subreddits...
                                          @else
                                         <div class="blurry-select-container">
-                                            <div class="blurry-overlay"></div>                                           
+                                            <div class="blurry-overlay"></div>
                                                 <select class="blurry-select" name="subreddit_id" style="display:none">
                                                     @if (!empty($subredditss))
                                                     @foreach ($subredditss as $subreddit)
@@ -164,7 +164,7 @@
                                                     @endforelse
                                                 </select>
                                         </div>
-                                        
+
                                         <div class="mb-4 d-flex justify-content-center">
                                             <img id="back-post-preview" src=""
                                             style="width: 500%" />
@@ -269,7 +269,7 @@
                             const preview = document.getElementById(previewId);
                             const edit = document.getElementById(edited);
                             var back = document.getElementById('backik');
-                            var choose = document.getElementById('change'); 
+                            var choose = document.getElementById('change');
 
                             if (input.files && input.files[0]) {
                                 const reader = new FileReader();
@@ -296,11 +296,11 @@
                             back.style.display = 'none';
                             choose.style.display = 'block';
                             preview.style.display = 'block';
-                                
 
-                               
+
+
                             }
-            
+
         </script>
 @endsection
 

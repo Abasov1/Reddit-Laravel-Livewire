@@ -64,14 +64,14 @@
                                     <div class="d-flex flex-row mt-2">
                                         <ul class="nav nav-tabs nav-tabs--vertical nav-tabs--left" >
                                             <li class="nav-item">
-                                                <a href="#gen-setting" class="nav-link @isset($editselected)@else active @endisset" data-toggle="tab" ><i class="fa fa-gear"></i> General Setting</a>
+                                                <a href="#gen-setting" class="nav-link @isset($editselected)@else @if ($errors->any())@else active @endif @endisset" data-toggle="tab" ><i class="fa fa-gear"></i> General Setting</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a href="#edit-profile" class="nav-link @isset($editselected)active @endisset" data-toggle="tab" ><i class="fa fa-pencil"></i> Edit Profile</a>
+                                                <a href="#edit-profile" class="nav-link @isset($editselected)active @endisset @if ($errors->any())active @endif" data-toggle="tab" ><i class="fa fa-pencil"></i> Edit Profile</a>
                                             </li>
                                         </ul>
                                         <div class="tab-content">
-                                            <div class="tab-pane fade @isset($editselected)@else show active @endisset" id="gen-setting" >
+                                            <div class="tab-pane fade @isset($editselected)@else @if ($errors->any())@else show active @endif @endisset" id="gen-setting" >
                                                 <div class="set-title">
                                                     <h5>General Setting</h5>
                                                     <span>Set your login preference, help us personalize your experience and make big account change here.</span>
@@ -133,7 +133,7 @@
                                                     </div>
                                                 </div>
                                             </div><!-- general setting -->
-                                            <div class="tab-pane fade @isset($editselected)show active @endisset" id="edit-profile" >
+                                            <div class="tab-pane fade @isset($editselected)show active @endisset @if ($errors->any()) show active @endif" id="edit-profile" >
                                                 <div class="set-title">
                                                     <h5>Edit Profile</h5>
                                                     <span>People on Pitnik will get to know you with the info below</span>
@@ -143,7 +143,7 @@
                                                         <figure><img id="pp" src="{{asset('storage/'.$user->image)}}" style="max-width:40px;max-height:40px;" alt=""></figure>
                                                         {{-- <div class="edit-img"> --}}
 
-                                                                <label class="fileContainer" id="atvuran">
+                                                                <label class="fileContainer" id="atvuran" @error('image') style="color:red;" @enderror>
                                                                     <i class="fa fa-camera-retro"></i>
                                                                     Chage PP
                                                                 </label>
@@ -158,10 +158,16 @@
                                                         <div>
                                                             <label>Name</label>
                                                             <input type="text" name="name" value="{{$user->name}}">
+                                                            @error('name')
+                                                                <span style="color:red;">{{$message}}</span>
+                                                            @enderror
                                                         </div>
                                                         <div>
                                                             <label>Email Address</label>
                                                             <input type="email" name="email" value="{{$user->email}}">
+                                                            @error('email')
+                                                                <span style="color:red;">{{$message}}</span>
+                                                            @enderror
                                                         </div>
                                                         <input type='file' name="image" id="sendikr" onchange="previewImage('sendikr','pp')"  accept=".png, .jpg, .jpeg" />
                                                         <div>
@@ -169,21 +175,15 @@
                                                             <input type="password" id="password" placeholder="pass">
                                                             <input type="password" id="confirmated" style="display:none;" name="password" placeholder="conf">
                                                             <span id="message" style="margin-top:10px;display:none;">askljdaldkj</span>
+                                                            @error('password')
+                                                                <span style="color:red;">{{$message}}</span>
+                                                            @enderror
                                                         </div>
                                                         <div id="afterconfirmate">
                                                             <button type="submit" id="cbutton" data-ripple="">Confirmate</button>
                                                         </div>
 
                                                     </form>
-                                                    @if ($errors->any())
-                                                        <div class="alert alert-danger">
-                                                            <ul>
-                                                                @foreach ($errors->all() as $error)
-                                                                    <li>{{ $error }}</li>
-                                                                @endforeach
-                                                            </ul>
-                                                        </div>
-                                                    @endif
                                                 </div>
                                         </div>
                                     </div>
@@ -244,7 +244,6 @@
                     reader.onload = function(e) {
                     preview.src = e.target.result;
                     preview.style.display = 'block';
-                    alert(input.value);
                     }
 
                     reader.readAsDataURL(input.files[0]);

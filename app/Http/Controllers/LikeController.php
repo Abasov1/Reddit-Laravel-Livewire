@@ -13,11 +13,13 @@ class LikeController extends Controller
     public function store(Post $post,Request $request){
         if($post->likedBy($request->user())){
             $post->likes()->where('user_id',$request->user()->id)->delete() ;
-            return back();
+            return response()->json(['success' => true]);
         }
         $post->likes()->create([
             'user_id' => $request->user()->id,
+
         ]);
+        return response()->json(['success' => true]);
         return back();
         /* dd($user); */
     }
