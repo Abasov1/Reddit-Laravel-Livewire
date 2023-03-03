@@ -1,6 +1,6 @@
 @extends('layout.temp')
 @section('temp')
-    <h1>POSTS</h1> <br> <br>
+    <h1>Posts</h1> <br> <br>
     <div id="variable-list">
     @foreach ($posts as $post)
         @include('other.post')

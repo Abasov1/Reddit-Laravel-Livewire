@@ -57,6 +57,37 @@ html,body{
 input[type="file"] {
     display: none;
   }
+  .sort-buttons {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+
+  .sort-buttons div {
+    align-items: center;
+    background-color: #ffffff;
+    border-radius: 5px;
+    color: #666666;
+    cursor: pointer;
+    display: flex;
+    font-size: 16px;
+    margin-right: 10px;
+    padding: 10px 15px;
+    transition: all 0.3s ease;
+  }
+
+  .sort-buttons div:hover {
+    background-color: #eeeeee;
+  }
+
+  .sort-buttons div.active {
+    background-color: #ff4500;
+    color: #ffffff;
+  }
+
+  .sort-buttons div i {
+    margin-right: 10px;
+  }
 .label-post{
 
 }
@@ -1308,7 +1339,7 @@ header.sticky {
     line-height: 15px;
     max-width: 70%;
     overflow-x: hidden;
-    text-overflow: ellipsis;
+    text-overflow: none;
     white-space: nowrap;
 }
 .mesg-meta > span > b{font-weight: 500;}
@@ -4520,7 +4551,6 @@ a.forgot-pwd {
     font-weight: 400;
     line-height: 15px;
     margin-bottom: 0;
-    text-transform: capitalize;
 }
 
 .notifi-meta > span {

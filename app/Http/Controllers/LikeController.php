@@ -6,6 +6,7 @@ use App\Models\Comment;
 use App\Models\Like;
 use App\Models\Post;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class LikeController extends Controller
@@ -19,7 +20,14 @@ class LikeController extends Controller
             'user_id' => $request->user()->id,
 
         ]);
-        return response()->json(['success' => true]);
+        if(!$request->user()->notifications()->where(['duduk_id' => $post->user->id,'post_id' => $post->id,'content' => 'likepost'])->exists()){
+        $request->user()->notifications()->attach($post->user->id,[
+            'post_id' => $post->id,
+            'content' => 'likepost',
+            'created_at' => now(),
+        ]);
+    }
+        return response()->json(['success' => true,'message' => $post->user->id]);
         return back();
         /* dd($user); */
     }
@@ -32,6 +40,13 @@ class LikeController extends Controller
         $comment->likes()->create([
             'user_id' => $request->user()->id,
         ]);
+        if(!auth()->user()->notifications()->where(['duduk_id' => $comment->user->id,'comment_id' => $comment->id,'content' => 'likecomment'])->exists()){
+            auth()->user()->notifications()->attach($comment->user->id,[
+                'comment_id' => $comment->id,
+                'content' => 'likecomment',
+                'created_at' => now(),
+            ]);
+        }
         return back();
         /* dd($user); */
     }

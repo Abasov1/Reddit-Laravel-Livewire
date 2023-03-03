@@ -152,16 +152,24 @@
                                          @else
                                         <div class="blurry-select-container">
                                             <div class="blurry-overlay"></div>
-                                                <select class="blurry-select" name="subreddit_id" style="display:none">
-                                                    @if (!empty($subredditss))
-                                                    @foreach ($subredditss as $subreddit)
-                                                        <option value="{{$subreddit->id}}">{{$subreddit->name}}</option>
-                                                    @endforeach
-                                                    @endif
-                                                    @forelse (auth()->user()->subreddits as $subreddit)
-                                                        <option value="{{$subreddit->id}}">{{$subreddit->name}}</option>
-                                                    @empty
-                                                    @endforelse
+                                            @isset($crotsubreddit)
+                                                <input type="hidden" name="subreddit_id" value="{{$crotsubreddit->id}}">
+                                            @endisset
+                                                <select class="blurry-select" @isset($crotsubreddit) disabled @else name="subreddit_id" @endisset style="display:none">
+                                                    @isset($crotsubreddit)
+                                                        <option selected value="{{$crotsubreddit->id}}">{{$crotsubreddit->name}}</option>
+                                                    @else
+
+                                                        @if (!empty($subredditss))
+                                                            @foreach ($subredditss as $subreddit)
+                                                                <option value="{{$subreddit->id}}">{{$subreddit->name}}</option>
+                                                            @endforeach
+                                                        @endif
+                                                        @forelse (auth()->user()->subreddits as $subreddit)
+                                                            <option value="{{$subreddit->id}}">{{$subreddit->name}}</option>
+                                                        @empty
+                                                        @endforelse
+                                                    @endisset
                                                 </select>
                                         </div>
 
@@ -181,8 +189,10 @@
          <br> <br> <br><br><br><br><br><br><br><br><br><br><br>
 
 @endsection
-@section('righttemp')
 
+@section('righttemp')
+@isset($crotsubreddit)
+@else
     @if ($errors->any())
         <div class="alert alert-danger">
             <ul>
@@ -192,6 +202,7 @@
             </ul>
         </div>
     @endif
+
     <div class="col-lg-10">
         <div class="central-meta postbox">
             <span class="create-post">Create Subreddit</span>
@@ -243,11 +254,7 @@
             </div></div></div>
 
          <br> <br> <br><br><br><br><br><br><br><br><br><br><br>
-         @error('name')
-             <script>
-                alert(''+{{$message}});
-             </script>
-         @enderror
+        @endisset
          <script>
             function previewImage(inputId,previewId) {
                 const input = document.getElementById(inputId);

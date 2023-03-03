@@ -49,4 +49,8 @@ class FIlterController extends Controller
         return view('other.subreddit',get_defined_vars());
 
     }
+    public function createpost($id){
+        $crotsubreddit = Subreddit::find($id);
+        return view('other.postmake',get_defined_vars());
+    }
 }

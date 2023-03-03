@@ -23,6 +23,13 @@ class HomeController extends Controller
             $userIds = collect($requests)->pluck('user_id');
             $rusers = User::whereIn('id',$userIds)->get();
         }
+        if(DB::table('modrequest')->where('mod_id',auth()->user()->id)->exists()){
+            $requests = DB::table('modrequest')->where('mod_id',auth()->user()->id)->get();
+            $userIds = collect($requests)->pluck('user_id');
+            $subIds = collect($requests)->pluck('subreddit_id');
+            $qrusers = User::whereIn('id',$userIds)->get();
+            $subers = Subreddit::whereIn('id',$subIds)->get();
+        }
         $posts = Post::with(['comments' => function($query) {
             $query->withCount('likes')->orderByDesc('likes_count');
         }])->latest()->get();

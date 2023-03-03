@@ -312,88 +312,42 @@
 				</li>
 				<li>
 					<a href="#" title="Notification" data-ripple="">
-						<i class="fa fa-bell"></i><em class="bg-purple">7</em>
+						<i class="fa fa-bell"></i>
+                            @php
+                                $usar = auth()->user();
+                                $check = $usar->checkrequest();
+                            @endphp
+                            @if($usar->checkrequest())
+                            <em class="bg-purple">
+                                {{$check['count']}}
+                                </em>
+                            @endif
+
 					</a>
 					<div class="dropdowns">
 						<span>4 New Notifications <a href="#" title="">Mark all as read</a></span>
 						<ul class="drops-menu">
-							<li>
-								<a href="notifications.html" title="">
-									<figure>
-										<img src="images/resources/thumb-1.jpg" alt="">
-										<span class="status f-online"></span>
-									</figure>
-									<div class="mesg-meta">
-										<h6>sarah Loren</h6>
-										<span>commented on your new profile status</span>
-										<i>2 min ago</i>
-									</div>
-								</a>
-							</li>
-							<li>
-								<a href="notifications.html" title="">
-									<figure>
-										<img src="images/resources/thumb-2.jpg" alt="">
-										<span class="status f-online"></span>
-									</figure>
-									<div class="mesg-meta">
-										<h6>Jhon doe</h6>
-										<span>Nicholas Grissom just became friends. Write on his wall.</span>
-										<i>4 hours ago</i>
-										<figure>
-											<span>Today is Marina Valentine’s Birthday! wish for celebrating</span>
-											<img src="images/birthday.png" alt="">
-										</figure>
-									</div>
-								</a>
-							</li>
-							<li>
-								<a href="notifications.html" title="">
-									<figure>
-										<img src="images/resources/thumb-3.jpg" alt="">
-										<span class="status f-online"></span>
-									</figure>
-									<div class="mesg-meta">
-										<h6>Andrew</h6>
-										<span>commented on your photo.</span>
-										<i>Sunday</i>
-										<figure>
-											<span>"Celebrity looks Beautiful in that outfit! We should see each"</span>
-											<img src="images/resources/admin.jpg" alt="">
-										</figure>
-									</div>
-								</a>
-							</li>
-							<li>
-								<a href="notifications.html" title="">
-									<figure>
-										<img src="images/resources/thumb-4.jpg" alt="">
-										<span class="status f-online"></span>
-									</figure>
-									<div class="mesg-meta">
-										<h6>Tom cruse</h6>
-										<span>nvited you to attend to his event Goo in</span>
-										<i>May 19</i>
-									</div>
-								</a>
-								<span class="tag">New</span>
-							</li>
-							<li>
-								<a href="notifications.html" title="">
-									<figure>
-										<img src="images/resources/thumb-5.jpg" alt="">
-										<span class="status f-online"></span>
-									</figure>
-									<div class="mesg-meta">
-										<h6>Amy</h6>
-										<span>Andrew Changed his profile picture. </span>
-										<i>dec 18</i>
-									</div>
-								</a>
-								<span class="tag">New</span>
-							</li>
+                            @if($check)
+                                @foreach ($check['requests'] as $request)
+                                    <li>
+                                    <a href="notifications.html" title="">
+                                        <figure>
+                                            <img src="{{asset('storage/'.$request->user->image)}}" width="30px" height="30px" alt="">
+                                            <span class="status f-online"></span>
+                                        </figure>
+                                        <div class="mesg-meta">
+                                            <h6>{{$request->user->name}}</h6>
+                                            <span>Want you to be mod on {{$request->subreddit->name}}
+                                            </span>
+                                            <i>{{$request->requestdate->diffForHumans()}}</i>
+                                        </div>
+                                    </a>
+                                </li>
+                                @endforeach
+                            @endif
+
 						</ul>
-						<a href="notifications.html" title="" class="more-mesg">View All</a>
+						<a href="/notifications/{{auth()->user()->id}}" title="" class="more-mesg">View All</a>
 					</div>
 				</li>
 				<li>
@@ -536,7 +490,7 @@
 					</a>
 				</li>
 				<li>
-					<a href="notifications.html" title="Notification" data-toggle="tooltip" data-placement="right">
+					<a href="/notifications/{{auth()->user()->id}}" title="Notification" data-toggle="tooltip" data-placement="right">
 						<i class="fa fa-bell-o"></i>
 					</a>
 				</li>
@@ -789,6 +743,220 @@
                 }
             });
         }
+        function removeRequest(userid,subid){
+            $.ajax({
+                type: 'POST',
+                url: '/removenotification/'+userid+'/'+subid,
+                success: function(data) {
+                    if (data.success) {
+
+                    }
+                    else {
+
+                    }
+                },
+                error: function() {
+                    // Error handling
+                }
+            });
+        }
+        function removenotification(id){
+            $.ajax({
+                type: 'POST',
+                url: '/deletenotification/'+id,
+                success: function(data) {
+                    if (data.success) {
+
+                    }
+                    else {
+
+                    }
+                },
+                error: function() {
+                    // Error handling
+                }
+            });
+        }
+        function acceptRequest(userid,mod,subid){
+            $.ajax({
+                type: 'POST',
+                url: '/acceptnotification/'+userid+'/'+mod+'/'+subid,
+                success: function(data) {
+                    if (data.success) {
+
+                    }
+                    else {
+
+                    }
+                },
+                error: function() {
+                    // Error handling
+                }
+            });
+        }
+        function takemodrole(id,subid){
+
+            $.ajax({
+                type: 'POST',
+                url: '/takerole/'+id+'/'+subid,
+                success: function(data) {
+                    if (data.success) {
+                        $('#moderator-list').empty();
+                        data.moderators.forEach(function(moderator) {
+                            if(moderator.id === data.creator_id){
+                                creatorlink = 'Creator of this subreddit';
+                                href = '/homes/'+moderator.id;
+                                method = '';
+                            }else{
+                                creatorlink = 'Take mod role';
+                                href = '#';
+                                method = 'onclick="takemodrole(' + moderator.id + ','+data.subid+');"';
+                            }
+                            var li = '<li style="margin-bottom:15px;">' +
+                                    '<figure><img src="{{asset('storage')}}' + '/' + moderator.image + '" width="30px" alt=""></figure>' +
+                                    '<div class="friend-meta">' +
+                                    '<h4><a href="time-line.html" title="">' + moderator.name + '</a></h4>' +
+                                    '<a href="'+href+'" '+method+' title="" class="underline">'+creatorlink+'</a>' +
+
+                                    '</div>' +
+                                '</li>';
+
+                        $('#moderator-list').append(li);
+
+                        });
+                        data.requestedmods.forEach(function(moderator) {
+                            var di = '<li style="margin-bottom:15px;">' +
+                                    '<figure><img src="{{asset('storage')}}' + '/' + moderator.image + '" width="30px" alt=""></figure>' +
+                                    '<div class="friend-meta">' +
+                                    '<h4><a href="time-line.html" title="">' + moderator.name + '</a></h4>' +
+                                    (moderator.is_creator ? '<a href="#"> Creator of this subreddit</a>' :
+                                        '<a href="#" onclick="takemodrequest(' + moderator.id + ','+data.subid+');" title="" class="underline">Take mod Request</a>' +
+                                        '<form action="" method="post" style="display:none;">' +
+                                        '@csrf' +
+                                        '<button type="submit" id="takemodrolebutton' + moderator.id + '"></button>' +
+                                        '</form>') +
+                                    '</div>' +
+                                '</li>';
+
+                        $('#moderator-list').append(di);
+                        });
+                    }
+                    else {
+
+                    }
+                },
+                error: function() {
+                    // Error handling
+                }
+            });
+        }
+        function takemodrequest(id,subid){
+            // if(confirm('Want to take back mod request')){
+            $.ajax({
+                type: 'POST',
+                url: '/takemodrequest/'+id+'/'+subid,
+                success: function(data) {
+                    if (data.success) {
+                        $('#moderator-list').empty();
+                        data.moderators.forEach(function(moderator) {
+                            if(moderator.id === data.creator_id){
+                                creatorlink = 'Creator of this subreddit';
+                                href = '/homes/'+moderator.id;
+                                method = '';
+                            }else{
+                                creatorlink = 'Take mod role';
+                                href = '#';
+                                method = 'onclick="takemodrole(' + moderator.id + ','+data.subid+');"';
+                            }
+                            var li = '<li style="margin-bottom:15px;">' +
+                                    '<figure><img src="{{asset('storage')}}' + '/' + moderator.image + '" width="30px" alt=""></figure>' +
+                                    '<div class="friend-meta">' +
+                                    '<h4><a href="time-line.html" title="">' + moderator.name + '</a></h4>' +
+                                    '<a href="'+href+'" '+method+' title="" class="underline">'+creatorlink+'</a>' +
+
+                                    '</div>' +
+                                '</li>';
+
+                        $('#moderator-list').append(li);
+
+                        });
+                        data.requestedmods.forEach(function(moderator) {
+                            var di = '<li style="margin-bottom:15px;">' +
+                                    '<figure><img src="{{asset('storage')}}' + '/' + moderator.image + '" width="30px" alt=""></figure>' +
+                                    '<div class="friend-meta">' +
+                                    '<h4><a href="time-line.html" title="">' + moderator.name + '</a></h4>' +
+                                    (moderator.is_creator ? '<a href="#"> Creator of this subreddit</a>' :
+                                        '<a href="#" onclick="takemodrequest(' + moderator.id + ','+data.subid+');" title="" class="underline">Take mod Request</a>' +
+                                        '<form action="" method="post" style="display:none;">' +
+                                        '@csrf' +
+                                        '<button type="submit" id="takemodrolebutton' + moderator.id + '"></button>' +
+                                        '</form>') +
+                                    '</div>' +
+                                '</li>';
+
+                        $('#moderator-list').append(di);
+                        });
+                    }
+                    else {
+
+                    }
+                },
+                error: function() {
+                    // Error handling
+                }
+            });
+        }
+    // }
+
+       function submitText(id) {
+        var text = $('#text-input').val();
+        $('#text-input').val('');
+
+        $.ajax({
+        type: 'POST',
+        url: '/searchmod/'+text+'/'+id,
+        success: function(data) {
+
+        if (data.success) {
+            // Clear the existing moderator list
+            // $('#moderator-list').empty();
+
+            // Add the updated moderators to the list
+            if(data.message === '1'){
+                alert('this user doesnt exists');
+            }else if(data.message === '2'){
+                alert('this mf is already a mod');
+            }else{
+            var moderator = data.moderator;
+            var li = '<li style="margin-bottom:15px;">' +
+                        '<figure><img src="{{asset('storage')}}' + '/' + moderator.image + '" width="30px" alt=""></figure>' +
+                        '<div class="friend-meta">' +
+                        '<h4><a href="time-line.html" title="">' + moderator.name + '</a></h4>' +
+                        (moderator.is_creator ? '<a href="#"> Creator of this subreddit</a>' :
+                            '<a href="#" onclick="takemodrequest(' + moderator.id + ','+data.subid+');" title="" class="underline">Mod request sended</a>' +
+                            '<form action="/takerole/' + moderator.id + '/' + data.subreddit_id + '" method="post" style="display:none;">' +
+                            '@csrf' +
+                            '<button type="submit" id="takemodrolebutton' + moderator.id + '"></button>' +
+                            '</form>') +
+                        '</div>' +
+                    '</li>';
+            $('#moderator-list').append(li);
+                            }
+
+    }
+
+        else {
+            // Handle error
+        }
+        },
+        error: function() {
+        // Handle error
+        }
+    });
+
+  // Close the modal
+  $('#myModal').modal('hide');
+}
    $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -807,7 +975,9 @@
         }
     });
 });
-
+    $('#modrequestlistspan').on('click',function(){
+        $('#modrequestlist').css('display','block');
+    })
     $('#trigger').click(function(){
         $('#yourmother').click();
     });
@@ -860,9 +1030,6 @@
   });
 
 </script>
-    <script>
-
-    </script>
 </body>
 
 <!-- Mirrored from wpkixx.com/html/pitnik-dark/newsfeed.html by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 22 Feb 2023 12:09:59 GMT -->

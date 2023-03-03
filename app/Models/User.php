@@ -63,11 +63,17 @@ class User extends Authenticatable
 {
     return $this->hasMany(Join::class);
 }
+    public function subreddit(){
+        return $this->hasOne(Subreddit::class,'id','creator_id');
+    }
     public function friends(){
         return $this->belongsToMany(User::class, 'user_user','user_id','friend_id');
     }
     public function friendRequest(){
         return $this->belongsToMany(User::class,'friendrequest','user_id','friend_id');
+    }
+    public function modRequest(){
+        return $this->belongsToMany(User::class,'modrequest','user_id','mod_id')->withPivot('subreddit_id');
     }
     public function subreddits()
     {
@@ -87,6 +93,10 @@ class User extends Authenticatable
     public function bannedfrom()
     {
         return $this->belongsToMany(Subreddit::class,'subreddit_user_post')->withPivot('post_id');
+    }
+    public function notifications()
+    {
+        return $this->belongsToMany(User::class,'notifications','user_id','duduk_id')->withPivot('post_id','comment_id','subcomment_id','subreddit_id','content');
     }
     public function comments(){
         return $this->hasMany(Comment::class);
@@ -162,4 +172,30 @@ class User extends Authenticatable
         $lastweek = Carbon::now()->subWeek();
         return DB::table('likes')->where('user_id',$this->id)->where('created_at','>=',$lastweek)->get()->count();
     }
+    public function checkrequest(){
+        if($this->id != auth()->user()->id){
+            return back();
+        }
+        $requests = DB::table('modrequest')->where('mod_id',$this->id)->get();
+        $count = count($requests);
+        if($requests->isEmpty()){
+            return false;
+        }else{
+        $userIds = collect($requests)->pluck('user_id');
+        $subIds = collect($requests)->pluck('subreddit_id');
+        $qrusers = User::whereIn('id',$userIds)->get();
+        $subers = Subreddit::whereIn('id',$subIds)->get();
+
+        foreach($requests as $request){
+            $request->user = $qrusers->where('id',$request->user_id)->first();
+            $request->subreddit = $subers->where('id',$request->subreddit_id)->first();
+            $request->requestdate = Carbon::parse($requests->where('user_id',$request->user->id)->where('subreddit_id',$request->subreddit->id)->first()->created_at);
+        }
+
+        return [
+            'requests' =>$requests,
+            'count' => $count
+        ];
+    }
+}
 }

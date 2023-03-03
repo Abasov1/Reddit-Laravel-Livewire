@@ -83,48 +83,10 @@
     </div><!-- user profile banner  -->
 @endsection
 @section('profileleft')
-<div class="col-lg-3">
-    <aside class="sidebar static left">
-        @isset($createdsubs)
-                <div class="widget">
-                    <h4 class="widget-title">Created Subreddits</h4>
-                    <ul class="followers">
-                        @foreach ($createdsubs as $subs)
-                            @php
-                                $pp = explode('/',$subs->image)
-                            @endphp
-                            <li>
-                                <figure><img src="{{asset('storage/'.$pp[0])}}" alt=""></figure>
-                                <div class="friend-meta">
-                                    <h4><a href="time-line.html" title="">{{$subs->name}}</a></h4>
-                                    <a href="/subreddit/{{$subs->id}}" title="" class="underline">Go</a>
-                                </div>
-                            </li>
-                        @endforeach
-                    </ul>
-                </div><!-- who's following -->
-        @endisset
-        @if(!$user->subreddits->isEmpty())
-        <div class="widget">
-            <h4 class="widget-title">Joined subreddits</h4>
-            <ul class="followers">
-                @foreach ($user->subreddits as $subreddit)
-                    <li>
-                        <figure><img src="{{asset('storage/'.$subreddit->image)}}" alt=""></figure>
-                        <div class="friend-meta">
-                            <h4><a href="time-line.html" title="">{{$subreddit->name}}</a></h4>
-                            <a href="/subreddit/{{$subreddit->id}}" title="" class="underline">Go</a>
-                        </div>
-                    </li>
-                @endforeach
-            </ul>
-        </div><!-- who's following -->
-        @endif
-    </aside>
-</div>
+{{--  --}}
 @endsection
 @section('profilecenter')
-    <div class="col-lg-6">
+    <div class="col-lg-8">
         <div class="central-meta">
             @foreach ($user->posts as $post)
                 @include('other.post')
@@ -133,7 +95,7 @@
     </div>
 @endsection
 @section('profileright')
-    <div class="col-lg-3">
+    <div class="col-lg-4">
         <aside class="sidebar static-right">
             <div class="widget">
                 @if (auth()->user()->id === $user->id)
@@ -170,6 +132,42 @@
                     </div>
                 </div>
             </div><!-- page like widget -->
+            @isset($createdsubs)
+                    <div class="widget">
+                        <h4 class="widget-title">Created Subreddits</h4>
+                        <ul class="followers">
+                            @foreach ($createdsubs as $subs)
+                                @php
+                                    $pp = explode('/',$subs->image)
+                                @endphp
+                                <li>
+                                    <figure><img src="{{asset('storage/'.$pp[0])}}" alt=""></figure>
+                                    <div class="friend-meta">
+                                        <h4><a href="/subreddit/{{$subs->id}}" title="">{{$subs->name}}</a></h4>
+                                        <a href="/subreddit/{{$subs->id}}" title="" class="underline">Go</a>
+                                    </div>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div><!-- who's following -->
+            @endisset
+            @if(!$user->subreddits->isEmpty())
+            <div class="widget">
+                <h4 class="widget-title">Joined subreddits</h4>
+                <ul class="followers">
+                    @foreach ($user->subreddits as $subreddit)
+                        <li>
+                            <figure><img src="{{asset('storage/'.$subreddit->image)}}" alt=""></figure>
+                            <div class="friend-meta">
+                                <h4><a href="/subreddit/{{$subreddit}}" title="">{{$subreddit->name}}</a></h4>
+                                <a href="/subreddit/{{$subreddit->id}}" title="" class="underline">Go</a>
+                            </div>
+                        </li>
+                    @endforeach
+                </ul>
+            </div><!-- who's following -->
+            @endif
         </aside>
     </div>
+
 @endsection

@@ -10,6 +10,7 @@ use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\JoinController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\RegisterController;
 use Illuminate\Support\Facades\Route;
 
@@ -49,6 +50,14 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('/subreddit',SubredditController::class);
     Route::post('/giverole/{user}/{subreddit}',[JoinController::class,'givemod']);
     Route::post('/takerole/{user}/{subreddit}',[JoinController::class,'takemod']);
+    Route::post('/takemodrequest/{user}/{subreddit}',[NotificationController::class,'takemodrequest']);
+    Route::post('/searchmod/{name}/{subreddit}',[JoinController::class,'searchmod']);
+    Route::get('/searchmod/{name}',[JoinController::class,'searchmodik']);
+
+    Route::get('/notifications/{user}',[NotificationController::class,'index']);
+    Route::post('/removenotification/{user}/{subreddit}',[NotificationController::class,'remove']);
+    Route::post('/deletenotification/{id}',[NotificationController::class,'removenotification']);
+    Route::post('/acceptnotification/{user}/{mod}/{subreddit}',[NotificationController::class,'accept']);
 
     Route::post('/ban/{post}',[JoinController::class,'ban']);
     Route::post('/unban/{user}/{subreddit}',[JoinController::class,'unban']);
@@ -59,14 +68,17 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/unadd/{user}',[FriendController::class,'unadd']);
     Route::post('/ignore/{user}',[FriendController::class,'ignore']);
     Route::post('/leavefriendship/{user}',[FriendController::class,'leave']);
+
     Route::put('/ppupdate/{user}',[FriendController::class,'ppupdate']);
     Route::put('/userupdate/{user}',[FriendController::class,'userupdate']);
 
     Route::get('/settings/{user}',[FriendController::class,'settings']);
+    Route::get('/subsettings/{subreddit}',[FriendController::class,'subsettings']);
     Route::get('/settingsedit/{user}',[FriendController::class,'settingsedit']);
     Route::post('/password-confirmation',[FriendController::class,'confirmate']);
 
     Route::get('subreddit/{id}/{date}',[FIlterController::class,'filter']);
+    Route::get('createpost/{id}',[FIlterController::class,'createpost']);
 
     Route::get('/logout',[LoginController::class,'logout']);
 

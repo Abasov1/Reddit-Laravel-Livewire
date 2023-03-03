@@ -14,9 +14,16 @@ class CommentController extends Controller
         $validated = $request->validate([
             'body' => 'required|max:255',
     ]);
-        $request->user()->comments()->create([
-            'post_id' => $request->post_id,
+        $post = Post::find($request->post_id);
+        $comment = $request->user()->comments()->create([
+            'post_id' => $post->id,
             'body' => $request->body,
+        ]);
+        auth()->user()->notifications()->attach($post->user->id,[
+            'post_id' => $post->id,
+            'comment_id' => $comment->id,
+            'content' => 'postcomment',
+            'created_at' => now(),
         ]);
     }
         return back();
@@ -26,12 +33,20 @@ class CommentController extends Controller
         $validated = $request->validate([
             'body' => 'required|max:255',
     ]);
-        $request->user()->comments()->create([
+        $subcomment = $request->user()->comments()->create([
             'post_id' => $post->id,
             'comment_id' => $comment->id,
             'body' => $request->body,
         ]);
-    }
+            auth()->user()->notifications()->attach($comment->user->id,[
+                'post_id' => $post->id,
+                'comment_id' => $comment->id,
+                'subcomment_id' => $subcomment->id,
+                'content' => 'commentcomment',
+                'created_at' => now(),
+            ]);
+        }
+    
         return back();
     }
     public function destroy(Comment $comment,Subreddit $subreddit)

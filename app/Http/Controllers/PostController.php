@@ -151,15 +151,16 @@ class PostController extends Controller
         $user = Auth::user();
         if($user->isMod($post->subreddit)){
             $this->authorize('moddelete',$post->subreddit);
-        }else{
-            $this->authorize('postdelete',$post);
-        }
-        if($user->id != $post->subreddit->creator_id){
             $post->delete();
             Storage::disk('public')->delete($post->image);
-            return redirect('/homes');
-        }
-        if($user->id = $post->subreddit->creator_id){
+            auth()->user()->notifications()->attach($post->user->id,[
+                'post_id' => $post->id,
+                'content' => 'modpostdelete',
+                'created_at' => now(),
+            ]);
+            return redirect('/homes');  
+        }else{
+            $this->authorize('postdelete',$post);
             $post->delete();
             Storage::disk('public')->delete($post->image);
             return redirect('/homes');

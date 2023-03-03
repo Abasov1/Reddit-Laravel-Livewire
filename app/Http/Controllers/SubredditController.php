@@ -82,10 +82,16 @@ class SubredditController extends Controller
         $subreddit = Subreddit::find($id);
         $newposts = Post::where('subreddit_id',$id)->latest()->get();
         $subreddits = Subreddit::withCount('users')->orderByDesc('users_count')->get();
+
         if(DB::table('friendrequest')->where('friend_id',auth()->user()->id)->exists()){
             $requests = DB::table('friendrequest')->where('friend_id',auth()->user()->id)->get();
             $userIds = collect($requests)->pluck('user_id');
             $rusers = User::whereIn('id',$userIds)->get();
+        }
+        if(DB::table('modrequest')->where('subreddit_id',$subreddit->id)->exists()){
+            $requests = DB::table('modrequest')->where('subreddit_id',$subreddit->id)->get();
+            $userIds = collect($requests)->pluck('mod_id');
+            $requestedmods = User::whereIn('id',$userIds)->get();
         }
         return view('other.subreddit',get_defined_vars());
     }

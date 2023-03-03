@@ -61,15 +61,61 @@ class JoinController extends Controller
         $user->subredditss()->attach($subreddit->id, ['role_id' => $role->id]);
         return back();
     }
-    public function takemod(User $user,Subreddit $subreddit){
+    public function takemod(User $user,Subreddit $subreddit,Request $request){
         $this->authorize('subredditdelete',$subreddit);
-        if(!$user->isJoined($subreddit)){
-        return back()->with('mesaj','this user is not joined to your server');
-    }
+
+        if($user->isMod($subreddit)){
         $role = Role::where('name', 'moderator')->first();
         $user->subredditss()->detach($subreddit->id, ['role_id' => $role->id]);
+        $requests = DB::table('modrequest')->where('subreddit_id',$subreddit->id)->get();
+        $userIds = collect($requests)->pluck('mod_id');
+        $requestedmodss = User::whereIn('id',$userIds)->get();
+        $moderators= $subreddit->moderators;
+            if($request->ajax()){
+                return response()->json([
+                    'success' => true,
+                    'message' => 'qezenfer',
+                    'moderators' => $moderators,
+                    'subid' => $subreddit->id,
+                    'creator_id' => $subreddit->creator_id,
+                    'requestedmods' => $requestedmodss
+                ]);
+            }
+        }
         return back();
     }
+    public function searchmod($name,Subreddit $subreddit){
+            $this->authorize('subredditdelete',$subreddit);
+            $auser = auth()->user();
+            if(!User::where('name',$name)->exists()){
+                $message = '1';
+            }elseif(User::where('name',$name)->first()->isMod($subreddit)){
+                $message = '2';
+            }
+            else{
+                $finduser = User::where('name',$name)->first();
+                // $role = Role::where('name', 'moderator')->first();
+                // $finduser->subredditss()->attach($subreddit->id, ['role_id' => $role->id]);
+                $auser->modRequest()->attach($finduser, ['subreddit_id' => $subreddit->id,'created_at' => now(), 'updated_at' => now()]);
+                $message = '3';
+
+                return response()->json([
+                    'success'=> true,
+                    'moderator' => $finduser,
+                    'message' => $message,
+                    'subid' => $subreddit->id,
+                    'creator_id' => $subreddit->creator_id
+                ]);
+            }
+            return response()->json([
+                'success'=> true,
+                'moderator' => false,
+                'message' => $message,
+                'subid' => $subreddit->id,
+                'creator_id' => $subreddit->creator_id
+            ]);
+    }
+
     public function ban(Post $post){
         $auth = Auth::user();
         $user = $post->user;
@@ -80,10 +126,14 @@ class JoinController extends Controller
                 $user->subredditss()->detach($subreddit->id, ['role_id' => $role->id]);
             }
     }
-        $user->subreddits()->detach($subreddit);
         $banrole = Role::where('name', 'banned')->first();
         $user->subredditss()->attach($subreddit->id, ['role_id' => $banrole->id]);
         $user->bannedfrom()->attach($subreddit->id, ['post_id' => $post->id]);
+        $auth->notifications()->attach($user->id,[
+            'post_id' => $post->id,
+            'content' => 'ban',
+            'created_at' => now(),
+        ]);
         return back();
     }
     public function unban(User $user, Subreddit $subreddit){
@@ -94,6 +144,11 @@ class JoinController extends Controller
         $post = Post::find($postid);
         $user->subredditss()->detach($subreddit->id, ['role_id' => $banrole->id]);
         $user->bannedfrom()->detach($subreddit->id, ['post_id' => $post->id]);
+        $auth->notifications()->attach($user->id,[
+            'post_id' => $post->id,
+            'content' => 'unban',
+            'created_at' => now(),
+        ]);
         return redirect('/subreddit/'.$subreddit->id);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Subreddit;
 use App\Models\User;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Http\Request;
@@ -36,6 +37,17 @@ class FriendController extends Controller
         if($user->id === auth()->user()->id){
             $editselected = "";
             return view('other.settings',get_defined_vars());
+        }
+        return back();
+    }
+    public function subsettings(Subreddit $subreddit){
+        if($subreddit->creator_id === auth()->user()->id){
+            if(DB::table('modrequest')->where('subreddit_id',$subreddit->id)->exists()){
+                $requests = DB::table('modrequest')->where('subreddit_id',$subreddit->id)->get();
+                $userIds = collect($requests)->pluck('mod_id');
+                $requestedmods = User::whereIn('id',$userIds)->get();
+            }   
+            return view('other.subsettings',get_defined_vars());
         }
         return back();
     }
@@ -153,5 +165,5 @@ class FriendController extends Controller
             return response()->json(['success' => false]);
         }
     }
-    
+
 }
