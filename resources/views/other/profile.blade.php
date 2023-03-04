@@ -28,7 +28,10 @@
             <img src="{{url('images/resources/profile-image.jpg')}}" alt="">
             @if(auth()->user()->id != $user->id)
             <ul class="profile-controls">
-                @if(!$user->isFriend())
+
+                @if($user->isRequested(auth()->user()))
+                    <li title="Friend request sent"><i class="fa fa-check"></i></li>
+                @elseif(!$user->isFriend())
                 <form action="/add/{{$user->id}}" method="post">
                     @csrf
                     <button type="submit" id="usersend" style="display:none"></button>

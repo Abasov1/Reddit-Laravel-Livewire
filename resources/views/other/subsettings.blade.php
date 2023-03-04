@@ -66,12 +66,12 @@
                                                                     </div>
                                                                 </li>
                                                             @endforeach
-                                                            @isset($requestedmods)
-                                                                @foreach ($requestedmods as $moderator)
+                                                            @isset($requestedmodss)
+                                                                @foreach ($requestedmodss as $moderator)
                                                                     <li  style="margin-bottom:15px;">
                                                                         <figure><img src="{{asset('storage/'.$moderator->image)}}" width="30px" alt=""></figure>
                                                                         <div class="friend-meta">
-                                                                            <h4><a href="time-line.html" title="">{{$moderator->name}}</a></h4>
+                                                                            <h4><a href="/homes/{{$moderator->id}}" title="">{{$moderator->name}}</a></h4>
                                                                             @if($moderator->isCreator($subreddit))
                                                                             <a href="#"> Creator of this subreddit</a>
                                                                             @else

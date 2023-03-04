@@ -42,11 +42,11 @@ class FriendController extends Controller
     }
     public function subsettings(Subreddit $subreddit){
         if($subreddit->creator_id === auth()->user()->id){
-            if(DB::table('modrequest')->where('subreddit_id',$subreddit->id)->exists()){
-                $requests = DB::table('modrequest')->where('subreddit_id',$subreddit->id)->get();
-                $userIds = collect($requests)->pluck('mod_id');
-                $requestedmods = User::whereIn('id',$userIds)->get();
-            }   
+            if(DB::table('notifications')->where('subreddit_id',$subreddit->id)->exists()){
+                $requests = DB::table('notifications')->where('subreddit_id',$subreddit->id)->get();
+                $userIds = collect($requests)->pluck('duduk_id');
+                $requestedmodss = User::whereIn('id',$userIds)->get();
+            }
             return view('other.subsettings',get_defined_vars());
         }
         return back();
@@ -54,34 +54,52 @@ class FriendController extends Controller
     public function add(User $user){
         $auser = auth()->user();
         if(!$user->isFriend()){
-        if(DB::table('friendrequest')->where('user_id',$user->id)->where('friend_id',$auser->id)->exists()){
-            $user->friendRequest()->detach($auser);
+        if($auser->isRequested($user)){
+            $friendrequest = DB::table('notifications')->where(['user_id'=>$user->id,'duduk_id'=>$auser->id]);
+            $friendrequest->delete();
+            $auser->sendNotification($user->id,null,null,null,null,'friendrequestaccepted');
             $user->friends()->attach($auser, ['created_at' => now(), 'updated_at' => now()]);
             $auser->friends()->attach($user, ['created_at' => now(), 'updated_at' => now()]);
-            return back();
+        }elseif(!$user->isRequested($auser)){
+            auth()->user()->sendNotification($user->id,null,null,null,null,'friendrequest');
         }
-        if(!DB::table('friendrequest')->where('user_id',$auser->id)->where('friend_id',$user->id)->exists()){
-            $auser->friendRequest()->attach($user);
-            return back();
-        }
+
+        // if(DB::table('friendrequest')->where('user_id',$user->id)->where('friend_id',$auser->id)->exists()){
+        //     $user->friendRequest()->detach($auser);
+        //     $user->friends()->attach($auser, ['created_at' => now(), 'updated_at' => now()]);
+        //     $auser->friends()->attach($user, ['created_at' => now(), 'updated_at' => now()]);
+        //     return back();
+        // }
+        // if(!DB::table('friendrequest')->where('user_id',$auser->id)->where('friend_id',$user->id)->exists()){
+        //     $auser->friendRequest()->attach($user);
+        //     return back();
+        // }
     }
         return back();
     }
     public function unadd(User $user){
         $auser = auth()->user();
-
-        if($user->friendRequest()->where('friend_id',$auser->id)->exists()){
-            $user->friendRequest()->detach($auser);
+        $friendrequest = DB::table('notifications')->where(['user_id'=>$user->id,'duduk_id'=>$auser->id]);
+        if($friendrequest->exists()){
+            $friendrequest->delete();
+            $auser->sendNotification($user->id,null,null,null,null,'friendrequestaccepted');
             $user->friends()->attach($auser, ['created_at' => now(), 'updated_at' => now()]);
             $auser->friends()->attach($user, ['created_at' => now(), 'updated_at' => now()]);
-            return back();
         }
+        // if($user->friendRequest()->where('friend_id',$auser->id)->exists()){
+        //     $user->friendRequest()->detach($auser);
+        //     $user->friends()->attach($auser, ['created_at' => now(), 'updated_at' => now()]);
+        //     $auser->friends()->attach($user, ['created_at' => now(), 'updated_at' => now()]);
+        //     return back();
+        // }
         return back();
     }
     public function ignore(User $user){
         $auser = auth()->user();
-        if($user->friendRequest()->where('friend_id',$auser->id)->exists()){
-            $user->friendRequest()->detach($auser);
+        $friendrequest = DB::table('notifications')->where(['user_id'=>$user->id,'duduk_id'=>$auser->id]);
+        if($friendrequest->exists()){
+            $friendrequest->delete();
+            $auser->sendNotification($user->id,null,null,null,null,'friendrequestdenied');
         }
         return back();
     }
@@ -90,6 +108,7 @@ class FriendController extends Controller
         if($auser->friends()->where('friend_id',$user->id)->exists()){
             $auser->friends()->detach($user);
             $user->friends()->detach($auser);
+            $auser->sendNotification($user->id,null,null,null,null,'friendshipended');
         }
         return back();
     }

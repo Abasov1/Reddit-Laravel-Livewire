@@ -21,18 +21,17 @@ class LikeController extends Controller
 
         ]);
         if(!$request->user()->notifications()->where(['duduk_id' => $post->user->id,'post_id' => $post->id,'content' => 'likepost'])->exists()){
-        $request->user()->notifications()->attach($post->user->id,[
-            'post_id' => $post->id,
-            'content' => 'likepost',
-            'created_at' => now(),
-        ]);
+        $request->user()->sendNotification($post->user->id,$post->id,null,null,null,'likepost');
     }
         return response()->json(['success' => true,'message' => $post->user->id]);
         return back();
         /* dd($user); */
     }
-    public function commentstore(Comment $comment,Request $request){
-        // return $comment;
+    public function commentstore(Comment $comment,Post $post,Request $request){
+        if(!auth()->user()->notifications()->where(['duduk_id' => $comment->user->id,'comment_id' => $comment->id,'content' => 'likecomment'])->exists()){
+            auth()->user()->sendNotification($comment->user->id,$post->id,$comment->id,null,null,'likecomment');
+        }
+
         if($comment->likedBy($request->user())){
             $comment->likes()->where('user_id',$request->user()->id)->delete() ;
             return back();
@@ -40,13 +39,8 @@ class LikeController extends Controller
         $comment->likes()->create([
             'user_id' => $request->user()->id,
         ]);
-        if(!auth()->user()->notifications()->where(['duduk_id' => $comment->user->id,'comment_id' => $comment->id,'content' => 'likecomment'])->exists()){
-            auth()->user()->notifications()->attach($comment->user->id,[
-                'comment_id' => $comment->id,
-                'content' => 'likecomment',
-                'created_at' => now(),
-            ]);
-        }
+
+
         return back();
         /* dd($user); */
     }

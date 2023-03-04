@@ -20,7 +20,7 @@
                                     <button id="{{('postsil'.$post->id)}}" type="submit" style="display:none;">Delete</button>
                                     <li><label for="{{('postsil'.$post->id)}}"><i class="fa fa-trash-o"></i>Delete Post</label></li>
                                 </form>
-                                
+
                                 <li><a href="/post/{{$post->id}}/edit"><i class="fa fa-pencil-square-o"></i>Edit Post</a></li>
                             @elsecan('moddelete', $post->subreddit)
                                     <form action="/post/{{$post->id}}" method="post">
@@ -73,7 +73,7 @@
                             @endif
                             @if ($post->user->isFriend())
                                 <li>Message {{$post->user->name}}</li>
-                            @elseif($post->user->isRequested())
+                            @elseif($post->user->isRequested(auth()->user()))
                                 <li>Friend request sent</li>
                             @elseif($post->user->id === auth()->user()->id)
                                 <li>View your profile</li>
@@ -327,7 +327,7 @@
                         <label for="agali"  id="{{'agali'.$comment->id}}" style="margin-right:10px"><i class="fa fa-reply"></i></label>
                         <button style="display:none" title="Reply"></button>
                         <label for="{{'ilk'.$comment->id}}" style=" @if($comment->likedBy(auth()->user()))color:red; @endif"><i class="fa fa-heart"></i><span style="margin-left:5px;">{{$comment->likes->count()}}</span></label>
-                            <form action="/lik/{{$comment->id}}" method="post">
+                            <form action="/lik/{{$comment->id}}/{{$post->id}}" method="post">
                                 @csrf
                                 <button type="submit" id="{{'ilk'.$comment->id}}" style="display:none">asd</button>
                             </form>

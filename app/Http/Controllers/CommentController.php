@@ -19,12 +19,7 @@ class CommentController extends Controller
             'post_id' => $post->id,
             'body' => $request->body,
         ]);
-        auth()->user()->notifications()->attach($post->user->id,[
-            'post_id' => $post->id,
-            'comment_id' => $comment->id,
-            'content' => 'postcomment',
-            'created_at' => now(),
-        ]);
+        auth()->user()->sendNotification($post->user->id,$post->id,$comment->id,null,null,'postcomment');
     }
         return back();
     }
@@ -38,15 +33,9 @@ class CommentController extends Controller
             'comment_id' => $comment->id,
             'body' => $request->body,
         ]);
-            auth()->user()->notifications()->attach($comment->user->id,[
-                'post_id' => $post->id,
-                'comment_id' => $comment->id,
-                'subcomment_id' => $subcomment->id,
-                'content' => 'commentcomment',
-                'created_at' => now(),
-            ]);
+            auth()->user()->sendNotification($comment->user->id,$post->id,$comment->id,$subcomment->id,null,'commentcomment');
         }
-    
+
         return back();
     }
     public function destroy(Comment $comment,Subreddit $subreddit)

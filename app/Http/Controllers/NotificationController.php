@@ -28,13 +28,13 @@ class NotificationController extends Controller
                  $request->requestdate = Carbon::parse($requests->where('user_id',$request->user->id)->where('subreddit_id',$request->subreddit->id)->first()->created_at);
              }
 
-            $notifications = DB::table('notifications')->where('duduk_id',$user->id)->get();
+            $notifications = DB::table('notifications')->where('duduk_id',$user->id)->latest()->get();
             $userIds = collect($notifications)->pluck('user_id');
             $postIds = collect($notifications)->pluck('post_id');
             $commentIds = collect($notifications)->pluck('comment_id');
             $subcommentIds = collect($notifications)->pluck('subcomment_id');
             $subredditIds = collect($notifications)->pluck('subreddit_id');
-            
+
             $nusers = User::whereIn('id',$userIds)->get();
             $nposts = Post::whereIn('id',$postIds)->get();
             $ncomments = Comment::whereIn('id',$commentIds)->get();
@@ -55,9 +55,9 @@ class NotificationController extends Controller
     public function takemodrequest(User $user,Subreddit $subreddit){
         $this->authorize('subredditdelete',$subreddit);
         $auser = auth()->user();
-        $auser->modRequest()->detach($user,['subreddit_id'=>$subreddit->id]);
-            $requests = DB::table('modrequest')->where('subreddit_id',$subreddit->id)->get();
-            $userIds = collect($requests)->pluck('mod_id');
+            DB::table('notifications')->where(['user_id'=>$auser->id,'duduk_id'=>$user->id,'subreddit_id'=>$subreddit->id])->delete();
+            $requests = DB::table('notifications')->where('content','modrequest')->where('subreddit_id',$subreddit->id)->get();
+            $userIds = collect($requests)->pluck('duduk_id');
             $requestedmodss = User::whereIn('id',$userIds)->get();
 
         return response()->json([
@@ -85,10 +85,9 @@ class NotificationController extends Controller
             'success' => true,
         ]);
     }
-    public function accept(User $user,$mod,Subreddit $subreddit){
+    public function acceptmodrequest(User $user,$mod,Subreddit $subreddit){
         $auth = User::find($mod);
-
-                DB::table('modrequest')->where('user_id',$user->id)->where('mod_id',$auth->id)->where('subreddit_id',$subreddit->id)->delete();
+                DB::table('notifications')->where(['user_id'=>$user->id,'duduk_id'=>$auth->id,'subreddit_id'=>$subreddit->id,'content'=>'modrequest'])->delete();
                 $auth->subredditss()->attach($subreddit->id, ['role_id'=> 2]);
                 return response()->json([
                 'success' => true,

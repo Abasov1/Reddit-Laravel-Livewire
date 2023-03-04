@@ -136,7 +136,7 @@
                             @endif
                             @if ($post->user->isFriend())
                                 <li>Message {{$post->user->name}}</li>
-                            @elseif($post->user->isRequested())
+                            @elseif($post->user->isRequested(auth()->user()))
                                 <li>Friend request sent</li>
                             @elseif($post->user->id === auth()->user()->id)
                                 <li>View your profile</li>

@@ -263,39 +263,43 @@
 			<ul class="setting-area">
 				<li><a href="/homes" title="Home"><i class="fa fa-home"></i></a></li>
 				<li>
-					<a href="#" title="Friend Requests" data-ripple="">
-						<i class="fa fa-user">
-                            </i><em class="bg-red" @isset($rusers) style="display:block" @else style="display:none" @endisset>
-                                    @isset($rusers)
-                                        {{$rusers->count()}}
-                                    @endisset
+					<a href="#" title="Friend Requests" data-ripple="" id="friendrequestcount">
+						<i class="fa fa-user"></i>
+                            @php
+                                $frrequest = auth()->user()->checkfriendrequest();
+                            @endphp
+                            @if($frrequest)
+                            <em class="bg-red">
+                                        {{$frrequest['count']}}
                                 </em>
+                                @endisset
 					</a>
-					<div class="dropdowns">
-						<span>@isset($rusers) {{$rusers->count()}} new request @endisset</span>
+					<div class="dropdowns" id="frienddropdown">
+						<span>@if($frrequest) {{$frrequest['count']}} new request @endisset</span>
 						<ul class="drops-menu">
-                            @isset($rusers)
-                                @foreach ($rusers as $i=>$user)
+                            @if($frrequest)
+                                @foreach ($frrequest['requests'] as $i=>$friend)
                                     <li>
                                         <div>
                                             <div class="comet-avatar user-image-container">
-                                                <img src="{{asset('storage/'.$user->image)}}" alt="">
+                                                <img src="{{asset('storage/'.$friend->user->image)}}" alt="">
                                             </div>
                                             <div class="mesg-meta">
-                                                <h6><a href="#" title="">{{$user->name}}</a></h6>
-                                                <span>Want to be friend</span>
+                                                <h6><a href="#" title="">{{$friend->user->name}}</a></h6>
+                                                <span>{{$friend->date->diffForHumans()}}</span>
                                                 <i></i>
                                             </div>
                                             <div class="add-del-friends">
-                                                <form action="/unadd/{{$user->id}}" method="post" >
+                                                <form action="/unadd/{{$friend->user->id}}" method="post" >
                                                     @csrf
-                                                    <button type="submit" style="display:none;" id="{{('unadd'.$user->id)}}"></button>
-                                                    <label title="Accept friend request" for="{{('unadd'.$user->id)}}"><i class="fa fa-reply"></i></label>
+                                                    <button type="submit" style="display:none;" id="{{('unadd'.$friend->user->id)}}"></button>
+                                                    <label title="Accept" for="{{('unadd'.$friend->user->id)}}"><i class="fa fa-check"></i></label>
                                                 </form>
-                                                <form action="/ignore/{{$user->id}}" method="post" >
+
+                                                <form action="/ignore/{{$friend->user->id}}" method="post" >
                                                     @csrf
-                                                    <button type="submit" style="display:none;" id="{{('ignore'.$user->id)}}"></button>
-                                                    <label title="Ignore" for="{{('ignore'.$user->id)}}"><i class="fa fa-trash"></i></label>
+                                                    <button type="submit" style="display:none;" id="{{('ignore'.$friend->user->id)}}"></button>
+                                                    <label title="Ignore" for="{{('ignore'.$friend->user->id)}}"><i class="fa fa-trash"></i></label>
                                                 </form>
                                             </div>
                                         </div>
@@ -306,7 +310,7 @@
                                     <h6><a href="#" title="">You dont have any friend requests</a></h6>
                                     <i></i>
                                 </div>
-                            @endisset
+                            @endif
 						</ul>
 					</div>
 				</li>
@@ -315,34 +319,106 @@
 						<i class="fa fa-bell"></i>
                             @php
                                 $usar = auth()->user();
-                                $check = $usar->checkrequest();
+                                $check = $usar->checkNotifications();
                             @endphp
-                            @if($usar->checkrequest())
-                            <em class="bg-purple">
-                                {{$check['count']}}
+                            @if($check)
+                                @if($check['count'] != '0')
+                                <em class="bg-purple">
+                                    @if($check['count'] > 10)10+@else{{$check['count']}}@endif
                                 </em>
+                                @endif
                             @endif
 
 					</a>
 					<div class="dropdowns">
-						<span>4 New Notifications <a href="#" title="">Mark all as read</a></span>
+						<span>@if ($check) {{$check['count']}} New Notifications  @endif</span>
 						<ul class="drops-menu">
-                            @if($check)
-                                @foreach ($check['requests'] as $request)
+                            @if(!$check['notifications']->isEmpty())
+                                @foreach ($check['notifications'] as $notification)
+                                @if($loop->iteration <= 10)
+                                @php
+                                if ($notification->content === 'likepost'){
+                                    $text = ' Liked your ';
+                                    $href = '/post/'.$notification->post->id;
+                                    $linktext =  'Post';
+                                }
+                                elseif ($notification->content === 'likecomment'){
+                                    $text = ' Liked your comment in this ';
+                                    $href = '/post/'.$notification->post->id;
+                                    $linktext = 'Post';
+                                }
+                                elseif ($notification->content === 'postcomment'){
+                                    $text = ' Commented: "'.$notification->comment->body.'" on your ';
+                                    $href = '/post/'.$notification->post->id;
+                                    $linktext = 'Post';
+                                }
+                                elseif ($notification->content === 'commentcomment'){
+                                    $text = ' Replied: "'. $notification->subcomment->body .'" to your comment on this ';
+                                    $href = '/post/'.$notification->post->id;
+                                    $linktext = 'Post';
+                                }
+                                elseif ($notification->content === 'ban'){
+                                    $text = ' Banned you from ';
+                                    $href = '/post/'.$notification->post->id;
+                                    $linktext = $notification->post->subreddit->name;
+                                }
+                                elseif ($notification->content === 'unban'){
+                                    $text = ' Unbanned you from ';
+                                    $href = '/subreddit/'.$notification->post->subreddit->id;
+                                    $linktext = $notification->post->subreddit->name;
+                                }
+                                elseif ($notification->content === 'modpostdelete'){
+                                    $text = ' Deleted your post from ';
+                                    $href = '/subreddit/'.$notification->subreddit->id;
+                                    $linktext = $notification->subreddit->name;
+                                }
+                                elseif ($notification->content === 'friendrequest'){
+                                    $text = ' Want to be friend ';
+                                    $href = '/homes/'.$notification->user->id   ;
+                                    $linktext = '';
+                                }
+                                elseif ($notification->content === 'friendrequestaccepted'){
+                                    $text = ' Accepted your friend request ';
+                                    $href = '/homes/'.$notification->user->id   ;
+                                    $linktext = '';
+                                }
+                                elseif ($notification->content === 'friendrequestdenied'){
+                                    $text = ' Denied your friend request ';
+                                    $href = '/homes/'.$notification->user->id   ;
+                                    $linktext = '';
+                                }
+                                elseif ($notification->content === 'friendshipended'){
+                                    $text = ' Stopped being friend with you  ';
+                                    $href = '/homes/'.$notification->user->id;
+                                    $linktext = '';
+                                }
+                                elseif ($notification->content === 'friendshipended'){
+                                    $text = ' Want you to be mod on  ';
+                                    $href = '/subreddit/'.$notification->subreddit->id;
+                                    $linktext = $notification->subreddit->name;
+                                }
+                                elseif ($notification->content === 'modrequest'){
+                                    $text = ' Want you to be mod on ';
+                                    $href = '/subreddit/'.$notification->subreddit->id;
+                                    $linktext = $notification->subreddit->name;
+                                }
+                            @endphp
                                     <li>
-                                    <a href="notifications.html" title="">
+                                    <a href="{{$href}}" title="">
                                         <figure>
-                                            <img src="{{asset('storage/'.$request->user->image)}}" width="30px" height="30px" alt="">
+                                            <img src="{{asset('storage/'.$notification->user->image)}}" width="30px" height="30px" alt="">
                                             <span class="status f-online"></span>
                                         </figure>
                                         <div class="mesg-meta">
-                                            <h6>{{$request->user->name}}</h6>
-                                            <span>Want you to be mod on {{$request->subreddit->name}}
-                                            </span>
-                                            <i>{{$request->requestdate->diffForHumans()}}</i>
+                                            <h6>{{$notification->user->name}}</h6>
+                                            <span>{{$text}} {{$linktext}}</span>
+                                            <i>{{$notification->date->diffForHumans()}}</i>
                                         </div>
                                     </a>
                                 </li>
+                                @else
+                                @break
+                                @endif
                                 @endforeach
                             @endif
 
@@ -777,10 +853,10 @@
                 }
             });
         }
-        function acceptRequest(userid,mod,subid){
+        function acceptModRequest(userid,mod,subid){
             $.ajax({
                 type: 'POST',
-                url: '/acceptnotification/'+userid+'/'+mod+'/'+subid,
+                url: '/acceptmodrequest/'+userid+'/'+mod+'/'+subid,
                 success: function(data) {
                     if (data.success) {
 
@@ -977,7 +1053,19 @@
 });
     $('#modrequestlistspan').on('click',function(){
         $('#modrequestlist').css('display','block');
-    })
+        $('#notificationlist').css('display','none');
+        $('#friendrequestlist').css('display','none');
+    });
+    $('#notificationlistspan').on('click',function(){
+        $('#modrequestlist').css('display','none');
+        $('#notificationlist').css('display','block');
+        $('#friendrequestlist').css('display','none');
+    });
+    $('#friendrequestlistspan').on('click',function(){
+        $('#modrequestlist').css('display','none');
+        $('#notificationlist').css('display','none');
+        $('#friendrequestlist').css('display','block');
+    });
     $('#trigger').click(function(){
         $('#yourmother').click();
     });

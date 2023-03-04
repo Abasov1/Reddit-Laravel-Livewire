@@ -37,7 +37,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('/homes', HomeController::class);
     Route::resource('/post', PostController::class);
     Route::post('/like/{post}',[LikeController::class,'store']);
-    Route::post('/lik/{comment}',[LikeController::class,'commentstore']);
+    Route::post('/lik/{comment}/{post}',[LikeController::class,'commentstore']);
 
     Route::post('/comment/{subreddit}',[CommentController::class,'store']);
     Route::post('/commentt/{comment}/{subreddit}/{post}',[CommentController::class,'commentstore']);
@@ -57,7 +57,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/notifications/{user}',[NotificationController::class,'index']);
     Route::post('/removenotification/{user}/{subreddit}',[NotificationController::class,'remove']);
     Route::post('/deletenotification/{id}',[NotificationController::class,'removenotification']);
-    Route::post('/acceptnotification/{user}/{mod}/{subreddit}',[NotificationController::class,'accept']);
+    Route::post('/acceptmodrequest/{user}/{mod}/{subreddit}',[NotificationController::class,'acceptmodrequest']);
 
     Route::post('/ban/{post}',[JoinController::class,'ban']);
     Route::post('/unban/{user}/{subreddit}',[JoinController::class,'unban']);

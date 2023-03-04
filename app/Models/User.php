@@ -98,6 +98,17 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(User::class,'notifications','user_id','duduk_id')->withPivot('post_id','comment_id','subcomment_id','subreddit_id','content');
     }
+    public function sendNotification($userId,$postId,$commentId,$subcommentId,$subredditId,$content){
+
+        $this->notifications()->attach($userId,[
+            'post_id' => $postId,
+            'comment_id' => $commentId,
+            'subcomment_id' => $subcommentId,
+            'subreddit_id' => $subredditId,
+            'content' => $content,
+            'created_at' => now(),
+        ]);
+    }
     public function comments(){
         return $this->hasMany(Comment::class);
     }
@@ -162,8 +173,8 @@ class User extends Authenticatable
     public function addedAt(User $user){
         return Carbon::parse(DB::table('user_user')->where('user_id',$user->id)->where('friend_id',$this->id)->first()->created_at)->diffForHumans();
     }
-    public function isRequested(){
-        return DB::table('friendrequest')->where('user_id',auth()->user()->id)->where('friend_id',$this->id)->exists();
+    public function isRequested(User $user){
+        return DB::table('notifications')->where(['user_id'=>$user->id,'duduk_id'=>$this->id,'content'=>'friendrequest'])->exists();
     }
     public function isFriend(){
         return DB::table('user_user')->where('user_id',auth()->user()->id)->where('friend_id',$this->id)->exists();
@@ -198,4 +209,56 @@ class User extends Authenticatable
         ];
     }
 }
+    public function checkfriendrequest(){
+        if($this->id != auth()->user()->id){
+            return back();
+        }
+        $requests = DB::table('notifications')->where('duduk_id',$this->id)->where('content','friendrequest')->get();
+        $count = count($requests);
+        if($requests->isEmpty()){
+            return false;
+        }else{
+        $userIds = collect($requests)->pluck('user_id');
+        $qrusers = User::whereIn('id',$userIds)->get();
+
+        foreach($requests as $request){
+            $request->user = $qrusers->where('id',$request->user_id)->first();
+            $request->date = Carbon::parse($requests->where('user_id',$request->user->id)->first()->created_at);
+        }
+
+        return [
+            'requests' =>$requests,
+            'count' => $count
+        ];
+    }
+}
+    public function checkNotifications(){
+        $notifications = DB::table('notifications')->where('duduk_id',$this->id)->latest()->get();
+        $count = count($notifications);
+            $userIds = collect($notifications)->pluck('user_id');
+            $postIds = collect($notifications)->pluck('post_id');
+            $commentIds = collect($notifications)->pluck('comment_id');
+            $subcommentIds = collect($notifications)->pluck('subcomment_id');
+            $subredditIds = collect($notifications)->pluck('subreddit_id');
+
+            $nusers = User::whereIn('id',$userIds)->get();
+            $nposts = Post::whereIn('id',$postIds)->get();
+            $ncomments = Comment::whereIn('id',$commentIds)->get();
+            $nsubcomments = Comment::whereIn('id',$subcommentIds)->get();
+            $nsubreddits = Subreddit::whereIn('id',$subredditIds)->get();
+
+            foreach($notifications as $notification){
+                $notification->user = $nusers->where('id',$notification->user_id)->first();
+                $notification->post = $nposts->where('id',$notification->post_id)->first();
+                $notification->comment = $ncomments->where('id',$notification->comment_id)->first();
+                $notification->subcomment = $nsubcomments->where('id',$notification->subcomment_id)->first();
+                $notification->subreddit = $nsubreddits->where('id',$notification->subreddit_id)->first();
+                $notification->date = Carbon::parse($notification->created_at);
+
+            }
+        return [
+            'notifications' => $notifications,
+            'count' => $count
+        ];
+    }
 }

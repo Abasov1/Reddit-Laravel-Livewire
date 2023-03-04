@@ -67,8 +67,8 @@ class JoinController extends Controller
         if($user->isMod($subreddit)){
         $role = Role::where('name', 'moderator')->first();
         $user->subredditss()->detach($subreddit->id, ['role_id' => $role->id]);
-        $requests = DB::table('modrequest')->where('subreddit_id',$subreddit->id)->get();
-        $userIds = collect($requests)->pluck('mod_id');
+        $requests = DB::table('notifications')->where('content','modrequest')->where('subreddit_id',$subreddit->id)->get();
+        $userIds = collect($requests)->pluck('duduk_id');
         $requestedmodss = User::whereIn('id',$userIds)->get();
         $moderators= $subreddit->moderators;
             if($request->ajax()){
@@ -96,7 +96,10 @@ class JoinController extends Controller
                 $finduser = User::where('name',$name)->first();
                 // $role = Role::where('name', 'moderator')->first();
                 // $finduser->subredditss()->attach($subreddit->id, ['role_id' => $role->id]);
-                $auser->modRequest()->attach($finduser, ['subreddit_id' => $subreddit->id,'created_at' => now(), 'updated_at' => now()]);
+                // $auser->modRequest()->attach($finduser, ['subreddit_id' => $subreddit->id,'created_at' => now(), 'updated_at' => now()]);
+                if(!DB::table('notifications')->where(['user_id'=>$auser->id,'duduk_id'=>$finduser->id,'subreddit_id'=>$subreddit->id])->exists()){
+                    $auser->sendNotification($finduser->id,null,null,null,$subreddit->id,'modrequest');
+                }
                 $message = '3';
 
                 return response()->json([

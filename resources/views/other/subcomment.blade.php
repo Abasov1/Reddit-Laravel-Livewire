@@ -82,7 +82,7 @@
                 <label for="agali"  id="{{'agal'.$subcomment->id}}" style="margin-right:10px"><i class="fa fa-reply"></i></label>
                         <button style="display:none" title="Reply"></button>
                 <label for="{{'ilk'.$subcomment->id}}" style=" @if($subcomment->likedBy(auth()->user()))color:red; @endif"><i class="fa fa-heart"></i><span style="margin-left:5px;">{{$subcomment->likes->count()}}</span></label>
-                    <form action="/lik/{{$subcomment->id}}" method="post">
+                    <form action="/lik/{{$subcomment->id}}/{{$post->id}}" method="post">
                         @csrf
                         <button type="submit" id="{{'ilk'.$subcomment->id}}" style="display:none">asd</button>
                     </form>
