@@ -51,6 +51,21 @@ Start Date:  8/August/19
 /*===============
 ***General Styling
 ===============*/
+.addedform textarea {
+    background: rgb(40,46,62) none repeat scroll 0 0;
+    border-color: transparent;
+    border-radius: 5px;
+    color: inherit;
+    font-size: 13px;
+    height: 80px;
+    line-height: 16px;
+}
+.addedform textarea:focus{
+	border-color: rgba(0,0,0,.1);
+}
+.addedform{
+    display:none    ;
+}
 html,body{
 	font-family: "Roboto", "Segoe Ui";
 }
@@ -2707,9 +2722,8 @@ li.post-comment .comet-avatar {
 
 .post-comt-box {
     display: inline-block;
-    padding-left: 15px;
     position: relative;
-    width: 93%;
+    width: 100%;
 }
 
 .post-comt-box form textarea {
@@ -2724,7 +2738,6 @@ li.post-comment .comet-avatar {
 .post-comt-box form textarea:focus{
 	border-color: rgba(0,0,0,.1);
 }
-
 .add-smiles {
     position: absolute;
     right: 10px;

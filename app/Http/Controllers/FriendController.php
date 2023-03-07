@@ -42,8 +42,8 @@ class FriendController extends Controller
     }
     public function subsettings(Subreddit $subreddit){
         if($subreddit->creator_id === auth()->user()->id){
-            if(DB::table('notifications')->where('subreddit_id',$subreddit->id)->exists()){
-                $requests = DB::table('notifications')->where('subreddit_id',$subreddit->id)->get();
+            if(DB::table('notifications')->where(['subreddit_id'=>$subreddit->id,'content'=>'modrequest'])->exists()){
+                $requests = DB::table('notifications')->where(['subreddit_id'=>$subreddit->id,'content'=>'modrequest'])->get();
                 $userIds = collect($requests)->pluck('duduk_id');
                 $requestedmodss = User::whereIn('id',$userIds)->get();
             }
@@ -79,19 +79,13 @@ class FriendController extends Controller
     }
     public function unadd(User $user){
         $auser = auth()->user();
-        $friendrequest = DB::table('notifications')->where(['user_id'=>$user->id,'duduk_id'=>$auser->id]);
+        $friendrequest = DB::table('notifications')->where(['user_id'=>$user->id,'duduk_id'=>$auser->id,'content'=>'friendrequest']);
         if($friendrequest->exists()){
             $friendrequest->delete();
             $auser->sendNotification($user->id,null,null,null,null,'friendrequestaccepted');
             $user->friends()->attach($auser, ['created_at' => now(), 'updated_at' => now()]);
             $auser->friends()->attach($user, ['created_at' => now(), 'updated_at' => now()]);
         }
-        // if($user->friendRequest()->where('friend_id',$auser->id)->exists()){
-        //     $user->friendRequest()->detach($auser);
-        //     $user->friends()->attach($auser, ['created_at' => now(), 'updated_at' => now()]);
-        //     $auser->friends()->attach($user, ['created_at' => now(), 'updated_at' => now()]);
-        //     return back();
-        // }
         return back();
     }
     public function ignore(User $user){

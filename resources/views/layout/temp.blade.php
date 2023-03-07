@@ -23,6 +23,7 @@
     <link rel="stylesheet" href="css/color.css">
     <link rel="stylesheet" href="css/responsive.css">
     <link rel="stylesheet" href="css/dark-theme.css"> --}}
+    @livewireStyles
 
 </head>
 <body>
@@ -333,94 +334,7 @@
 					<div class="dropdowns">
 						<span>@if ($check) {{$check['count']}} New Notifications  @endif</span>
 						<ul class="drops-menu">
-                            @if(!$check['notifications']->isEmpty())
-                                @foreach ($check['notifications'] as $notification)
-                                @if($loop->iteration <= 10)
-                                @php
-                                if ($notification->content === 'likepost'){
-                                    $text = ' Liked your ';
-                                    $href = '/post/'.$notification->post->id;
-                                    $linktext =  'Post';
-                                }
-                                elseif ($notification->content === 'likecomment'){
-                                    $text = ' Liked your comment in this ';
-                                    $href = '/post/'.$notification->post->id;
-                                    $linktext = 'Post';
-                                }
-                                elseif ($notification->content === 'postcomment'){
-                                    $text = ' Commented: "'.$notification->comment->body.'" on your ';
-                                    $href = '/post/'.$notification->post->id;
-                                    $linktext = 'Post';
-                                }
-                                elseif ($notification->content === 'commentcomment'){
-                                    $text = ' Replied: "'. $notification->subcomment->body .'" to your comment on this ';
-                                    $href = '/post/'.$notification->post->id;
-                                    $linktext = 'Post';
-                                }
-                                elseif ($notification->content === 'ban'){
-                                    $text = ' Banned you from ';
-                                    $href = '/post/'.$notification->post->id;
-                                    $linktext = $notification->post->subreddit->name;
-                                }
-                                elseif ($notification->content === 'unban'){
-                                    $text = ' Unbanned you from ';
-                                    $href = '/subreddit/'.$notification->post->subreddit->id;
-                                    $linktext = $notification->post->subreddit->name;
-                                }
-                                elseif ($notification->content === 'modpostdelete'){
-                                    $text = ' Deleted your post from ';
-                                    $href = '/subreddit/'.$notification->subreddit->id;
-                                    $linktext = $notification->subreddit->name;
-                                }
-                                elseif ($notification->content === 'friendrequest'){
-                                    $text = ' Want to be friend ';
-                                    $href = '/homes/'.$notification->user->id   ;
-                                    $linktext = '';
-                                }
-                                elseif ($notification->content === 'friendrequestaccepted'){
-                                    $text = ' Accepted your friend request ';
-                                    $href = '/homes/'.$notification->user->id   ;
-                                    $linktext = '';
-                                }
-                                elseif ($notification->content === 'friendrequestdenied'){
-                                    $text = ' Denied your friend request ';
-                                    $href = '/homes/'.$notification->user->id   ;
-                                    $linktext = '';
-                                }
-                                elseif ($notification->content === 'friendshipended'){
-                                    $text = ' Stopped being friend with you  ';
-                                    $href = '/homes/'.$notification->user->id;
-                                    $linktext = '';
-                                }
-                                elseif ($notification->content === 'friendshipended'){
-                                    $text = ' Want you to be mod on  ';
-                                    $href = '/subreddit/'.$notification->subreddit->id;
-                                    $linktext = $notification->subreddit->name;
-                                }
-                                elseif ($notification->content === 'modrequest'){
-                                    $text = ' Want you to be mod on ';
-                                    $href = '/subreddit/'.$notification->subreddit->id;
-                                    $linktext = $notification->subreddit->name;
-                                }
-                            @endphp
-                                    <li>
-                                    <a href="{{$href}}" title="">
-                                        <figure>
-                                            <img src="{{asset('storage/'.$notification->user->image)}}" width="30px" height="30px" alt="">
-                                            <span class="status f-online"></span>
-                                        </figure>
-                                        <div class="mesg-meta">
-                                            <h6>{{$notification->user->name}}</h6>
-                                            <span>{{$text}} {{$linktext}}</span>
-                                            <i>{{$notification->date->diffForHumans()}}</i>
-                                        </div>
-                                    </a>
-                                </li>
-                                @else
-                                @break
-                                @endif
-                                @endforeach
-                            @endif
+                            @include('other.beybala',['includetopnotifications'=>'a'])
 
 						</ul>
 						<a href="/notifications/{{auth()->user()->id}}" title="" class="more-mesg">View All</a>
@@ -756,7 +670,7 @@
 		</div>
 	</div>
 </div>
-
+    @livewireScripts
 	<script src="{{url('js/main.min.js')}}"></script>
 	<script src="{{url('js/jquery-stories.js')}}"></script>
 	<script src="{{url('../../../cdnjs.cloudflare.com/ajax/libs/gsap/1.18.2/TweenMax.min.js')}}"></script>
@@ -797,8 +711,13 @@
     @endforeach
 @endisset
 
-
 <script>
+    $('.goingallup').click(function(){
+        const element = document.getElementById('my-element');
+    if (element) {
+        element.scrollIntoView();
+    }
+    });
     $('#filter-posts').change(function() {
         var url = $(this).val();
         window.location.href = url;
@@ -870,6 +789,73 @@
                 }
             });
         }
+        function acceptFriendRequest(userid){
+            $.ajax({
+                type: 'POST',
+                url: '/unadd/'+userid,
+                success: function(data) {
+                    if (data.success) {
+
+                    }
+                    else {
+
+                    }
+                },
+                error: function() {
+                    // Error handling
+                }
+            });
+        }
+        function addTextArea(commentid,subid,postid,event){
+            var label = $(event.target);
+            label.attr('id','a'+commentid);
+            var labelid = label.attr('id');
+            label.hide();
+            var li = label.closest("li");
+            li.attr('id','b'+commentid);
+            var liid = li.attr('id');
+            var form = '<form action="/commentt/'+commentid+'/'+subid+'/'+postid+'" method="post" style="position:relative;">'+
+                '<textarea name="body" placeholder="Post your comment" style="background: rgb(40,46,62) none repeat scroll 0 0;border-color: transparent;border-radius: 5px;color: inherit;font-size: 13px;height: 80px;line-height: 16px;"></textarea>'+
+                '<button class="post-btn" type="button" onclick="closeTextArea('+labelid+','+liid+');" data-ripple="" style="bottom: 2px;position: absolute;right: 60px;background: none;">Cancel</button>'+
+                '<button class="post-btn" type="submit" data-ripple="" style="bottom: 2px;position: absolute;right: 0;background: none;">Reply</button>'+
+                '</form>';
+                li.append(form);
+
+        }
+        function closeTextArea(labelid,liid){
+                    alert(labelid.html());
+                }
+        function unban(userid,subid){
+            $.ajax({
+                type: 'POST',
+                url: '/unban/'+userid+'/'+subid,
+                success: function(data) {
+                    if (data.success) {
+                        $('#bannedusers-list').empty();
+                        data.bannedusers.forEach(function(banneduser) {
+
+                            var li = '<li style="margin-bottom:15px;">' +
+                                    '<figure><img src="{{asset('storage')}}' + '/' + banneduser.image + '" width="30px" alt=""></figure>' +
+                                    '<div class="friend-meta">' +
+                                    '<h4><a href="/homes/'+banneduser.id+'" title="">' + banneduser.name + '</a></h4>' +
+                                    '<a href="#" onclick="unban(' + banneduser.id + ','+data.subid+');" title="" class="underline">Unban</a>' +
+
+                                    '</div>' +
+                                '</li>';
+
+                        $('#bannedusers-list').append(li);
+
+                        });
+                    }
+                    else {
+
+                    }
+                },
+                error: function() {
+                    // Error handling
+                }
+            });
+        }
         function takemodrole(id,subid){
 
             $.ajax({
@@ -891,7 +877,7 @@
                             var li = '<li style="margin-bottom:15px;">' +
                                     '<figure><img src="{{asset('storage')}}' + '/' + moderator.image + '" width="30px" alt=""></figure>' +
                                     '<div class="friend-meta">' +
-                                    '<h4><a href="time-line.html" title="">' + moderator.name + '</a></h4>' +
+                                    '<h4><a href="/homes/'+moderator.id+'" title="">' + moderator.name + '</a></h4>' +
                                     '<a href="'+href+'" '+method+' title="" class="underline">'+creatorlink+'</a>' +
 
                                     '</div>' +
@@ -904,13 +890,10 @@
                             var di = '<li style="margin-bottom:15px;">' +
                                     '<figure><img src="{{asset('storage')}}' + '/' + moderator.image + '" width="30px" alt=""></figure>' +
                                     '<div class="friend-meta">' +
-                                    '<h4><a href="time-line.html" title="">' + moderator.name + '</a></h4>' +
+                                    '<h4><a href="/homes/'+moderator.id+'" title="">' + moderator.name + '</a></h4>' +
                                     (moderator.is_creator ? '<a href="#"> Creator of this subreddit</a>' :
-                                        '<a href="#" onclick="takemodrequest(' + moderator.id + ','+data.subid+');" title="" class="underline">Take mod Request</a>' +
-                                        '<form action="" method="post" style="display:none;">' +
-                                        '@csrf' +
-                                        '<button type="submit" id="takemodrolebutton' + moderator.id + '"></button>' +
-                                        '</form>') +
+                                        '<a href="#" onclick="takemodrequest(' + moderator.id + ','+data.subid+');" title="" class="underline">Take mod Request</a>'
+                                    ) +
                                     '</div>' +
                                 '</li>';
 
@@ -926,6 +909,7 @@
                 }
             });
         }
+
         function takemodrequest(id,subid){
             // if(confirm('Want to take back mod request')){
             $.ajax({
@@ -947,7 +931,7 @@
                             var li = '<li style="margin-bottom:15px;">' +
                                     '<figure><img src="{{asset('storage')}}' + '/' + moderator.image + '" width="30px" alt=""></figure>' +
                                     '<div class="friend-meta">' +
-                                    '<h4><a href="time-line.html" title="">' + moderator.name + '</a></h4>' +
+                                    '<h4><a href="/homes/'+moderator.id+'" title="">' + moderator.name + '</a></h4>' +
                                     '<a href="'+href+'" '+method+' title="" class="underline">'+creatorlink+'</a>' +
 
                                     '</div>' +
@@ -960,13 +944,10 @@
                             var di = '<li style="margin-bottom:15px;">' +
                                     '<figure><img src="{{asset('storage')}}' + '/' + moderator.image + '" width="30px" alt=""></figure>' +
                                     '<div class="friend-meta">' +
-                                    '<h4><a href="time-line.html" title="">' + moderator.name + '</a></h4>' +
+                                    '<h4><a href="/homes/'+moderator.id+'" title="">' + moderator.name + '</a></h4>' +
                                     (moderator.is_creator ? '<a href="#"> Creator of this subreddit</a>' :
-                                        '<a href="#" onclick="takemodrequest(' + moderator.id + ','+data.subid+');" title="" class="underline">Take mod Request</a>' +
-                                        '<form action="" method="post" style="display:none;">' +
-                                        '@csrf' +
-                                        '<button type="submit" id="takemodrolebutton' + moderator.id + '"></button>' +
-                                        '</form>') +
+                                        '<a href="#" onclick="takemodrequest(' + moderator.id + ','+data.subid+');" title="" class="underline">Take mod Request</a>'
+                                        ) +
                                     '</div>' +
                                 '</li>';
 
@@ -1002,22 +983,27 @@
                 alert('this user doesnt exists');
             }else if(data.message === '2'){
                 alert('this mf is already a mod');
-            }else{
+            }
+            else if(data.message === '2.5'){
+                alert('This user is banned. If you want to give him a moderator role then open this user s ban');
+            }
+            else if(data.message === '2.6'){
+                alert('You already sent a mod request to this user.');
+            }
+            else{
+
             var moderator = data.moderator;
             var li = '<li style="margin-bottom:15px;">' +
                         '<figure><img src="{{asset('storage')}}' + '/' + moderator.image + '" width="30px" alt=""></figure>' +
                         '<div class="friend-meta">' +
-                        '<h4><a href="time-line.html" title="">' + moderator.name + '</a></h4>' +
+                        '<h4><a href="/homes/'+moderator.id+'" title="">' + moderator.name + '</a></h4>' +
                         (moderator.is_creator ? '<a href="#"> Creator of this subreddit</a>' :
-                            '<a href="#" onclick="takemodrequest(' + moderator.id + ','+data.subid+');" title="" class="underline">Mod request sended</a>' +
-                            '<form action="/takerole/' + moderator.id + '/' + data.subreddit_id + '" method="post" style="display:none;">' +
-                            '@csrf' +
-                            '<button type="submit" id="takemodrolebutton' + moderator.id + '"></button>' +
-                            '</form>') +
+                            '<a href="#" onclick="takemodrequest(' + moderator.id + ','+data.subid+');" title="" class="underline">Mod request sended</a>'
+                            ) +
                         '</div>' +
                     '</li>';
             $('#moderator-list').append(li);
-                            }
+        }
 
     }
 
@@ -1032,6 +1018,71 @@
 
   // Close the modal
   $('#myModal').modal('hide');
+}
+function modban(text,id) {
+
+        $.ajax({
+        type: 'POST',
+        url: '/banuser/'+text+'/'+id,
+        success: function(data) {
+        if (data.success) {
+            if(data.message === '1'){
+                alert('this user doesnt exists');
+            }else if(data.message === '2'){
+                alert('this mf is already banned');
+            }else if(data.message === '2.5'){
+                alert('This user is moderator. If you want to ban this user then take this user s role back');
+            }else if(data.message === '2.6'){
+                alert('First you need to remove the mod request');
+            }
+        }
+    }});
+    }
+function banUser(id) {
+        var text = $('#ban-text-input').val();
+        $('#ban-text-input').val('');
+
+        $.ajax({
+        type: 'POST',
+        url: '/banuser/'+text+'/'+id,
+        success: function(data) {
+        if (data.success) {
+            if(data.message === '1'){
+                alert('this user doesnt exists');
+            }else if(data.message === '2'){
+                alert('this mf is already banned');
+            }else if(data.message === '2.5'){
+                alert('This user is moderator. If you want to ban this user then take this user s role back');
+            }else if(data.message === '2.6'){
+                alert('First you need to remove the mod request');
+            }
+            else{
+            var banneduser = data.banneduser;
+            var li = '<li style="margin-bottom:15px;">' +
+                        '<figure><img src="{{asset('storage')}}' + '/' + banneduser.image + '" width="30px" alt=""></figure>' +
+                        '<div class="friend-meta">' +
+                        '<h4><a href="/homes/'+banneduser.id+'" title="">' + banneduser.name + '</a></h4>' +
+                        (banneduser.is_creator ? '<a href="#"> Creator of this subreddit</a>' :
+                            '<a href="#" onclick="unban(' + banneduser.id + ','+data.subid+');" title="" class="underline">Unban</a>'
+                            ) +
+                        '</div>' +
+                    '</li>';
+            $('#bannedusers-list').append(li);
+        }
+
+    }
+
+        else {
+            // Handle error
+        }
+        },
+        error: function() {
+        // Handle error
+        }
+    });
+
+  // Close the modal
+  $('#amyModal').modal('hide');
 }
    $.ajaxSetup({
             headers: {

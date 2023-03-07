@@ -10,6 +10,7 @@ use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\JoinController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\ModController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\RegisterController;
 use Illuminate\Support\Facades\Route;
@@ -48,18 +49,20 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/childedit/{comment}',[CommentController::class,'edit']);
 
     Route::resource('/subreddit',SubredditController::class);
-    Route::post('/giverole/{user}/{subreddit}',[JoinController::class,'givemod']);
-    Route::post('/takerole/{user}/{subreddit}',[JoinController::class,'takemod']);
-    Route::post('/takemodrequest/{user}/{subreddit}',[NotificationController::class,'takemodrequest']);
-    Route::post('/searchmod/{name}/{subreddit}',[JoinController::class,'searchmod']);
+    Route::post('/giverole/{user}/{subreddit}',[ModController::class,'givemod']);
+    Route::post('/takerole/{user}/{subreddit}',[ModController::class,'takemod']);
+    Route::post('/takemodrequest/{user}/{subreddit}',[ModController::class,'takemodrequest']);
+    Route::post('/searchmod/{name}/{subreddit}',[ModController::class,'searchmod']);
     Route::get('/searchmod/{name}',[JoinController::class,'searchmodik']);
 
     Route::get('/notifications/{user}',[NotificationController::class,'index']);
     Route::post('/removenotification/{user}/{subreddit}',[NotificationController::class,'remove']);
     Route::post('/deletenotification/{id}',[NotificationController::class,'removenotification']);
-    Route::post('/acceptmodrequest/{user}/{mod}/{subreddit}',[NotificationController::class,'acceptmodrequest']);
+    Route::post('/acceptmodrequest/{user}/{mod}/{subreddit}',[ModController::class,'acceptmodrequest']);
 
     Route::post('/ban/{post}',[JoinController::class,'ban']);
+    Route::post('/banuser/{name}/{subreddit}',[JoinController::class,'banuser']);
+
     Route::post('/unban/{user}/{subreddit}',[JoinController::class,'unban']);
     Route::get('/bannedusers/{id}',[JoinController::class,'index']);
 

@@ -42,10 +42,10 @@ jQuery(document).ready(function($) {
 	$(".postoverlay").not(".new-postbox").click(function() {
 	    $(".postoverlay").fadeOut(500);
 	});
-	$("[type = submit]").click(function () {
-	    var post = $("textarea").val();
-	    $("<p class='post'>" + post + "</p>").appendTo("section");
-	});
+	// $("[type = submit]").click(function () {
+	//     var post = $("textarea").val();
+	//     $("<p class='post'>" + post + "</p>").appendTo("section");
+	// });
 
 // top menu list
 	$('.main-menu > span').on('click', function () {
@@ -1133,17 +1133,7 @@ if ($.isFunction($.fn.mmenu)) {
 			time: 1000
 		});
 		}
-/** Post a Comment **/
-jQuery(".post-comt-box textarea").on("keydown", function(event) {
 
-	if (event.keyCode == 13) {
-		var comment = jQuery(this).val();
-		var parent = jQuery(".showmore").parent("li");
-		var comment_HTML = '<li><div class="comet-avatar"><img alt="" src="images/resources/comet-2.jpg"></div><div class="we-comment"><h5><a title="" href="time-line.html">Sophia</a></h5><p>'+comment+'</p><div class="inline-itms"><span>1 minut ago</span><a title="Reply" href="#" class="we-reply"><i class="fa fa-reply"></i></a><a title="" href="#"><i class="fa fa-heart"></i></a></div></div></li>';
-		$(comment_HTML).insertBefore(parent);
-		jQuery(this).val('');
-	}
-});
 
 //inbox page
 //***** Message Star *****//

@@ -86,6 +86,7 @@
                                 <a href="/post/{{$post->id}}/edit">Edit</a>
                                 <li><i class="fa fa-pencil-square-o"></i>Edit Post</li>
                             @elsecan('moddelete', $post->subreddit)
+                                @if (!$post->isDeleted())
                                     <form action="/post/{{$post->id}}" method="post">
                                         @csrf
                                         @method('delete')
@@ -94,46 +95,39 @@
                                         <li><label for="{{('modpostsil'.$post->id)}}"><i class="fa fa-trash-o"></i>Delete Post</label></li>
                                         @endif
                                     </form>
-                                @endcan
+                                @endif
 
-
-                            @if ($post->user->isJoined($post->subreddit))
+                            @endcan
                                 @can('subredditdelete',$post->subreddit)
                                     @if (!$post->user->isMod($post->subreddit))
-                                        <form action="/giverole/{{$post->user->id}}/{{$post->subreddit->id}}" method="post">
-                                            @csrf
-                                            <button id="{{('modver'.$post->id)}}" type="submit" style="display: none">MODERATORLUQ VER</button>
-                                            <li><label for="{{('modver'.$post->id)}}"><i class="fa fa-address-card-o"></i>Give mod role at {{$post->subreddit->name}}</label></li>
-                                        </form>
+                                        <li onclick="givemodrole({{$post->user->name}},{{$post->subreddit->id}})"><i class="fa fa-address-card-o"></i> Take mod role from {{$post->subreddit->name}}</li>
                                     @elseif ($post->user->isMod($post->subreddit))
-                                        <form action="/takerole/{{$post->user->id}}/{{$post->subreddit->id}}" method="post">
-                                            @csrf
-                                            <button id="{{('modal'.$post->id)}}" type="submit" style="display: none">MODERATORLUQ Al</button>
-                                            <li><label for="{{('moadl'.$post->id)}}"><i class="fa fa-address-card-o"></i>Take mod role from {{$post->subreddit->name}}</label></li>
-                                        </form>
+                                        <li onclick="takemodrole({{$post->user->id}},{{$post->subreddit->id}})"><i class="fa fa-address-card-o"></i> Take mod role from {{$post->subreddit->name}}</li>
+                                    @elseif ($post->user->isModRequested($post->subreddit))
+                                    <li onclick="takemodrole({{$post->user->id}},{{$post->subreddit->id}})"><i class="fa fa-address-card-o"></i> Take mod request back for {{$post->subreddit->name}}</li>
                                     @endif
                                 @endcan
-                                @can('subredditdelete',$post->subreddit)
-                                    <form action="/ban/{{$post->id}}" method="post">
-                                        @csrf
-                                        <button id="{{('banla'.$post->id)}}" type="submit" style="display: none">   </button>
-                                        <li><label for="{{('banla'.$post->id)}}"><i class="fa fa-address-card-o"></i>Ban from{{$post->subreddit->name}}</label></li>
-                                    </form>
+
+                                    @can('subredditdelete',$post->subreddit)
+                                        @if($post->user->isModRequested($subreddit))
+                                            <li><i class="fa fa-address-card-o"></i>Mod requested sended</li>
+                                        @else
+                                            <li onclick="modban('{{$post->user->name}}','{{$post->subreddit->id}}')"><i class="fa fa-address-card-o"></i>Ban user</li>
+                                        @endif
                                     @endcan
-                                @if (auth()->user()->id != $post->subreddit->creator_id)
-                                    @if($post->user->id != $post->subreddit->creator_id)
-                                            @if(!$post->user->isMod($post->subreddit))
-                                                @can('moddelete',$post->subreddit)
-                                                    <form action="/ban/{{$post->id}}" method="post">
-                                                        @csrf
-                                                        <button id="{{('modbanla'.$post->id)}}" type="submit" style="display: none">   </button>
-                                                        <li><label for={{('modbanla'.$post->id)}}"><i class="fa fa-address-card-o"></i>Ban from{{$post->subreddit->name}}</label></li>
-                                                    </form>
-                                                @endcan
-                                            @endif
+                                    @if (auth()->user()->id != $post->subreddit->creator_id)
+                                        @if($post->user->id != $post->subreddit->creator_id)
+                                                @if(!$post->user->isMod($post->subreddit))
+                                                    @can('moddelete',$post->subreddit)
+                                                        @if($post->user->isModRequested($subreddit))
+                                                            <li><i class="fa fa-address-card-o"></i>Mod requested sended</li>
+                                                        @else
+                                                            <li onclick="modban('{{$post->user->name}}','{{$post->subreddit->id}}')"><i class="fa fa-address-card-o"></i>Ban user</li>
+                                                        @endif
+                                                    @endcan
+                                                @endif
+                                        @endif
                                     @endif
-                                @endif
-                            @endif
                             @if ($post->user->isFriend())
                                 <li>Message {{$post->user->name}}</li>
                             @elseif($post->user->isRequested(auth()->user()))
@@ -157,6 +151,9 @@
                     Posted on <a href="/subreddit/{{$post->subreddit->id}}">{{$post->subreddit->name}}</a>
                     @if (auth()->user()->id === $post->user->id)
                         - Posted by you
+                    @endif
+                    @if($post->isDeleted())
+                        - Deleted
                     @endif
                 </ins>
                 <span>{{$post->created_at->diffForHumans()}}</span>
@@ -218,37 +215,7 @@
 
                     </ul>
                 </div>
-            </div>
-            <div class="coment-area" style="">
-                <ul class="we-comet">
-                    @foreach($post->comments as $comment)
-                        @if($loop->iteration <= 3)
-                    <li>
-                        <div class="comet-avatar image-container">
-                            <img src="{{asset('storage/'.$comment->user->image)}}" alt="">
-                        </div>
-                        <div class="we-comment">
-                            <h5><a href="time-line.html" title="">{{$comment->user->name}}</a></h5>
-                            <p>{{$comment->body}}</p>
-                            <div class="inline-itms">
-                                <span>1 year ago</span>
-                                <a class="we-reply" href="#" title="Reply"><i class="fa fa-reply"></i></a>
-                                <a href="#" title=""><i class="fa fa-heart"></i><span>{{$comment->likes->count()}}</span></a>
-                            </div>
-                        </div>
+            </div></div>
 
-                    </li>
-
-                        @else
-                        @break
-                        @endif
-                    @endforeach
-                    <li>
-                        <a href="/post/{{$post->id}}" title="" class="showmore underline">more comments+</a>
-                    </li>
-
-                </ul>
-            </div>
-        </div>
     </div>
 </div>

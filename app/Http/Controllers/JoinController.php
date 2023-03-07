@@ -52,72 +52,7 @@ class JoinController extends Controller
         return back();
         /* dd($user); */
     }
-    public function givemod(User $user,Subreddit $subreddit){
-        $this->authorize('subredditdelete',$subreddit);
-        if(!$user->isJoined($subreddit)){
-        return back()->with('mesaj','this user is not joined to your server');
-    }
-        $role = Role::where('name', 'moderator')->first();
-        $user->subredditss()->attach($subreddit->id, ['role_id' => $role->id]);
-        return back();
-    }
-    public function takemod(User $user,Subreddit $subreddit,Request $request){
-        $this->authorize('subredditdelete',$subreddit);
 
-        if($user->isMod($subreddit)){
-        $role = Role::where('name', 'moderator')->first();
-        $user->subredditss()->detach($subreddit->id, ['role_id' => $role->id]);
-        $requests = DB::table('notifications')->where('content','modrequest')->where('subreddit_id',$subreddit->id)->get();
-        $userIds = collect($requests)->pluck('duduk_id');
-        $requestedmodss = User::whereIn('id',$userIds)->get();
-        $moderators= $subreddit->moderators;
-            if($request->ajax()){
-                return response()->json([
-                    'success' => true,
-                    'message' => 'qezenfer',
-                    'moderators' => $moderators,
-                    'subid' => $subreddit->id,
-                    'creator_id' => $subreddit->creator_id,
-                    'requestedmods' => $requestedmodss
-                ]);
-            }
-        }
-        return back();
-    }
-    public function searchmod($name,Subreddit $subreddit){
-            $this->authorize('subredditdelete',$subreddit);
-            $auser = auth()->user();
-            if(!User::where('name',$name)->exists()){
-                $message = '1';
-            }elseif(User::where('name',$name)->first()->isMod($subreddit)){
-                $message = '2';
-            }
-            else{
-                $finduser = User::where('name',$name)->first();
-                // $role = Role::where('name', 'moderator')->first();
-                // $finduser->subredditss()->attach($subreddit->id, ['role_id' => $role->id]);
-                // $auser->modRequest()->attach($finduser, ['subreddit_id' => $subreddit->id,'created_at' => now(), 'updated_at' => now()]);
-                if(!DB::table('notifications')->where(['user_id'=>$auser->id,'duduk_id'=>$finduser->id,'subreddit_id'=>$subreddit->id])->exists()){
-                    $auser->sendNotification($finduser->id,null,null,null,$subreddit->id,'modrequest');
-                }
-                $message = '3';
-
-                return response()->json([
-                    'success'=> true,
-                    'moderator' => $finduser,
-                    'message' => $message,
-                    'subid' => $subreddit->id,
-                    'creator_id' => $subreddit->creator_id
-                ]);
-            }
-            return response()->json([
-                'success'=> true,
-                'moderator' => false,
-                'message' => $message,
-                'subid' => $subreddit->id,
-                'creator_id' => $subreddit->creator_id
-            ]);
-    }
 
     public function ban(Post $post){
         $auth = Auth::user();
@@ -132,26 +67,52 @@ class JoinController extends Controller
         $banrole = Role::where('name', 'banned')->first();
         $user->subredditss()->attach($subreddit->id, ['role_id' => $banrole->id]);
         $user->bannedfrom()->attach($subreddit->id, ['post_id' => $post->id]);
-        $auth->notifications()->attach($user->id,[
-            'post_id' => $post->id,
-            'content' => 'ban',
-            'created_at' => now(),
-        ]);
+        $auth->sendNotification($user->id,null,null,null,$subreddit->id,'ban');
         return back();
     }
-    public function unban(User $user, Subreddit $subreddit){
+    public function banuser($name,Subreddit $subreddit){
+        $auser = auth()->user();
+        $user = User::where('name',$name)->first();
+        if(!User::where('name',$name)->exists()){
+            $message = '1';
+        }elseif($user->isBanned($subreddit)){
+            $message = '2';
+        }elseif($user->isMod($subreddit)){
+            $message = '2.5';
+        }elseif($user->isModRequested($subreddit)){
+            $message = '2.6';
+        }
+        else{
+            $auser->sendNotification($user->id,null,null,null,$subreddit->id,'ban');
+            $user->subredditss()->attach($subreddit->id, ['role_id' => '3']);
+            $message = '3';
+            return response()->json([
+                'success' => true,
+
+                'banneduser' => $user,
+                'message' => $message,
+                'subid' => $subreddit->id,
+            ]);
+        }
+        return response()->json([
+            'success' => true,
+            'banneduser' => false,
+            'message' => $message,
+        ]);
+    }
+    public function unban(User $user, Subreddit $subreddit,Request $request){
         $auth = Auth::user();
         $banrole = Role::where('name', 'banned')->first();
-        $postfind = DB::table('subreddit_user_post')->where('user_id',$user->id)->where('subreddit_id',$subreddit->id)->get();
-        $postid = $postfind[0]->post_id;
-        $post = Post::find($postid);
         $user->subredditss()->detach($subreddit->id, ['role_id' => $banrole->id]);
-        $user->bannedfrom()->detach($subreddit->id, ['post_id' => $post->id]);
-        $auth->notifications()->attach($user->id,[
-            'post_id' => $post->id,
-            'content' => 'unban',
-            'created_at' => now(),
-        ]);
+        $auth->sendNotification($user->id,null,null,null,$subreddit->id,'unban');
+        if($request->ajax()){
+            return response()->json([
+                'success' => true,
+                'bannedusers' => $subreddit->bannedusers,
+                'subid' => $subreddit->id,
+                'count' => count($subreddit->bannedusers)
+            ]);
+        }
         return redirect('/subreddit/'.$subreddit->id);
     }
 }

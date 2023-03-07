@@ -80,7 +80,9 @@ class SubredditController extends Controller
     {
         $user = Auth::user();
         $subreddit = Subreddit::find($id);
-        $newposts = Post::where('subreddit_id',$id)->latest()->get();
+        $deletedposts = DB::table('deletedposts')->where('subreddit_id',$subreddit->id)->get();
+        $dpost = collect($deletedposts)->pluck('post_id');
+        $newposts = Post::where('subreddit_id',$id)->whereNotIn('id',$dpost)->latest()->get();
         $subreddits = Subreddit::withCount('users')->orderByDesc('users_count')->get();
 
         if(DB::table('friendrequest')->where('friend_id',auth()->user()->id)->exists()){
@@ -88,11 +90,7 @@ class SubredditController extends Controller
             $userIds = collect($requests)->pluck('user_id');
             $rusers = User::whereIn('id',$userIds)->get();
         }
-        if(DB::table('modrequest')->where('subreddit_id',$subreddit->id)->exists()){
-            $requests = DB::table('modrequest')->where('subreddit_id',$subreddit->id)->get();
-            $userIds = collect($requests)->pluck('mod_id');
-            $requestedmods = User::whereIn('id',$userIds)->get();
-        }
+
         return view('other.subreddit',get_defined_vars());
     }
 

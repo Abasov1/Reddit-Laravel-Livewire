@@ -83,6 +83,10 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Post::class, 'user_post');
     }
+    public function deletedposts()
+    {
+        return $this->belongsToMany(Post::class, 'deletedposts','user_id','post_id')->withPivot('subreddit_id');
+    }
     public function hasSeen(Post $post){
         return $this->seenposts()->where('post_id',$post->id)->exists();
     }
@@ -99,15 +103,16 @@ class User extends Authenticatable
         return $this->belongsToMany(User::class,'notifications','user_id','duduk_id')->withPivot('post_id','comment_id','subcomment_id','subreddit_id','content');
     }
     public function sendNotification($userId,$postId,$commentId,$subcommentId,$subredditId,$content){
-
-        $this->notifications()->attach($userId,[
-            'post_id' => $postId,
-            'comment_id' => $commentId,
-            'subcomment_id' => $subcommentId,
-            'subreddit_id' => $subredditId,
-            'content' => $content,
-            'created_at' => now(),
-        ]);
+        if(auth()->user()->id != $userId){
+            $this->notifications()->attach($userId,[
+                'post_id' => $postId,
+                'comment_id' => $commentId,
+                'subcomment_id' => $subcommentId,
+                'subreddit_id' => $subredditId,
+                'content' => $content,
+                'created_at' => now(),
+            ]);
+        }
     }
     public function comments(){
         return $this->hasMany(Comment::class);
@@ -175,6 +180,9 @@ class User extends Authenticatable
     }
     public function isRequested(User $user){
         return DB::table('notifications')->where(['user_id'=>$user->id,'duduk_id'=>$this->id,'content'=>'friendrequest'])->exists();
+    }
+    public function isModRequested(Subreddit $subreddit){
+        return DB::table('notifications')->where(['duduk_id'=>$this->id,'subreddit_id'=>$subreddit->id,'content'=>'modrequest'])->exists();
     }
     public function isFriend(){
         return DB::table('user_user')->where('user_id',auth()->user()->id)->where('friend_id',$this->id)->exists();

@@ -43,4 +43,8 @@ class Subreddit extends Model
         return $this->belongsToMany(User::class, 'subreddit_user_role')
             ->wherePivot('role_id', 2);
     }
+    public function bannedusers(){
+        return $this->belongsToMany(User::class,'subreddit_user_role')
+            ->wherePivot('role_id',3);
+    }
 }

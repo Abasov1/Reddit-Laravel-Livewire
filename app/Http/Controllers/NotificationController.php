@@ -52,22 +52,7 @@ class NotificationController extends Controller
             }
             return view('other.notification',get_defined_vars());
     }
-    public function takemodrequest(User $user,Subreddit $subreddit){
-        $this->authorize('subredditdelete',$subreddit);
-        $auser = auth()->user();
-            DB::table('notifications')->where(['user_id'=>$auser->id,'duduk_id'=>$user->id,'subreddit_id'=>$subreddit->id])->delete();
-            $requests = DB::table('notifications')->where('content','modrequest')->where('subreddit_id',$subreddit->id)->get();
-            $userIds = collect($requests)->pluck('duduk_id');
-            $requestedmodss = User::whereIn('id',$userIds)->get();
 
-        return response()->json([
-            'success' => true,
-            'moderators' => $subreddit->moderators,
-            'requestedmods' => $requestedmodss,
-            'subid' => $subreddit->id,
-            'creator_id' => $subreddit->creator_id,
-        ]);
-    }
     public function remove(User $user,Subreddit $subreddit){
         if(DB::table('modrequest')->where('user_id',$user->id)->where('mod_id',auth()->user()->id)->where('subreddit_id',$subreddit->id)->exists()){
             DB::table('modrequest')->where('user_id',$user->id)->where('mod_id',auth()->user()->id)->where('subreddit_id',$subreddit->id)->delete();
@@ -85,15 +70,4 @@ class NotificationController extends Controller
             'success' => true,
         ]);
     }
-    public function acceptmodrequest(User $user,$mod,Subreddit $subreddit){
-        $auth = User::find($mod);
-                DB::table('notifications')->where(['user_id'=>$user->id,'duduk_id'=>$auth->id,'subreddit_id'=>$subreddit->id,'content'=>'modrequest'])->delete();
-                $auth->subredditss()->attach($subreddit->id, ['role_id'=> 2]);
-                return response()->json([
-                'success' => true,
-                'id' => auth()->user()->id
-            ]);
-            }
-
-
-        }
+}

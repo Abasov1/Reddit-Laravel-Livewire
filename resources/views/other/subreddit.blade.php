@@ -98,7 +98,6 @@
                                         @endif
                                     @else
                                     <a class="main-btn2" href="/subsettings/{{$subreddit->id}}">Modify</a>
-                                    <a class="main-btn2" href="#" title="">Delete</a>
                                 @endif
 								</div>
 								<div style="display:flex;justify-content:center;">
@@ -114,7 +113,7 @@
                                             <figure><img src="{{asset('storage/'.$subs->image)}}" width="30px" alt=""></figure>
                                             <div class="friend-meta">
                                                 <h4><a href="time-line.html" title="">{{$subs->name}}</a></h4>
-                                                <a href="/subreddit/{{$subs->id}}" title="" class="underline">Go</a>
+                                                <a href="/homes/{{$subs->id}}" title="" class="underline">Go</a>
                                             </div>
                                         </li>
                                     @endforeach
