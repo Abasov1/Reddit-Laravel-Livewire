@@ -155,7 +155,7 @@ class User extends Authenticatable
         return $this->subredditss()->where('subreddit_id',$subreddit->id)->wherePivot('role_id',3)->exists();
     }
     public function isJoined(Subreddit $subreddit){
-        return DB::table('subreddit_user')->where('user_id',$this->id)->where('subreddit_id',$subreddit->id)->exists();
+        return DB::table('subreddit_user')->where(['user_id'=>$this->id,'subreddit_id'=>$subreddit->id])->exists();
     }
     public function isCreator(Subreddit $subreddit){
         return $this->id === $subreddit->creator_id;

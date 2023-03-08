@@ -79,17 +79,17 @@ class PostController extends Controller
     public function show($id)
     {
         $user = auth()->user();
-        $post = Post::with('comments')->find($id);
+        $post = Post::where('id',$id)->first();
         if(!$user->hasSeen($post)){
             $user->seenposts()->attach($post, ['created_at' => now(), 'updated_at' => now()]);
         }
-        $comments = Comment::with('subcomments.subcomments')
-            ->whereNull('post_id')->get();
-        if(DB::table('friendrequest')->where('friend_id',auth()->user()->id)->exists()){
-            $requests = DB::table('friendrequest')->where('friend_id',auth()->user()->id)->get();
-            $userIds = collect($requests)->pluck('user_id');
-            $rusers = User::whereIn('id',$userIds)->get();
-        }
+        $comments = Comment::where('post_id',$post->id)
+        ->with('subcomments.subcomments')
+        ->whereNull('comment_id')
+        ->latest()
+        ->withCount('likes')
+        ->orderByDesc('likes_count')
+        ->get();
         return view('other.postshow',get_defined_vars());
     }
 

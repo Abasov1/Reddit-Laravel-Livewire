@@ -29,10 +29,10 @@ jQuery(document).ready(function($) {
 	  	return false;
   });
 
-  $("body *").not('.top-area > .setting-area > li > a').on("click", function() {
-	 $(".top-area > .setting-area > li > a").removeClass('active');
+//   $("body *").not('.top-area > .setting-area > li > a').not('.dropdowns').on("click", function() {
+// 	 $(".top-area > .setting-area > li > a").removeClass('active');
 
- });
+//  });
 
 
 // New submit post box
@@ -233,10 +233,10 @@ $('.audio-call, .video-call').on('click', function () {
 		return false;
 	});
 
-//------- remove class active on body
-	$("body *").not('.top-area > .setting-area > li > a').on("click", function() {
-		$(".top-area > .setting-area > li > div").not('.searched').removeClass('active');
-	});
+// //------- remove class active on body
+// 	$("body *").not('.top-area > .setting-area > li > a').not('.dropwons').not('.drops-menu').on("click", function() {
+// 		$(".top-area > .setting-area > li > div").not('.searched').removeClass('active');
+// 	});
 
 
 //--- user setting dropdown on topbar
@@ -245,15 +245,15 @@ $('.user-img').on('click', function() {
 });
 
 
-//--- side message box
-	$('.friendz-list > li, .chat-users > li, .drops-menu > li > a.show-mesg').on('click', function() {
-		$('.chat-box').addClass("show");
-		return false;
-	});
-	$('.close-mesage').on('click', function() {
-		$('.chat-box').removeClass("show");
-		return false;
-	});
+// //--- side message box
+// 	$('.friendz-list > li, .chat-users > li, .drops-menu > li > a.show-mesg').on('click', function() {
+// 		$('.chat-box').addClass("show");
+// 		return false;
+// 	});
+// 	$('.close-mesage').on('click', function() {
+// 		$('.chat-box').removeClass("show");
+// 		return false;
+// 	});
 
 //------ scrollbar plugin
 	if ($.isFunction($.fn.perfectScrollbar)) {
@@ -1217,36 +1217,36 @@ if ($.isFunction($.fn.mmenu)) {
 		  " - $" + $( "#slider-range" ).slider( "values", 1 ) );
 	  } );
 
-if ($.isFunction($.fn.toast)) {
-	$.toast({
-		heading: 'Welcome To Pitnik',
-		text: '',
-		showHideTransition: 'slide',
-		icon: 'success',
-		loaderBg: '#fa6342',
-		position: 'bottom-right',
-		hideAfter: 3000,
-	});
+// if ($.isFunction($.fn.toast)) {
+// 	$.toast({
+// 		heading: 'Welcome To Pitnik',
+// 		text: '',
+// 		showHideTransition: 'slide',
+// 		icon: 'success',
+// 		loaderBg: '#fa6342',
+// 		position: 'bottom-right',
+// 		hideAfter: 3000,
+// 	});
 
-	$.toast({
-		heading: 'Information',
-		text: 'Now you can full demo of pitnik and hope you like',
-		showHideTransition: 'slide',
-		icon: 'info',
-		hideAfter: 5000,
-		loaderBg: '#fa6342',
-		position: 'bottom-right',
-	});
-	$.toast({
-		heading: 'Support & Help',
-		text: 'Report any <a href="#">issues</a> by email',
-		showHideTransition: 'fade',
-		icon: 'error',
-		hideAfter: 7000,
-		loaderBg: '#fa6342',
-		position: 'bottom-right',
-	});
-}
+// 	$.toast({
+// 		heading: 'Information',
+// 		text: 'Now you can full demo of pitnik and hope you like',
+// 		showHideTransition: 'slide',
+// 		icon: 'info',
+// 		hideAfter: 5000,
+// 		loaderBg: '#fa6342',
+// 		position: 'bottom-right',
+// 	});
+// 	$.toast({
+// 		heading: 'Support & Help',
+// 		text: 'Report any <a href="#">issues</a> by email',
+// 		showHideTransition: 'fade',
+// 		icon: 'error',
+// 		hideAfter: 7000,
+// 		loaderBg: '#fa6342',
+// 		position: 'bottom-right',
+// 	});
+// }
 
 });//document ready end
 
