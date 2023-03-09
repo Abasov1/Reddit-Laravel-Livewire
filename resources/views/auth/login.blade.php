@@ -1,21 +1,3 @@
-{{-- @extends('layout.app')
-@section('app')
-    <form action="/login" method="post">
-        @csrf
-        <input type="email" name="email" value="{{ old('email') }}"><br>
-        @error('email')
-            {{$message}}
-        @enderror <br>
-        <input type="password" name="password" value="{{ old('password') }}"> <br>
-        @error('password')
-            {{$message}}
-        @enderror <br>
-        Xatirla meni
-        <label for="remember">
-        <input type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}><br>
-        <input type="submit" value="daxil ol"><br>
-    </form>
-@endsection --}}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -102,37 +84,6 @@
 				<div class="row">
 					<div class="offset-lg-1 col-lg-10">
 						<div class="row border-center">
-							{{-- <div class="col-lg-6 col-md-6">
-								<div class="already-log">
-									<h4>Recent Login</h4>
-									<p>Next Time you login click your picture. To remove an account from this page click cross.</p>
-									<div class="log-user">
-										<div class="row">
-											<div class="col-lg-4 col-md-4 col-sm-4">
-												<div class="user-log">
-													<i class="ti-close" title="Remove Account"></i>
-													<a href="#" title=""><img src="images/resources/author.jpg" alt="">
-													<span>Adam James</span>
-													</a>
-												</div>
-											</div>
-											<div class="col-lg-4 col-md-4 col-sm-4">
-												<div class="user-log">
-													<i class="ti-close" title="Remove Account"></i>
-													<a href="#" title=""><img src="images/resources/author2.jpg" alt="">
-													<span>Emma Watson</span>
-													</a>
-												</div>
-											</div>
-											<div class="col-lg-4 col-md-4 col-sm-4">
-												<div class="user-add">
-													<div><i class="ti-plus"></i><span>Add Account</span></div>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div> --}}
 							<div class="col-lg-7 col-md-6 ">
 								<div class="logout-f">
 									<h4><i class="fa fa-key"></i> Login</h4>

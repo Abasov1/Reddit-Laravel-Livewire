@@ -7609,6 +7609,18 @@ input[type="checkbox"]:checked + label{color: #000;}
     object-fit: cover; /* Crop the image to cover the container */
     border-radius:100%;
 }
+.logout-form > figure {
+    width: 40px; /* Set the desired width of the image */
+    height: 40px; /* Set the desired height of the image */
+    margin-left:10px;
+    overflow: hidden; /* Hide any overflow */
+}
+.logout-form > figure img {
+    width: 100%; /* Set the width of the image to 100% of the container */
+    height: 100%; /* Set the height to auto to maintain aspect ratio */
+    object-fit: cover; /* Crop the image to cover the container */
+    border-radius:100%;
+}
 .edit-img {
     display: inline-block;
     margin-left: 10px;

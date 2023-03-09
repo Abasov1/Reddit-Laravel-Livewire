@@ -7,9 +7,9 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="row merged20" id="page-contents">
-                        <div class="col-lg-12">
+                        <div class="col-lg-12"  style="min-height: 500px;">
                             <div class="central-meta">
-                                <div class="editing-interest">
+                                <div class="editing-interest" >
                                     <span class="create-post" style="cursor: pointer;"><i class="ti-bell"></i><span id="notificationlistspan"> Other Notifications </span><span id="friendrequestlistspan"><i class="fa fa-user-o" style="margin-left:30px;"> </i> Friend Requests</span><span id="modrequestlistspan"><i class="fa fa-user-o" style="margin-left:30px;"> </i> Mod Requests</span><a title="" href="setting.html">Notifications Setting</a></span>
                                     <div class="notification-box">
                                         <ul>

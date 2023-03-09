@@ -63,6 +63,9 @@ class User extends Authenticatable
 {
     return $this->hasMany(Join::class);
 }
+    public function ntsetting(){
+        return $this->hasOne(Notificationsetting::class);
+    }
     public function subreddit(){
         return $this->hasOne(Subreddit::class,'id','creator_id');
     }
@@ -104,14 +107,34 @@ class User extends Authenticatable
     }
     public function sendNotification($userId,$postId,$commentId,$subcommentId,$subredditId,$content){
         if(auth()->user()->id != $userId){
-            $this->notifications()->attach($userId,[
-                'post_id' => $postId,
-                'comment_id' => $commentId,
-                'subcomment_id' => $subcommentId,
-                'subreddit_id' => $subredditId,
-                'content' => $content,
-                'created_at' => now(),
-            ]);
+            $nt = Notificationsetting::where('user_id',$userId)->first();
+            if($nt->all != true){
+                if($content === 'friendrequest' && $nt->frnt == false){
+                    return;
+                }elseif($content === 'modrequest' && $nt->modnt == false){
+                    return;
+                }elseif($content === 'likepost' || $content === 'postcomment' || $content === "commentcomment" || $content === "likecomment"){
+                    if($nt->postnt != false){
+                        $this->notifications()->attach($userId,[
+                            'post_id' => $postId,
+                            'comment_id' => $commentId,
+                            'subcomment_id' => $subcommentId,
+                            'subreddit_id' => $subredditId,
+                            'content' => $content,
+                            'created_at' => now(),
+                        ]);
+                    }
+                }else{
+                    $this->notifications()->attach($userId,[
+                        'post_id' => $postId,
+                        'comment_id' => $commentId,
+                        'subcomment_id' => $subcommentId,
+                        'subreddit_id' => $subredditId,
+                        'content' => $content,
+                        'created_at' => now(),
+                    ]);
+                }
+            }
         }
     }
     public function comments(){

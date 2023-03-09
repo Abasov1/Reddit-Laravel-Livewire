@@ -6,6 +6,7 @@ use App\Models\Post;
 use App\Models\Subreddit;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
@@ -43,11 +44,17 @@ class RegisterController extends Controller
             'email' => 'required|email|max:255|unique:users',
             'image' =>'required',
     ]);
-        User::create([
+        $user = User::create([
             'name' => $request->name,
             'password' => Hash::make($request->password),
             'email' => $request->email,
             'image' => $file
+        ]);
+        $user->ntsetting()->create([
+            'frnt' => true,
+            'modnt' => true,
+            'postnt' => true,
+            'allnt' => false,
         ]);
         if(!auth()->attempt($request->only('email','password'))){
             return back();

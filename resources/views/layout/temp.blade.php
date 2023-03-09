@@ -532,9 +532,13 @@
 <script>
     $('.goingallup').click(function(){
         const element = document.getElementById('my-element');
+
     if (element) {
         element.scrollIntoView();
     }
+    });
+    $('#atvuran').on('click',function(){
+        $('#sendikr').click();
     });
     $('#filter-posts').change(function() {
         var url = $(this).val();

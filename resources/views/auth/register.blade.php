@@ -1,50 +1,3 @@
-{{-- @extends('layout.app')
-@section('app')
-
-    <form action="/register" enctype="multipart/form-data" method="post">
-        @csrf
-        <input type="text" name="name" value="{{ old('name') }}"><br>
-        @error('name')
-            {{$message}}
-        @enderror <br>
-        <input type="email" name="email" value="{{ old('email') }}"><br>
-        @error('email')
-            {{$message}}
-        @enderror <br>
-        <input type="password" name="password" value="{{ old('password') }}"> <br>
-        @error('password')
-            {{$message}}
-        @enderror <br>
-        <input type="password" name="password_confirmation"><br><br>
-        profil:
-        <input type="file" name="image" id="image" onchange="readURL(this);"><br>
-        @error('image')
-            {{$message}}
-        @enderror <br>
-        <input type="submit" value="qeydiyyatdan kec"><br>
-    </form>
-    <img id="blah" src="http://placehold.it/180"  width="100px" height="auto"/> <br>
-    <script>
-        $('#blah').hide();
-            $('#negar').show();
-            $('#yourmom').hide();
-             function readURL(input) {
-            if (input.files && input.files[0]) {
-                var reader = new FileReader();
-
-                reader.onload = function (e) {
-                    $('#blah')
-                        .attr('src', e.target.result);
-                };
-
-                reader.readAsDataURL(input.files[0]);
-                $('#blah').show();
-                $('#negar').hide();
-                $('#yourmom').show();
-            }
-        }
-    </script>
-@endsection --}}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -64,7 +17,7 @@
     <link rel="stylesheet" href="css/color.css">
     <link rel="stylesheet" href="css/responsive.css">
     <link rel="stylesheet" href="css/dark-theme.css">
-
+    @livewireStyles
 </head>
 <body>
 <!--<div class="se-pre-con"></div>-->
@@ -131,121 +84,7 @@
 				<div class="row">
 					<div class="offset-lg-1 col-lg-10">
 						<div class="row border-center">
-							{{-- <div class="col-lg-6 col-md-6">
-								<div class="already-log">
-									<h4>Recent Login</h4>
-									<p>Next Time you login click your picture. To remove an account from this page click cross.</p>
-									<div class="log-user">
-										<div class="row">
-											<div class="col-lg-4 col-md-4 col-sm-4">
-												<div class="user-log">
-													<i class="ti-close" title="Remove Account"></i>
-													<a href="#" title=""><img src="images/resources/author.jpg" alt="">
-													<span>Adam James</span>
-													</a>
-												</div>
-											</div>
-											<div class="col-lg-4 col-md-4 col-sm-4">
-												<div class="user-log">
-													<i class="ti-close" title="Remove Account"></i>
-													<a href="#" title=""><img src="images/resources/author2.jpg" alt="">
-													<span>Emma Watson</span>
-													</a>
-												</div>
-											</div>
-											<div class="col-lg-4 col-md-4 col-sm-4">
-												<div class="user-add">
-													<div><i class="ti-plus"></i><span>Add Account</span></div>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div> --}}
-							<div class="col-lg-7 col-md-6 ">
-								<div class="logout-f">
-									<h4><i class="fa fa-key"></i> Register</h4>
-									<p>Create new inspiring profile</p>
-                                                                        {{-- @if ($errors->any())
-                                        <div class="alert alert-danger">
-                                            <ul>
-                                                @foreach ($errors->all() as $error)
-                                                    <li>{{ $error }}</li>
-                                                @endforeach
-                                            </ul>
-                                        </div>
-                                    @endif --}}
-									<div class="logout-form">
-										<form  action="/register" method="post" class="again-login"  enctype="multipart/form-data">
-                                            @csrf
-											<input name="name" type="text" @error('name') style="border-style:solid;border-color: red;" @enderror placeholder="Name" value="{{old('name')}}">
-                                            @error('name')
-                                                <p style="text-color:red;color:red;margin-left:10px">{{$message}}</p>
-                                            @enderror
-                                            <input name="email" type="email" @error('email') style="border-style:solid;border-color: red;" @enderror placeholder="Email" value="{{old('email')}}">
-                                            @error('email')
-                                                <p style="text-color:red;color:red;margin-left:10px">{{$message}}</p>
-                                            @enderror
-											<input name="password" type="password" @error('password') style="border-style:solid;border-color: red;" @enderror placeholder="Password" value="{{old('password')}}">
-                                            @error('password')
-                                                <p style="text-color:red;color:red;margin-left:10px">{{$message}}</p>
-                                            @enderror
-
-											<input name="password_confirmation" type="password" placeholder="Password Confirmation">
-                                            {{-- <label for="avatar">Avatar</label>
-                                            <div class="avatar-upload" >
-                                                <div class="avatar-preview">
-                                                    <img id="avatar-preview" src="https://cdn.oneesports.gg/cdn-data/2022/11/MW2_Ghost_Mask.jpg" alt="Preview">
-                                                </div>
-                                                <div class="avatar-edit">
-                                                    <input type='file' id="avatar" name="avatar" accept=".png, .jpg, .jpeg" />
-                                                    <label for="avatar">Choose Avatar</label>
-                                                </div>
-                                            </div>
-                                            @error('avatar')
-                                                <div class="alert alert-danger">{{ $message }}</div>
-                                            @enderror --}}
-
-                                            <div class="modal fade" id="avatarModal" tabindex="-1" role="dialog" aria-labelledby="avatarModalLabel" aria-hidden="true">
-                                                <div class="modal-dialog modal-dialog-centered" role="document">
-                                                  <div class="modal-content" style="background-color:rgb(6,8,24);">
-                                                    <div class="modal-header">
-                                                      <h5 class="modal-title" id="avatarModalLabel">Choose Avatar</h5>
-                                                      <button type="button" class="close" data-dismiss="modal" aria-label="Close" >
-                                                        <span aria-hidden="true" style="color:rgb(149,154,181);">&times;</span>
-                                                      </button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                      <div class="avatar-upload">
-                                                        <div class="avatar-preview">
-                                                          <img id="avatar-preview" src="https://cdn.oneesports.gg/cdn-data/2022/11/MW2_Ghost_Mask.jpg" alt="Preview">
-                                                        </div>
-                                                        <div class="avatar-edit">
-                                                          <input type='file' id="avatar" name="image" accept=".png, .jpg, .jpeg" />
-                                                          <label for="avatar" >Choose Avatar</label>
-                                                        </div>
-                                                      </div>
-                                                      @error('image')
-                                                      <div class="alert alert-danger">{{ $message }}</div>
-                                                      @enderror
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                      <button type="button" data-dismiss="modal">Close</button>
-                                                      <button type="button" data-dismiss="modal">Save changes</button>
-                                                    </div>
-                                                  </div>
-                                                </div>
-                                              </div>
-
-											<button type="submit" style="margin-left:10 px">Register</button>
-                                            <button type="button" style="background-color:rgb(250,99,66);margin-right:10px;@error('image') border-style:solid;border-color:red; @enderror" data-toggle="modal" data-target="#avatarModal">
-                                                Choose Avatar
-                                              </button>
-										</form>
-										<p>Already have a account? <a href="/login" title="">Login</a></p>
-									</div>
-								</div>
-							</div>
+							@livewire('auth-live')
 						</div>
 						<div class="sub-total" style="margin-left: 30px;">
 							<div class="row">
@@ -312,7 +151,7 @@
 			</div>
 		</div>
 	</div><!-- upload popup -->
-
+    @livewireScripts
 	<script src="js/main.min.js"></script>
 	<script src="js/script.js"></script>
     <script>
@@ -328,6 +167,19 @@
         $("#avatar").change(function(){
             readURL(this);
         });
+        $('#atvuran').on('click',function(){
+        $('#sendikr').click();
+        });
+        function login(event){
+            event.preventDefault();
+            document.getElementById('register').style.display = "none";
+            document.getElementById('login').style.display = "block";
+        }
+        function register(event){
+            event.preventDefault();
+            document.getElementById('login').style.display = "none";
+            document.getElementById('register').style.display = "block";
+        }
     </script>
 
 </body>

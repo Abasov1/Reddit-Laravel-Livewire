@@ -79,7 +79,6 @@
                 <i class="del ti-close" onclick="removenotification({{$notification->id}})" title="Remove"></i>
             </li>
         @endforeach
-
     @endisset
 @endisset
 @isset($includetopnotifications)

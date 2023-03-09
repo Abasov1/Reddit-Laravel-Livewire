@@ -20,11 +20,17 @@ class CommentLive extends Component
     ];
     public function store(){
         $this->validate();
-        auth()->user()->comments()->create([
+        $createdcomment = auth()->user()->comments()->create([
             'post_id' => $this->post->id,
             'body' => $this->body,
             'comment_id' =>$this->commentid
         ]);
+        if($this->commentid != null){
+            $comant = Comment::where('id',$this->commentid)->first();
+            auth()->user()->sendNotification($comant->user->id,$this->post->id,$this->commentid,$createdcomment->id,null,'commentcomment');
+        }else{
+            auth()->user()->sendNotification($this->post->user->id,$this->post->id,$createdcomment->id,null,null,'postcomment');
+        }
         if($this->previewComment != null){
             $this->commentid = null;
             $this->previewComment = null;
