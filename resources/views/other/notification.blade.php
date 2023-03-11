@@ -57,7 +57,7 @@
                                                                 </div>
                                                             </div>
                                                             <i class="del ti-close" onclick="removenotification({{$frrequest->id}})" title="Remove"></i>
-                                                            <i class="del fa fa-check" onclick="acceptFriendRequest({{$request->user->id}})" title="Accept"></i>
+                                                            <i class="del fa fa-check" onclick="acceptFriendRequest({{$frrequest->user->id}})" title="Accept"></i>
                                                         </li>
                                                     @endforeach
 

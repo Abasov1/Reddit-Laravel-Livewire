@@ -5,16 +5,16 @@
         <div class="logout-form">
             <form wire:submit.prevent="login" class="again-login">
                 @csrf
-                <input wire:model="lemail" name="email" type="email" @error('lemail') style="border-style:solid;border-color: red;" @enderror placeholder="Email" value="{{old('email')}}">
+                <input wire:model.lazy="lemail" required name="email" type="email" placeholder="Email" value="{{old('email')}}">
                 @error('lemail')
-                    <p style="text-color:red;color:red;margin-left:10px">{{$message}}</p>
+                    <b style="text-color:red;color:red;margin-left:10px">{{$message}}</b>
                 @enderror
-                <input  wire:model="lpassword" name="password" type="password" @error('lpassword') style="border-style:solid;border-color: red;" @enderror placeholder="Password" value="{{old('password')}}">
+                <input  wire:model="lpassword" required name="password" type="password" placeholder="Password" value="{{old('password')}}">
                 @error('lpassword')
-                    <p style="text-color:red;color:red;margin-left:10px">{{$message}}</p>
+                    <b style="text-color:red;color:red;margin-left:10px">{{$message}}</b> <br
                 @enderror
                 @if($qirir)
-                    <p style="text-color:red;color:red;margin-left:10px">{{$qirir}}</p>
+                    <b style="text-color:red;color:red;margin-left:10px">{{$qirir}}</b> <br>
                 @endif
                 <label for="remember" id="remember-label">Remember me</label>
                 <input wire:model="remember" type="checkbox" name="remember" style="display:inline-block" id="remember" {{ old('remember') ? 'checked' : '' }}><br>
@@ -34,22 +34,22 @@
             </label>
             <form wire:submit.prevent="register" class="again-login" enctype="multipart/form-data">
                 @csrf
-                <input wire:model="rname" name="name" type="text" @error('rname') style="border-style:solid;border-color: red;" @enderror placeholder="Name" value="{{old('name')}}">
+                <input wire:model.lazy="rname" required name="name" type="text" placeholder="Name" value="{{old('name')}}">
                 @error('rname')
-                    <p style="text-color:red;color:red;margin-left:10px">{{$message}}</p>
+                    <b style="text-color:red;color:red;margin-left:10px">{{$message}}</b>
                 @enderror
-                <input wire:model="remail" name="email" type="email" @error('remail') style="border-style:solid;border-color: red;" @enderror placeholder="Email" value="{{old('email')}}">
+                <input wire:model.lazy="remail" required name="email" type="email" placeholder="Email" value="{{old('email')}}">
                 @error('remail')
-                    <p style="text-color:red;color:red;margin-left:10px">{{$message}}</p>
+                    <b style="text-color:red;color:red;margin-left:10px">{{$message}}</b>
                 @enderror
-                <input wire:model="rpassword" name="password" type="password" @error('rpassword') style="border-style:solid;border-color: red;" @enderror placeholder="Password" value="{{old('password')}}">
+                <input wire:model.debounce.500ms="rpassword" required name="password" type="password" placeholder="Password" value="{{old('password')}}">
                 @error('rpassword')
-                    <p style="text-color:red;color:red;margin-left:10px">{{$message}}</p>
+                    <b style="text-color:red;color:red;margin-left:10px">{{$message}}</b>
                 @enderror
                 <input wire:model="image" type="file" id="sendikr" style="display:none">
-                <input wire:model="rpasswordConfirmation" name="password_confirmation" type="password" placeholder="Password Confirmation">
+                <input wire:model="rpasswordConfirmation" required name="password_confirmation" type="password" placeholder="Password Confirmation">
                 @error('rpasswordConfirmation')
-                    <p style="text-color:red;color:red;margin-left:10px">{{$message}}</p>
+                    <b style="text-color:red;color:red;margin-left:10px">{{$message}}</b>
                 @enderror
                 <button wire:loading.attr="disabled" type="submit" style="margin-left:10 px">Register</button>
             </form>

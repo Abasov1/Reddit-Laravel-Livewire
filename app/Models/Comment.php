@@ -29,7 +29,7 @@ class Comment extends Model
         return $this->hasOne(User::class,'id','user_id');
     }
     public function post(){
-        return $this->belongsTo(Post::class,'id','post_id');
+        return $this->hasOne(Post::class,'id','post_id');
     }
     public function commentedComments(User $user){
         return $this->hasManyThrough(Comment::class,Comment::class)->where('user_id',$user->id);

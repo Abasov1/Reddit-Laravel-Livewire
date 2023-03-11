@@ -13,6 +13,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ModController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\SearchController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -87,7 +88,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/friends/{user}',[FriendController::class,'index']);
 
-});
+    Route::post('/qiril',[SearchController::class,'search']);
 
+});
+Route::view('/test','other.chat');
 
 

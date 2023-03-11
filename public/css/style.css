@@ -368,7 +368,9 @@ img {
     padding-right: 15px;
     padding-left: 15px;
   }
-
+  ::-webkit-scrollbar {
+    display: none;
+  }
 .container-fluid.ext-padding {
     padding-left: 130px;
     padding-right: 130px;

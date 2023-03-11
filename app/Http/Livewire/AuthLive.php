@@ -37,6 +37,7 @@ class AuthLive extends Component
             'rname.required' => 'Name is required',
             'rname.min' => 'Name should be at least 6 characters',
             'rname.max' => 'Name should be maximum 20 characters',
+            'rname.unique' => 'Name has already taken',
             'remail.required' => 'Email is required',
             'remail.email' => 'It should be an email',
             'remail.unique' => 'This email has already taken',

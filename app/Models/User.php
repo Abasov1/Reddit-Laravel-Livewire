@@ -69,6 +69,9 @@ class User extends Authenticatable
     public function subreddit(){
         return $this->hasOne(Subreddit::class,'id','creator_id');
     }
+    public function messages(){
+        return $this->belongsToMany(User::class,'messages','user_id','friend_id')->withPivot('body');
+    }
     public function friends(){
         return $this->belongsToMany(User::class, 'user_user','user_id','friend_id');
     }

@@ -1,6 +1,9 @@
 <div class="central-meta item">
     <div class="user-post">
         <div class="friend-info">
+            <figure style="margin-top:10px;">
+                <img src="{{asset('storage/'.$post->user->image)}}" width="50px" height="50" style="border-radius:100%;">
+            </figure>
             <div class="friend-name">
                 <div class="more">
                     <div class="more-post-optns"><i class="ti-more-alt"></i>
@@ -75,7 +78,6 @@
                     </div>
                 </div>
                 <ins>
-                    <img src="{{asset('storage/'.$post->user->image)}}" width="40px" height="40" style="border-radius:100%;">
                     <a title="" href="/homes/{{$post->user->id}}">{{$post->user->name}}</a>
                     Posted on <a href="/subreddit/{{$post->subreddit->id}}">{{$post->subreddit->name}}</a>
                     @if (auth()->user()->id === $post->user->id)

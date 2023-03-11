@@ -17,6 +17,21 @@
     <link rel="stylesheet" href="{{url('css/responsive.css')}}">
     <link rel="stylesheet" href="{{url('css/dark-theme.css')}}">
 
+    <script src="{{url('https://js.pusher.com/7.2/pusher.min.js')}}"></script>
+    <script>
+
+        // Enable pusher logging - don't include this in production
+        Pusher.logToConsole = true;
+
+        var pusher = new Pusher('c62f3da14acfaa261e8d', {
+        cluster: 'eu'
+        });
+
+        var channel = pusher.subscribe('messaga');
+        channel.bind('message-sent', function(data) {
+            document.getElementById('tixla').click();
+        });
+    </script>
     @livewireStyles
 
 </head>
@@ -125,9 +140,10 @@
 			    </span>
 			</div>
 			<div class="top-search">
-				<form method="post" class="">
-					<input type="text" placeholder="Search People, Pages, Groups etc">
-					<button data-ripple><i class="ti-search"></i></button>
+				<form method="post" aria-autocomplete="off" autocomplete="off" action="/qiril" class="">
+                    @csrf
+					<input type="text" name="index" placeholder="Search People, Pages, Groups etc">
+					<button type="submit"><i class="ti-search"></i></button>
 				</form>
 			</div>
 			<div class="page-name">
@@ -314,7 +330,7 @@
 					</a>
 				</li>
 				<li>
-					<a href="chat-messenger.html" title="Messages" data-toggle="tooltip" data-placement="right">
+					<a href="/test" title="Messages" data-toggle="tooltip" data-placement="right">
 						<i class="ti-comment-alt"></i>
 					</a>
 				</li>
@@ -516,19 +532,6 @@
 	<script src="{{url('js/locationpicker.jquery.js')}}"></script>
 	<script src="{{url('js/map-init.js')}}"></script>
 	<script src="{{url('js/script.js')}}"></script>
-
-	{{-- <script src="js/main.min.js"></script>
-
-
-	<script src="js/jquery-stories.js"></script>
-	<script src="../../../cdnjs.cloudflare.com/ajax/libs/gsap/1.18.2/TweenMax.min.js"></script>
-	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA8c55_YHLvDHGACkQscgbGLtLRdxBDCfI"></script>
-	<script src="js/locationpicker.jquery.js"></script>
-	<script src="js/map-init.js"></script>
-	<script src="js/script.js"></script> --}}
-
-
-
 <script>
     $('.goingallup').click(function(){
         const element = document.getElementById('my-element');
