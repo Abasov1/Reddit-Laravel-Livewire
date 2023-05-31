@@ -1,46 +1,38 @@
+@if($sectionoff)
 @extends('layout.temp')
 @section('subreddit')
-	<section>
+<section>
+@endif
+	<section id="content">
 		<div class="gap gray-bg">
 			<div class="container">
 				<div class="row" id="page-contents">
-
-					<div class="col-lg-1">
-
-					</div>
-                    <div class="col-lg-7">
-                            <div class="featured-baner mate-black low-opacity">
-                                @php
-                                    $baner = explode('/',$subreddit->image);
-                                @endphp
-                                <img src="{{asset('storage/'.$baner[1])}}" alt="">
-                                <h3>{{$subreddit->name}}</h3>
-                            </div>
-						<div class="row" style="margin-left:77%;margin-top:20px;">
-							<div class="col-lg-6 col-md-6 col-sm-6">
-								<div class="pst-change-style">
-									<select id="filter-posts">
-                                        <option value="">New</option>
-                                        <option value="/subreddit/{{$subreddit->id}}/today" @isset($tudik) selected @endisset>Top of today</option>
-                                        <option value="/subreddit/{{$subreddit->id}}/week" @isset($wedik) selected @endisset>Top of this week</option>
-                                        <option value="/subreddit/{{$subreddit->id}}/month" @isset($modik) selected @endisset>Top of this month</option>
-                                        <option value="/subreddit/{{$subreddit->id}}/all" @isset($adik) selected @endisset>Top of all time</option>
+                    @php
+                        $baner = explode('/',$subreddit->image);
+                    @endphp
+                    <div class="col-lg-8">
+                        <div class="featured-baner mate-black low-opacity">
+                            @php
+                                $baner = explode('/',$subreddit->image);
+                            @endphp
+                            <img src="{{asset('storage/'.$baner[1])}}" alt="">
+                            <h3>{{$subreddit->name}}</h3>
+                        </div>
+                        <div class="row" style="margin-left:77%;margin-top:20px;">
+                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                <div class="pst-change-style" >
+                                    <select id="filter-posts">
+                                        <option value="1">New</option>
+                                        <option value="2">Top of today</option>
+                                        <option value="3">Top of this week</option>
+                                        <option value="4">Top of this month</option>
+                                        <option value="5">Top of all time</option>
                                       </select>
-								</div>
-							</div>
-						</div>
-						<div class="load-more" id="resetloop">
-                            @isset($posts)
-                                @foreach($posts as $post)
-                                    @include('other.post')
-                                @endforeach
-                            @else
-                                @foreach($newposts as $post)
-                                    @include('other.post')
-                                @endforeach
-                            @endisset
-						</div>
-					</div>
+                                </div>
+                            </div>
+                        </div>
+                    @livewire('filter-subreddit',['subreddit'=>$subreddit])
+                    </div>
                     <div class="col-lg-4">
                         <aside class="sidebar static right">
 							<div class="friend-box" >
@@ -49,7 +41,6 @@
 									<span>{{$subreddit->users->count()}}</span>
 								</figure>
 								<div class="frnd-meta" >
-									<img alt="" src="images/resources/frnd-figure3.jpg">
 									<div style="display:flex;justify-content:center;">
 										<a title="" href="#">{{$subreddit->name}}</a>
 									</div>
@@ -93,4 +84,7 @@
 			</div>
 		</div>
 	</section>
+@if ($sectionoff)
+</section>
 @endsection
+@endif

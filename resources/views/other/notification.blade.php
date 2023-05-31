@@ -1,7 +1,7 @@
 @extends('layout.temp')
 
 @section('subreddit')
-<section>
+<section id="content">
     <div class="gap2 gray-bg">
         <div class="container">
             <div class="row">

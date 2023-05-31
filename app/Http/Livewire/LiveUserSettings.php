@@ -102,7 +102,7 @@ class LiveUserSettings extends Component
             $image = Image::make($this->image);
 
             // crop the image to a square
-            $image->fit(300, 300);
+            $image->fit(300, 300); 
 
             $ex = $this->image->getClientOriginalExtension();
             $file = uniqid() .'.'. $ex;

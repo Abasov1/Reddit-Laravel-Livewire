@@ -1,28 +1,11 @@
 @extends('layout.temp')
-@section('profile')
-{{-- <h1>
-    <div class="comet-avatar profile-image-container">
-        <img  src="{{asset('storage/'.$user->image)}}" alt="">
-    </div><b  style="padding-left:20px">{{$user->name}}</b></h1>
-     - Total posts: {{$user->posts->count()}}
-
-    @isset($aton)
-    - Created Subreddits:
-    @foreach ($aton as $anon)
-        {{$anon->name}}
-    @endforeach
-    @endisset
-    - Received likes: {{$user->receivedLikes()->count()}}
-    @if(!$user->subreddits->isEmpty())
-    - Joined Subreddits @foreach ($user->subreddits as $subreddit)
-                        {{$subreddit->name}}
-                    @endforeach
-                    @endif
-    <br> <br>
-    <h1>POSTS</h1> <br>
-    @foreach ($user->posts as $post)
-    @include('other.post')
-    @endforeach --}}
+@section('subreddit')
+<section id="content">
+    <div class="gap2 gray-bg">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="row merged20" id="page-contents">
     <div class="user-profile">
         <figure>
             <img src="{{url('images/resources/profile-image.jpg')}}" alt="">
@@ -62,7 +45,6 @@
                         </a>
                         <div class="author-content">
                             <a class="h4 author-name" href="about.html">{{$user->name}}</a>
-                            <div class="country">Ontario, CA</div>
                         </div>
                     </div>
                 </div>
@@ -84,11 +66,6 @@
             </div>
         </div>
     </div><!-- user profile banner  -->
-@endsection
-@section('profileleft')
-{{--  --}}
-@endsection
-@section('profilecenter')
     <div class="col-lg-8">
         <div class="central-meta">
             @foreach ($user->posts as $post)
@@ -96,8 +73,6 @@
             @endforeach
         </div>
     </div>
-@endsection
-@section('profileright')
     <div class="col-lg-4">
         <aside class="sidebar static-right">
             <div class="widget">
@@ -129,7 +104,7 @@
                           </div>
                           <div class="tab-pane fade" id="link2" >
                               <span><i class="fa fa-eye"></i>{{$user->totalViews()}}</span>
-                              <a href="#" title="weekly-likes">Total views this week{{$user->totalViewsThisWeek()}}</a>
+                              <a href="#" title="weekly-likes">Total views this week {{$user->totalViewsThisWeek()}}</a>
                           </div>
                         </div>
                     </div>
@@ -172,5 +147,11 @@
             @endif
         </aside>
     </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
 
 @endsection

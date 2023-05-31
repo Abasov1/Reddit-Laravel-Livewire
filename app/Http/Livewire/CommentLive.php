@@ -4,6 +4,7 @@ namespace App\Http\Livewire;
 
 use App\Models\Comment;
 use App\Models\Post;
+use App\Models\User;
 use Livewire\Component;
 
 class CommentLive extends Component
@@ -15,6 +16,8 @@ class CommentLive extends Component
     public $previewComment = null;
     public $inside = 'Comment';
     public $likecount;
+    public $amount = 10;
+    protected $listeners = ['bottomPage'=>'loadmore'];
     protected $rules = [
         'body' => 'required',
     ];
@@ -30,7 +33,9 @@ class CommentLive extends Component
             auth()->user()->sendNotification($comant->user->id,$this->post->id,$this->commentid,$createdcomment->id,null,'commentcomment');
         }else{
             auth()->user()->sendNotification($this->post->user->id,$this->post->id,$createdcomment->id,null,null,'postcomment');
+            $this->amount++;
         }
+        $this->body = '';
         if($this->previewComment != null){
             $this->commentid = null;
             $this->previewComment = null;
@@ -41,6 +46,7 @@ class CommentLive extends Component
         ->with('subcomments.subcomments')
         ->whereNull('comment_id')
         ->latest()
+        ->take($this->amount)
         ->get();
     }
     public function commentToggle($id){
@@ -60,6 +66,7 @@ class CommentLive extends Component
         ->with('subcomments.subcomments')
         ->whereNull('comment_id')
         ->latest()
+        ->take($this->amount)
         ->get();
         if($comment->likedBy(auth()->user())){
             $comment->likes()->where('user_id',auth()->user()->id)->delete() ;
@@ -75,7 +82,19 @@ class CommentLive extends Component
     }
     public function mount($post,$comments){
         $this->post = $post;
-        $this->comments = $comments;
+        $this->loadcomments();
+    }
+    public function loadcomments(){
+        $this->comments = Comment::where('post_id',$this->post->id)
+        ->with('subcomments.subcomments')
+        ->whereNull('comment_id')
+        ->latest()
+        ->take($this->amount)
+        ->get();
+    }
+    public function loadmore(){
+        $this->amount+=10;
+        $this->loadcomments();
     }
     public function render()
     {

@@ -1,5 +1,5 @@
 <div>
-    <ul class="we-comet" id="my-element">>
+    <ul class="we-comet" id="my-element">
                         <h1 style="color:white;">Make Comment</h1>
                         <li class="post-comment">
                             <div class="comet-avatar">
@@ -36,6 +36,7 @@
                         </li>
                         <h1 id="mercimek" style="color:white">Comments</h1>
                         @foreach ($comments as $comment )
+
                         <li>
                             <div class="comet-avatar image-container">
                                 <img src="{{asset('storage/'.$comment->user->image)}}" alt="">

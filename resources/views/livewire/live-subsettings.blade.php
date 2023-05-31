@@ -57,17 +57,6 @@
                 </div>
             </div>
             </div>
-        <div class="account-delete">
-            <h5>Subreddit changes</h5>
-            <div>
-                <span>Users cant post or join the subreddit</span>
-                <button type="button" class=""><span>Deactivate subreddit</span></button>
-            </div>
-            <div>
-                <span>Delete all posts and subreddit</span>
-                <button type="button" class=""><span>Delete subreddit</span></button>
-            </div>
-        </div>
     </div><!-- general setting -->
     <div wire:ignore.self class="tab-pane fade" id="edit-profile" >
         <div class="set-title">

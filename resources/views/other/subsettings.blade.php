@@ -1,6 +1,6 @@
 @extends('layout.temp')
 @section('profile')
-<section>
+<section style="margin-bottom:200px;">
     <div class="gap2 gray-bg">
         <div class="container">
             <div class="row">
@@ -23,27 +23,6 @@
                                             </li>
                                             <li class="nav-item">
                                                 <a href="#edit-profile" class="nav-link" data-toggle="tab" ><i class="fa fa-ban"></i> Banned users</a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a href="#notifi" class="nav-link" data-toggle="tab" ><i class="fa fa-bell"></i> Notification</a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a href="#messages" class="nav-link" data-toggle="tab" ><i class="fa fa-comment"></i> Messages</a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a href="#weather" class="nav-link" data-toggle="tab" ><i class="fa fa-cloud"></i> Weather Setting</a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a href="#page-manage" class="nav-link" data-toggle="tab" ><i class="fa fa-pencil-square-o"></i>Widgets Setting</a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a href="#privacy" class="nav-link" data-toggle="tab"  ><i class="fa fa-shield"></i> Privacy & Data</a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a href="#security" class="nav-link" data-toggle="tab" ><i class="fa fa-lock"></i> Security</a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a href="#apps" class="nav-link" data-toggle="tab" ><i class="fa fa-th"></i> Apps</a>
                                             </li>
                                         </ul>
                                         @livewire('live-subsettings',['subreddit'=>$subreddit])

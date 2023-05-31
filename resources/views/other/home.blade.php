@@ -1,10 +1,11 @@
+@if($sectionoff)
 @extends('layout.temp')
 @section('subreddit')
-<section>
+<section id="content">
+@endif
     <div class="gap2 gray-bg">
         <div class="container">
             <div class="row">
-
                 <div class="col-lg-8">
                     <div id="variable-list">
                     @foreach ($posts as $post)
@@ -40,6 +41,8 @@
             </div>
         </div>
     </div>
+@if ($sectionoff)
 </section>
-
 @endsection
+@endif
+

@@ -6,7 +6,7 @@
         </div>
         <div class="onoff-options ">
             <form wire:submit.prevent="setsettings">
-                <div class="setting-row">
+                <div class="setting-row"> 
                     <span>Friend requests</span>
                     <p>Enable this if you want to see friend request</p>
                     <input wire:loading.attr="disabled" wire:click="dsds" wire:model="frnt" type="checkbox" id="switch00" {{ ($nt->frnt == true) ? 'checked' : '' }} />
@@ -37,17 +37,6 @@
                 </div>
             </form>
         </div>
-        <div class="account-delete">
-            <h5>Account Changes</h5>
-            <div>
-                <span>Hide Your Posts and profile </span>
-                <button type="button" class=""><span>Deactivate account</span></button>
-            </div>
-            <div>
-                <span>Delete your account and data </span>
-                <button type="button" class=""><span>close account</span></button>
-            </div>
-        </div>
     </div><!-- general setting -->
     <div  wire:ignore.self class="tab-pane fade @isset($editselected)show active @endisset @if ($errors->any()) show active @endif" id="edit-profile" >
         <div class="set-title">
@@ -55,7 +44,6 @@
             <span>People on Pitnik will get to know you with the info below</span>
         </div>
         <div class="setting-meta">
-            <div class="change-photo">
                 <figure><img id="pp" src="{{ isset($image) ? $image->temporaryUrl() : asset('storage/'.$user->image) }}" style="max-width:40px;max-height:40px;" alt=""></figure>
                 {{-- <div class="edit-img"> --}}
 

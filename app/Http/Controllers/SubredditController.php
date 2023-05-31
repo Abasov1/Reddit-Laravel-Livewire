@@ -76,7 +76,7 @@ class SubredditController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($id,Request $request)
     {
         $user = Auth::user();
         $subreddit = Subreddit::find($id);
@@ -90,7 +90,10 @@ class SubredditController extends Controller
             $userIds = collect($requests)->pluck('user_id');
             $rusers = User::whereIn('id',$userIds)->get();
         }
-
+        $sectionoff = true;
+        if($request->ajax()){
+            $sectionoff = false;
+        }
         return view('other.subreddit',get_defined_vars());
     }
 

@@ -79,7 +79,7 @@
                 </div>
                 <ins>
                     <a title="" href="/homes/{{$post->user->id}}">{{$post->user->name}}</a>
-                    Posted on <a href="/subreddit/{{$post->subreddit->id}}">{{$post->subreddit->name}}</a>
+                    Posted on <a href="/subreddit/{{$post->subreddit->id}}" onclick="gosub({{$post->subreddit->id}},event)">{{$post->subreddit->name}}</a>
                     @if (auth()->user()->id === $post->user->id)
                         - Posted by you
                     @endif

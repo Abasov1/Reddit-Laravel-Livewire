@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Events\SendNotification;
 use App\Models\Post;
 use Carbon\Carbon;
 use Laravel\Sanctum\HasApiTokens;
@@ -70,7 +72,7 @@ class User extends Authenticatable
         return $this->hasOne(Subreddit::class,'id','creator_id');
     }
     public function messages(){
-        return $this->belongsToMany(User::class,'messages','user_id','friend_id')->withPivot('body');
+        return $this->belongsToMany(User::class,'messages','user_id','friend_id')->withPivot('body','seen');
     }
     public function friends(){
         return $this->belongsToMany(User::class, 'user_user','user_id','friend_id');
@@ -126,6 +128,8 @@ class User extends Authenticatable
                             'content' => $content,
                             'created_at' => now(),
                         ]);
+                        event(new SendNotification(auth()->user()->id,$userId));
+
                     }
                 }else{
                     $this->notifications()->attach($userId,[
@@ -136,6 +140,7 @@ class User extends Authenticatable
                         'content' => $content,
                         'created_at' => now(),
                     ]);
+                    event(new SendNotification(auth()->user()->id,$userId));
                 }
             }
         }
@@ -250,7 +255,10 @@ class User extends Authenticatable
         $requests = DB::table('notifications')->where('duduk_id',$this->id)->where('content','friendrequest')->get();
         $count = count($requests);
         if($requests->isEmpty()){
-            return false;
+            return [
+                'requests' =>[],
+                'count' => '0'
+            ];
         }else{
         $userIds = collect($requests)->pluck('user_id');
         $qrusers = User::whereIn('id',$userIds)->get();
@@ -267,6 +275,7 @@ class User extends Authenticatable
     }
 }
     public function checkNotifications(){
+
         $notifications = DB::table('notifications')->where('duduk_id',$this->id)->latest()->get();
         $count = count($notifications);
             $userIds = collect($notifications)->pluck('user_id');

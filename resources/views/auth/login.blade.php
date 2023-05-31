@@ -28,42 +28,6 @@
 		<div class="logo">
 			<a title="" href="newsfeed.html"><img src="images/logo.png" alt=""></a>
 		</div>
-
-		<div class="top-area">
-			<div class="top-search">
-				<form method="post" class="">
-					<input type="text" placeholder="Search People, Pages, Groups etc">
-					<button data-ripple><i class="ti-search"></i></button>
-				</form>
-			</div>
-			<div class="page-name">
-			    <span>Logout</span>
-			</div>
-			<ul class="setting-area">
-				<li><a data-ripple="" title="Home" href="newsfeed.html"><i class="fa fa-home"></i></a></li>
-				<li><a href="#" title="Help" data-ripple=""><i class="fa fa-question-circle"></i></a>
-					<div class="dropdowns helps">
-						<span>Quick Help</span>
-						<form method="post">
-							<input type="text" placeholder="How can we help you?">
-						</form>
-						<span>Help with this page</span>
-						<ul class="help-drop">
-							<li><a href="#" title=""><i class="fa fa-book"></i>Terms and Conditions</a></li>
-							<li><a href="#" title=""><i class="fa fa-question-circle-o"></i>FAQs</a></li>
-							<li><a href="#" title=""><i class="fa fa-building-o"></i>Carrers</a></li>
-							<li><a href="#" title=""><i class="fa fa-map-marker"></i>Contact</a></li>
-							<li><a href="#" title=""><i class="fa fa-pencil-square-o"></i>Privacy Policy</a></li>
-							<li><a href="#" title=""><i class="fa fa-exclamation-triangle"></i>Report a Problem</a></li>
-						</ul>
-					</div>
-				</li>
-				<li><a class="text" data-ripple="" title="Privacy" href="policies.html">Privacy & Policy</a></li>
-				<li><a class="text" data-ripple="" title="Privacy" href="about.html">Contact</a></li>
-				<li><a class="text" data-ripple="" title="Privacy" href="faq.html">Faq's</a></li>
-				<li><a class="text" data-ripple="" title="Privacy" href="forum.html">Forum</a></li>
-			</ul>
-		</div>
 	</div><!-- topbar -->
 
 	<section>

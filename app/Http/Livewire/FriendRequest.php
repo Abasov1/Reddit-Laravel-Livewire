@@ -11,9 +11,9 @@ class FriendRequest extends Component
 {
     public $frrequests;
     public $count;
-    public function mount($frrequests,$count){
-        $this->frrequests = $frrequests;
-        $this->count = $count;
+    protected $listeners = ['fryenile'=>'yenile'];
+    public function mount(){
+        $this->frrequests =  auth()->user()->checkfriendrequest();
     }
     public function accept($id){
         if(DB::table('notifications')->where(['user_id'=>$id,'duduk_id'=>auth()->user()->id,'content'=>'friendrequest'])->exists()){
@@ -24,15 +24,7 @@ class FriendRequest extends Component
             auth()->user()->sendNotification($id,null,null,null,null,'friendrequestaccepted');
 
         }
-        $friends = DB::table('notifications')->where(['duduk_id'=>auth()->user()->id,'content'=>'friendrequest'])->get();
-        $userIds = collect($friends)->pluck('user_id');
-        $users = User::whereIn('id',$userIds)->get();
-        foreach($friends as $friend){
-            $friend->user = $users->where('id',$friend->user_id)->first();
-            $friend->date = Carbon::parse($friends->where('user_id',$friend->user->id)->first()->created_at);
-        }
-        $this->count = count($friends);
-        $this->frrequests = $friends;
+        $this->frrequests = auth()->user()->checkfriendrequest();
     }
     public function ignore($id){
         $user = User::where('id',$id)->first();
@@ -40,16 +32,12 @@ class FriendRequest extends Component
             DB::table('notifications')->where(['user_id'=>$id,'duduk_id'=>auth()->user()->id,'content'=>'friendrequest'])->delete();
             auth()->user()->sendNotification($id,null,null,null,null,'friendrequestdenied');
         }
-        $friends = DB::table('notifications')->where(['duduk_id'=>auth()->user()->id,'content'=>'friendrequest'])->get();
-        $userIds = collect($friends)->pluck('user_id');
-        $users = User::whereIn('id',$userIds)->get();
-        foreach($friends as $friend){
-            $friend->user = $users->where('id',$friend->user_id)->first();
-            $friend->date = Carbon::parse($friends->where('user_id',$friend->user->id)->first()->created_at);
-        }
-        $this->count = count($friends);
-        $this->frrequests = $friends;
+        $this->frrequests = auth()->user()->checkfriendrequest();
 
+    }
+    public function yenile(){
+        $this->frrequests =  auth()->user()->checkfriendrequest();
+        $this->count = auth()->user()->checkfriendrequest('count');
     }
     public function render()
     {

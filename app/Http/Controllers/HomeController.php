@@ -31,6 +31,10 @@ class HomeController extends Controller
         // } else {
         //     return view('other.home',compact('posts'));
         // }
+        $sectionoff = true;
+        if($request->ajax()){
+            $sectionoff = false;
+        }
         return view('other.home',get_defined_vars());
     }
 

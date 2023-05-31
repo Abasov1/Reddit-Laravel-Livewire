@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\SendNotification;
 use App\Models\Comment;
 use App\Models\Like;
 use App\Models\Post;
@@ -28,9 +29,6 @@ class LikeController extends Controller
         /* dd($user); */
     }
     public function commentstore(Comment $comment,Post $post,Request $request){
-        if(!auth()->user()->notifications()->where(['duduk_id' => $comment->user->id,'comment_id' => $comment->id,'content' => 'likecomment'])->exists()){
-            auth()->user()->sendNotification($comment->user->id,$post->id,$comment->id,null,null,'likecomment');
-        }
 
         if($comment->likedBy($request->user())){
             $comment->likes()->where('user_id',$request->user()->id)->delete() ;
@@ -39,8 +37,9 @@ class LikeController extends Controller
         $comment->likes()->create([
             'user_id' => $request->user()->id,
         ]);
-
-
+        if(!auth()->user()->notifications()->where(['duduk_id' => $comment->user->id,'comment_id' => $comment->id,'content' => 'likecomment'])->exists()){
+            auth()->user()->sendNotification($comment->user->id,$post->id,$comment->id,null,null,'likecomment');
+        }
         return back();
         /* dd($user); */
     }

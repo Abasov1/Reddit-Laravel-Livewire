@@ -103,7 +103,6 @@
                                              @if(auth()->user()->isJoined($subreddit)) Leave @else Join @endif</a>
 
                                         </ins>
-                                        <span>something</span>
                                     </div>
                                 </div>
                             </div>
@@ -129,7 +128,6 @@
                                         <ins>
 
                                             <a title="" href="/homes/{{$user->id}}">{{$user->name}}</a>
-                                            <a style="float:right;margin-top:10px;" href="">Send friend request</a>
                                         </ins>
                                         <span>Joined {{$user->created_at->diffForHumans()}}</span>
                                     </div>
